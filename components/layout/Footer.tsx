@@ -171,6 +171,7 @@ export function Footer() {
         external: true,
       },
       { label: t('links.github'), href: 'https://github.com/luzzo33/nos-plus-web', external: true },
+      { label: t('links.changelog'), href: '/changelog' },
     ],
   };
 
