@@ -3,15 +3,20 @@
 import { logError, logInfo } from '@/lib/logging/logger';
 
 const REGISTRY_FLAG = Symbol.for('nos.plus.logging.registered');
+type GlobalWithRegistryFlag = typeof globalThis & {
+  [REGISTRY_FLAG]?: boolean;
+};
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== 'nodejs') return;
 
-  if ((globalThis as any)[REGISTRY_FLAG]) {
+  const globalWithRegistry = globalThis as GlobalWithRegistryFlag;
+
+  if (globalWithRegistry[REGISTRY_FLAG]) {
     return;
   }
 
-  (globalThis as any)[REGISTRY_FLAG] = true;
+  globalWithRegistry[REGISTRY_FLAG] = true;
   logInfo('[runtime] instrumentation registered');
 
   process.on('uncaughtException', (error) => {
