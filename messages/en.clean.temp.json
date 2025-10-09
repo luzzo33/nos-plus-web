@@ -104,6 +104,7 @@
     }
   },
   "common": {
+    "changelogIntro": "Keep up with the latest NOS.plus releases, fixes, and feature drops.",
     "dataPoints": "data points",
     "timeRanges": {
       "7d": "7D",

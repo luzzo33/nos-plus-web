@@ -258,6 +258,7 @@
   },
   "common": {
     "customDate": "Personalizado",
+    "changelogIntro": "Mantente al día con los últimos lanzamientos, correcciones y novedades de NOS.plus.",
     "timeRanges": {
       "1h": "1H",
       "4h": "4H",

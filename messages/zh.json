@@ -615,6 +615,7 @@
     "fontSize": "字体大小",
     "fontSizeSettings": "字体设置",
     "customDate": "自定义",
+    "changelogIntro": "及时了解 NOS.plus 最新的发布、修复和功能更新。",
     "days": {
       "today": "今天",
       "yesterday": "昨天",
