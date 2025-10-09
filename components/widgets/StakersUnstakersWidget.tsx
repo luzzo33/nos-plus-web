@@ -157,6 +157,8 @@ export function StakersUnstakersWidget({ isMobile = false }: { isMobile?: boolea
     };
   });
 
+  const shouldUseCompactDropdown = isMobile && availableTimeframes.length > 4;
+
   const skeleton = (
     <div className="animate-pulse space-y-3">
       <div className={summaryGridClass}>
@@ -212,7 +214,10 @@ export function StakersUnstakersWidget({ isMobile = false }: { isMobile?: boolea
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[90px] overflow-hidden"
+                  className={cn(
+                    'absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[90px] overflow-hidden',
+                    shouldUseCompactDropdown && 'grid grid-cols-2 sm:grid-cols-1 min-w-[180px]',
+                  )}
                 >
                   {timeframeOptions.map((option) => (
                     <button

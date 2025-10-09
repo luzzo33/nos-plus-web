@@ -107,6 +107,9 @@ export function StakingDetailsWidget({ isMobile = false }: { isMobile?: boolean 
     label: tc(`timeRanges.${tf}`),
   }));
 
+  const shouldUseCompactMetricDropdown = isMobile && metricDefinitions.length > 4;
+  const shouldUseCompactTimeframeDropdown = isMobile && timeframeOptions.length > 4;
+
   const skeleton = (
     <div className="animate-pulse space-y-3">
       <div className="flex gap-2">
@@ -155,7 +158,11 @@ export function StakingDetailsWidget({ isMobile = false }: { isMobile?: boolean 
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[130px] overflow-hidden"
+                    className={cn(
+                      'absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[130px] overflow-hidden',
+                      shouldUseCompactMetricDropdown &&
+                        'grid grid-cols-2 sm:grid-cols-1 min-w-[200px]',
+                    )}
                   >
                     {metricDefinitions.map((metric) => (
                       <button
@@ -207,7 +214,11 @@ export function StakingDetailsWidget({ isMobile = false }: { isMobile?: boolean 
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[110px] overflow-hidden"
+                    className={cn(
+                      'absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[110px] overflow-hidden',
+                      shouldUseCompactTimeframeDropdown &&
+                        'grid grid-cols-2 sm:grid-cols-1 min-w-[180px]',
+                    )}
                   >
                     {timeframeOptions.map((option) => (
                       <button
