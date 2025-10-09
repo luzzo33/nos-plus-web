@@ -7,13 +7,14 @@
   "terms": {
     "hero": {
       "title": "使用条款",
-      "subtitle": "本条款适用于您对 NOS.plus 的使用。NOS.plus 是面向 Nosana 生态的独立社区平台，按最佳努力原则提供仪表板、监控和 API，并非商业产品。"
+      "subtitle": "本条款适用于您对 NOS.plus 的使用。NOS.plus 是面向 Nosana 生态的独立社区平台，与 Nosana 无隶属或背书关系，按最佳努力原则提供仪表板、监控和 API，并非商业产品。"
     },
     "sections": {
       "overview": {
         "title": "1. 接受条款",
         "body": [
           "使用 NOS.plus 即表示你同意这些条款。平台免费提供，旨在为 Nosana 社区提供公益服务。",
+          "NOS.plus 由志愿者维护，并非 Nosana 官方产品。",
           "如果你向团队或社区分享 NOS.plus，请确保他们同样了解并接受这些条款。"
         ]
       },
@@ -81,6 +82,7 @@
         "title": "9. 免责声明",
         "body": [
           "NOS.plus 仅用于信息与教育目的；",
+          "NOS.plus 与 Nosana 无隶属、授权或背书关系；",
           "本站内容不构成金融或投资建议；",
           "数据来源于公开渠道，可能不完整或存在误差。"
         ]

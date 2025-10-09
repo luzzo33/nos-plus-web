@@ -7,13 +7,14 @@
   "terms": {
     "hero": {
       "title": "Condizioni d'uso",
-      "subtitle": "Queste condizioni disciplinano l'utilizzo di NOS.plus, una piattaforma indipendente guidata dalla community per l'ecosistema Nosana. Il servizio offre cruscotti, monitor e API secondo il principio del best effort e non è un prodotto commerciale."
+      "subtitle": "Queste condizioni disciplinano l'utilizzo di NOS.plus, una piattaforma indipendente guidata dalla community per l'ecosistema Nosana. NOS.plus non è affiliata né approvata da Nosana; il servizio offre cruscotti, monitor e API secondo il principio del best effort e non è un prodotto commerciale."
     },
     "sections": {
       "overview": {
         "title": "1. Accettazione",
         "body": [
           "Utilizzando NOS.plus accetti queste condizioni. La piattaforma è offerta senza costi come servizio di buona volontà per la community Nosana.",
+          "NOS.plus è un'iniziativa volontaria e non va considerata come un prodotto ufficiale di Nosana.",
           "Se condividi NOS.plus con altre persone (ad esempio nella tua community o nel tuo team), assicurati che comprendano e accettino le stesse condizioni."
         ]
       },
@@ -91,6 +92,7 @@
         "title": "9. Clausole di esclusione",
         "body": [
           "NOS.plus ha finalità esclusivamente informative ed educative.",
+          "NOS.plus non è affiliata, approvata o gestita da Nosana.",
           "Niente qui costituisce consulenza finanziaria o d'investimento.",
           "I dati sono aggregati da fonti pubbliche e possono essere incompleti o imprecisi."
         ]
