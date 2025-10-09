@@ -1,51 +1,28 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ExternalLink, ChevronDown } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ExternalLink } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
+import { truncateAddress } from '@/components/monitor/WalletActionMenu';
 
-export type WalletPlanType = 'dca' | 'limit';
-
-interface WalletActionMenuProps {
-  wallet: string;
+interface PlanIdentifierMenuProps {
   planId: string;
-  planType: WalletPlanType;
   className?: string;
-  size?: 'sm' | 'md';
-  align?: 'left' | 'right';
+  triggerClassName?: string;
 }
 
-export function truncateAddress(address: string, leading = 4, trailing = 4) {
-  if (!address) return '';
-  const lead = address.slice(0, leading);
-  const tail = address.slice(-trailing);
-  return `${lead}\u2026${tail}`;
-}
-
-export function WalletActionMenu({
-  wallet,
-  planId: _planId,
-  planType: _planType,
+export function PlanIdentifierMenu({
+  planId,
   className,
-  size = 'md',
-  align = 'right',
-}: WalletActionMenuProps) {
+  triggerClassName,
+}: PlanIdentifierMenuProps) {
   const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState<'left' | 'right'>(align);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [placement, setPlacement] = useState<'left' | 'right'>('right');
 
-  const label = useMemo(() => truncateAddress(wallet, 4, 4), [wallet]);
-
-  useEffect(() => {
-    setPlacement(align);
-  }, [align]);
-
-  useEffect(() => {
-    if (!open) {
-      setPlacement(align);
-    }
-  }, [open, align]);
+  const label = useMemo(() => truncateAddress(planId, 4, 4), [planId]);
 
   const closeMenu = useCallback(() => setOpen(false), []);
 
@@ -58,10 +35,10 @@ export function WalletActionMenu({
   }, []);
 
   const handleOpenSolscan = useCallback(() => {
-    if (!wallet) return;
-    openInNewTab(`https://solscan.io/address/${encodeURIComponent(wallet)}`);
+    if (!planId) return;
+    openInNewTab(`https://solscan.io/address/${encodeURIComponent(planId)}`);
     closeMenu();
-  }, [wallet, openInNewTab, closeMenu]);
+  }, [planId, openInNewTab, closeMenu]);
 
   useEffect(() => {
     if (!open) return;
@@ -94,7 +71,10 @@ export function WalletActionMenu({
   }, [open, closeMenu]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setPlacement('right');
+      return;
+    }
 
     const adjustPlacement = () => {
       const menu = menuRef.current;
@@ -117,55 +97,40 @@ export function WalletActionMenu({
     };
   }, [open]);
 
-  const sizeClasses =
-    size === 'sm'
-      ? {
-          trigger: 'text-[11px] px-2 py-1',
-          menuItem: 'px-2 py-1.5 text-xs',
-        }
-      : {
-          trigger: 'text-xs px-2.5 py-1.5',
-          menuItem: 'px-3 py-2 text-sm',
-        };
-
-  if (!wallet) return null;
+  if (!planId) return null;
 
   return (
     <div className={cn('relative inline-flex', className)}>
       <button
         ref={triggerRef}
-        type="button"
+        type='button'
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
-          'inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/80 font-mono text-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
-          sizeClasses.trigger,
+          'inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
+          triggerClassName,
         )}
-        aria-haspopup="menu"
+        aria-haspopup='menu'
         aria-expanded={open}
       >
-        <ExternalLink className="h-3 w-3 shrink-0 text-primary" />
-        <span>{label}</span>
-        <ChevronDown className="h-3 w-3 shrink-0 opacity-70" />
+        <span className='font-mono'>{label}</span>
+        <ExternalLink className='h-3 w-3 shrink-0' />
       </button>
       {open && (
         <div
           ref={menuRef}
-          role="menu"
+          role='menu'
           className={cn(
-            'absolute top-full z-40 mt-1 min-w-[10rem] rounded-lg border border-border/50 bg-background/95 shadow-lg backdrop-blur-sm',
+            'absolute top-full z-40 mt-1 min-w-[11rem] rounded-lg border border-border/50 bg-background/95 p-1 shadow-lg backdrop-blur-sm',
             placement === 'left' ? 'left-0 right-auto' : 'right-0 left-auto',
           )}
         >
           <button
-            type="button"
+            type='button'
+            role='menuitem'
             onClick={handleOpenSolscan}
-            className={cn(
-              'flex w-full items-center gap-2 text-left text-foreground transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none',
-              sizeClasses.menuItem,
-            )}
-            role="menuitem"
+            className='flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-foreground transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none'
           >
-            <ExternalLink className="h-3.5 w-3.5 text-primary" />
+            <ExternalLink className='h-3.5 w-3.5 text-primary' />
             <span>View on Solscan</span>
           </button>
         </div>
