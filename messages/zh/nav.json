@@ -4,6 +4,7 @@
   "volume": "成交量",
   "holders": "持有人",
   "docs": "API 文档",
+  "changelog": "更新日志",
   "blog": "博客",
   "stakersUnstakers": "质押 / 解押",
   "stakingDetails": "质押详情",
@@ -28,6 +29,7 @@
     "analysis": "代币流向分析",
     "apiKeys": "申请监控 API 访问权限",
     "docs": "浏览 NOS+ API 文档",
+    "changelog": "查看最新的 NOS.plus 版本与更新",
     "blog": "产品更新与故事"
   },
   "toggleTheme": "切换主题",

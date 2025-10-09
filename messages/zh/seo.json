@@ -56,6 +56,10 @@
       "title": "NOS.plus 文档",
       "description": "查看集成指南、API 规范与最佳实践，快速上手 NOS.plus 分析能力。"
     },
+    "changelog": {
+      "title": "NOS.plus 更新日志与发行说明",
+      "description": "了解 NOS.plus 最新的功能更新、问题修复与体验优化，紧跟 Nosana 社区动态。"
+    },
     "holders": {
       "title": "Nosana 持币者情报",
       "description": "实时分析钱包分布、巨鲸动向与资金流入流出情况。"

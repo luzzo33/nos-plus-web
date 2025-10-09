@@ -56,6 +56,10 @@
       "title": "Documentazione NOS.plus",
       "description": "Esplora guide di integrazione, specifiche API e best practice per costruire con l’analitica di NOS.plus."
     },
+    "changelog": {
+      "title": "Changelog e note di rilascio di NOS.plus",
+      "description": "Leggi gli ultimi aggiornamenti, correzioni e miglioramenti di NOS.plus per la community Nosana."
+    },
     "holders": {
       "title": "Intelligence sui holder di Nosana",
       "description": "Analizza distribuzione dei wallet, movimenti delle balene e flussi in entrata e uscita in tempo reale."
