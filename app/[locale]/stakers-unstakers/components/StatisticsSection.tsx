@@ -28,16 +28,18 @@ import type { TimeRange } from '@/lib/api/client';
 import type { BalancesStatsResponse } from '@/lib/api/balances-client';
 
 import { Tooltip as UiTooltip } from '@/components/ui/Tooltip';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 import { cn } from '@/lib/utils';
 import { useFontScale, FONT_SCALE } from '../hooks/useFontScale';
 
 type MetricMode = 'total' | 'stakers' | 'unstakers';
 
 interface StatisticsSectionProps {
-  stats: BalancesStatsResponse['stats'];
+  stats: BalancesStatsResponse['stats'] | null | undefined;
   statsRange: TimeRange;
   mounted: boolean;
   metric: MetricMode;
+  loading?: boolean;
 }
 
 const METRIC_META: Record<MetricMode, { color: string; accent: string }> = {
@@ -88,13 +90,68 @@ interface SeriesStats {
   median: number | null;
 }
 
-export function StatisticsSection({ stats, statsRange, mounted, metric }: StatisticsSectionProps) {
+export function StatisticsSection({
+  stats,
+  statsRange,
+  mounted,
+  metric,
+  loading = false,
+}: StatisticsSectionProps) {
   const { text } = useFontScale();
   const t = useTranslations('stakersUnstakers.stats');
   const tt = useTranslations('stakersUnstakers.stats.tooltips');
   const tc = useTranslations('common');
 
-  if (!mounted || !stats) return null;
+  const isHydrated = mounted || loading;
+  if (!isHydrated) return null;
+
+  if (loading || !stats) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="card-base p-4 md:p-5 space-y-3">
+              <SkeletonBlock className="h-4 w-28 rounded-lg" />
+              <SkeletonBlock className="h-6 w-24 rounded-lg" />
+              <SkeletonBlock className="h-3 w-16 rounded-lg" />
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="card-base p-4 md:p-6 space-y-4">
+            <SkeletonBlock className="h-5 w-52 rounded-lg" />
+            <div className="grid grid-cols-2 gap-3">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="space-y-2">
+                  <SkeletonBlock className="h-3 w-24 rounded-lg" />
+                  <SkeletonBlock className="h-4 w-32 rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="card-base p-4 md:p-6 space-y-4">
+            <SkeletonBlock className="h-5 w-48 rounded-lg" />
+            <SkeletonBlock className="h-48 w-full rounded-xl" />
+          </div>
+        </div>
+
+        <div className="card-base p-4 md:p-6 space-y-4">
+          <SkeletonBlock className="h-5 w-52 rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="space-y-2">
+                <SkeletonBlock className="h-3 w-28 rounded-lg" />
+                <SkeletonBlock className="h-4 w-24 rounded-lg" />
+                <SkeletonBlock className="h-3 w-20 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+  if (!stats) return null;
 
   const metricKey: MetricMode = metric || 'total';
   const metricMeta = METRIC_META[metricKey];

@@ -5,11 +5,13 @@ import { TrendingUp, TrendingDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { AccountsWidgetData } from '@/lib/api/balances-client';
 import { cn } from '@/lib/utils';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 import { useFontScale } from '../hooks/useFontScale';
 
 interface HeaderProps {
   widget: AccountsWidgetData | null;
   mounted: boolean;
+  loading?: boolean;
 }
 
 const fmtSigned = (n?: number, suffix = '') => {
@@ -22,9 +24,11 @@ const fmtSigned = (n?: number, suffix = '') => {
   return `${sign}${v.toFixed(2).replace(/\.00$/, '')}${suffix}`;
 };
 
-export function StakersUnstakersHeader({ widget, mounted }: HeaderProps) {
+export function StakersUnstakersHeader({ widget, mounted, loading = false }: HeaderProps) {
   const { text } = useFontScale();
   const t = useTranslations('stakersUnstakers');
+  const showData = mounted && widget && !loading;
+  const showSkeleton = loading || !widget;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background p-6 md:p-8">
@@ -38,7 +42,25 @@ export function StakersUnstakersHeader({ widget, mounted }: HeaderProps) {
             </p>
           </div>
 
-          {mounted && widget && (
+          {showSkeleton && (
+            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border border-border/50 min-w-[280px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.from({ length: 2 }).map((_, idx) => (
+                  <div key={idx} className="space-y-3">
+                    <SkeletonBlock className="h-3 w-32 rounded-lg" />
+                    <SkeletonBlock className="h-8 w-32 rounded-lg" />
+                    <div className="flex items-center gap-3">
+                      <SkeletonBlock className="h-4 w-4 rounded-full" />
+                      <SkeletonBlock className="h-3 w-20 rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <SkeletonBlock className="mt-4 h-3 w-40 rounded-lg" />
+            </div>
+          )}
+
+          {showData && (
             <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border border-border/50 min-w-[280px]">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Accounts */}

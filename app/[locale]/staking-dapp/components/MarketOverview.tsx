@@ -19,12 +19,14 @@ import { Tooltip as UiTooltip } from '@/components/ui/Tooltip';
 import { useFontScale } from '../hooks/useFontScale';
 import { useTranslations, useLocale } from 'next-intl';
 import type { TimeRange } from '@/lib/api/client';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 interface MarketOverviewProps {
   widget: any;
   stats: any;
   statsRange: TimeRange;
   mounted: boolean;
+  loading?: boolean;
   onStatsRangeChange: (range: TimeRange) => void;
   onRefresh: () => void;
   refreshing: boolean;
@@ -37,6 +39,7 @@ export function MarketOverview({
   stats,
   statsRange,
   mounted,
+  loading = false,
   onStatsRangeChange,
   onRefresh,
   refreshing,
@@ -60,7 +63,56 @@ export function MarketOverview({
     { value: '1y', label: tc('timeRanges.1y'), description: tc('timeRangeDescriptions.1y') },
   ];
 
-  if (!mounted || !widget) return null;
+  const isHydrated = mounted || loading;
+  if (!isHydrated) return null;
+
+  if (loading || !widget) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <SkeletonBlock className="h-6 w-48 rounded-lg" />
+          <div className="flex items-center gap-2">
+            <SkeletonBlock className="h-9 w-36 rounded-lg" />
+            <SkeletonBlock className="h-9 w-28 rounded-lg" />
+            <SkeletonBlock className="h-9 w-9 rounded-lg" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-6">
+          <div className="card-base p-4 md:p-6 space-y-3">
+            <SkeletonBlock className="h-5 w-52 rounded-lg" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="space-y-2 rounded-lg bg-secondary/50 p-3">
+                  <SkeletonBlock className="h-3 w-24 rounded-lg" />
+                  <SkeletonBlock className="h-4 w-16 rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="card-base p-4 md:p-6 space-y-3">
+            <SkeletonBlock className="h-5 w-40 rounded-lg" />
+            <SkeletonBlock className="h-6 w-28 rounded-lg" />
+            <SkeletonBlock className="h-3 w-20 rounded-lg" />
+            <SkeletonBlock className="h-3 w-24 rounded-lg" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="card-base p-4 md:p-6 space-y-2">
+              <SkeletonBlock className="h-3 w-28 rounded-lg" />
+              <SkeletonBlock className="h-5 w-20 rounded-lg" />
+              <SkeletonBlock className="h-3 w-16 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!mounted) return null;
 
   const toNumber = (value: unknown): number | undefined => {
     if (typeof value === 'number' && Number.isFinite(value)) return value;

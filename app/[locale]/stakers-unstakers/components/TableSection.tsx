@@ -9,6 +9,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { TimeRange } from '@/lib/api/client';
 import type { BalancesTableResponse } from '@/lib/api/balances-client';
 import { cn, getDateLocale } from '@/lib/utils';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 import { useFontScale } from '../hooks/useFontScale';
 
 interface TableRowDisplayChange {
@@ -66,6 +67,7 @@ interface TableSectionProps {
   onDownload: (type: 'table', format: 'csv' | 'json') => void;
   isMobile: boolean;
   mounted: boolean;
+  loading: boolean;
 }
 
 const timeRanges: TimeRange[] = ['24h', '7d', '30d', '90d', '180d', '1y', 'all'];
@@ -83,6 +85,7 @@ export function TableSection({
   onDownload,
   isMobile,
   mounted,
+  loading,
 }: TableSectionProps) {
   const { text } = useFontScale();
   const locale = useLocale();
@@ -171,6 +174,7 @@ export function TableSection({
       base.push({ key: 'avgBalance', label: t('columns.avgBalance'), sortable: false });
     return base;
   }, [t, hasAmounts, hasAvgBalance]);
+  const columnCount = columns.length || 6;
 
   const tableRows = rows.map((row: AnyAccountsRow) => {
     const isSimplified = 'timestamp' in row && 'total' in row && 'stakers' in row;
@@ -513,9 +517,25 @@ export function TableSection({
             </tr>
           </thead>
           <tbody>
-            {tableRows.length === 0 ? (
+            {loading ? (
+              Array.from({ length: 6 }).map((_, rowIdx) => (
+                <tr
+                  key={`stakers-table-skeleton-${rowIdx}`}
+                  className="border-b border-border/60 last:border-b-0"
+                >
+                  {Array.from({ length: columnCount }).map((__, colIdx) => (
+                    <td
+                      key={`stakers-table-skeleton-${rowIdx}-${colIdx}`}
+                      className={cn('px-3 md:px-4 py-3', text('xs', 'sm'))}
+                    >
+                      <SkeletonBlock className="h-4 w-full max-w-[160px] rounded-lg" />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : tableRows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="text-center py-12 text-muted-foreground">
+                <td colSpan={columns.length || 1} className="text-center py-12 text-muted-foreground">
                   {t('noRows')}
                 </td>
               </tr>

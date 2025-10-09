@@ -7,6 +7,7 @@ import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { cn, getDateLocale } from '@/lib/utils';
 import { useFontScale } from '../hooks/useFontScale';
 import { useLocale, useTranslations } from 'next-intl';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 type TimeRange = string;
 
@@ -23,6 +24,7 @@ interface Props {
   onDownload: (type: 'table', format: 'csv' | 'json') => void;
   isMobile: boolean;
   mounted: boolean;
+  loading?: boolean;
 }
 
 export function TableSection({
@@ -38,6 +40,7 @@ export function TableSection({
   onDownload,
   isMobile,
   mounted,
+  loading = false,
 }: Props) {
   const { text } = useFontScale();
   const locale = useLocale();
@@ -53,6 +56,7 @@ export function TableSection({
   const rawRows: any[] = Array.isArray(tableData?.table?.rows)
     ? (tableData!.table!.rows as any[])
     : [];
+  const columnCount = tableColumns.length || 6;
 
   const tableRows = rawRows.map((r, idx) => ({
     id: r.id ?? idx,
@@ -380,69 +384,98 @@ export function TableSection({
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((row: any, index: number) => (
-              <tr
-                key={`${row.id}-${row.timestamp}-${index}`}
-                className="border-b border-border hover:bg-secondary/30 transition-colors"
-              >
-                {/* Timestamp */}
-                <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
-                  {mounted ? formatLocal(new Date(row.timestamp)) : '...'}
-                </td>
-                {/* xNOS */}
-                <td className={cn('px-3 md:px-4 py-2 md:py-3 font-medium', text('xs', 'sm'))}>
-                  {row.xnosDisplay ??
-                    (typeof row.xnos === 'number'
-                      ? Math.round(row.xnos).toLocaleString()
-                      : (row.xnos ?? '-'))}
-                </td>
-                {/* Change % */}
-                <td
-                  className={cn(
-                    'px-3 md:px-4 py-2 md:py-3 font-medium',
-                    text('xs', 'sm'),
-                    typeof row.changeDisplay === 'object' && row.changeDisplay?.color === 'green'
-                      ? 'text-green-500'
-                      : typeof row.changeDisplay === 'object' && row.changeDisplay?.color === 'red'
-                        ? 'text-red-500'
-                        : 'text-foreground',
-                  )}
+            {loading ? (
+              Array.from({ length: 6 }).map((_, rowIdx) => (
+                <tr
+                  key={`staking-table-skeleton-${rowIdx}`}
+                  className="border-b border-border last:border-b-0"
                 >
-                  {typeof row.changeDisplay === 'object'
-                    ? row.changeDisplay.value
-                    : (row.changeDisplay ??
-                      (typeof row.change === 'number' ? `${(row.change * 100).toFixed(2)}%` : '-'))}
-                </td>
-                {/* High */}
-                <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
-                  {row.highDisplay ??
-                    (typeof row.high === 'number'
-                      ? Math.round(row.high).toLocaleString()
-                      : (row.high ?? '-'))}
-                </td>
-                {/* Low */}
-                <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
-                  {row.lowDisplay ??
-                    (typeof row.low === 'number'
-                      ? Math.round(row.low).toLocaleString()
-                      : (row.low ?? '-'))}
-                </td>
-                {/* Data Points */}
+                  {Array.from({ length: columnCount }).map((__, colIdx) => (
+                    <td
+                      key={`staking-table-skeleton-${rowIdx}-${colIdx}`}
+                      className={cn('px-3 md:px-4 py-3', text('xs', 'sm'))}
+                    >
+                      <SkeletonBlock className="h-4 w-full max-w-[160px] rounded-lg" />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : tableRows.length === 0 ? (
+              <tr>
                 <td
-                  className={cn(
-                    'px-3 md:px-4 py-2 md:py-3 text-muted-foreground',
-                    text('xs', 'sm'),
-                  )}
+                  colSpan={tableColumns.length || 1}
+                  className="text-center py-12 text-muted-foreground"
                 >
-                  {row.dataPoints ?? '-'}
-                </td>
-                {/* APR */}
-                <td className={cn('px-3 md:px-4 py-2 md:py-3 font-medium', text('xs', 'sm'))}>
-                  {row.aprDisplay ??
-                    (typeof row.apr === 'number' ? `${row.apr.toFixed(2)}%` : (row.apr ?? '-'))}
+                  {t('noRows')}
                 </td>
               </tr>
-            ))}
+            ) : (
+              tableRows.map((row: any, index: number) => (
+                <tr
+                  key={`${row.id}-${row.timestamp}-${index}`}
+                  className="border-b border-border hover:bg-secondary/30 transition-colors"
+                >
+                  {/* Timestamp */}
+                  <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
+                    {mounted && row.timestamp ? formatLocal(new Date(row.timestamp)) : '—'}
+                  </td>
+                  {/* xNOS */}
+                  <td className={cn('px-3 md:px-4 py-2 md:py-3 font-medium', text('xs', 'sm'))}>
+                    {row.xnosDisplay ??
+                      (typeof row.xnos === 'number'
+                        ? Math.round(row.xnos).toLocaleString()
+                        : (row.xnos ?? '-'))}
+                  </td>
+                  {/* Change % */}
+                  <td
+                    className={cn(
+                      'px-3 md:px-4 py-2 md:py-3 font-medium',
+                      text('xs', 'sm'),
+                      typeof row.changeDisplay === 'object' && row.changeDisplay?.color === 'green'
+                        ? 'text-green-500'
+                        : typeof row.changeDisplay === 'object' && row.changeDisplay?.color === 'red'
+                          ? 'text-red-500'
+                          : 'text-foreground',
+                    )}
+                  >
+                    {typeof row.changeDisplay === 'object'
+                      ? row.changeDisplay.value
+                      : (row.changeDisplay ??
+                        (typeof row.change === 'number'
+                          ? `${(row.change * 100).toFixed(2)}%`
+                          : '-'))}
+                  </td>
+                  {/* High */}
+                  <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
+                    {row.highDisplay ??
+                      (typeof row.high === 'number'
+                        ? Math.round(row.high).toLocaleString()
+                        : (row.high ?? '-'))}
+                  </td>
+                  {/* Low */}
+                  <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
+                    {row.lowDisplay ??
+                      (typeof row.low === 'number'
+                        ? Math.round(row.low).toLocaleString()
+                        : (row.low ?? '-'))}
+                  </td>
+                  {/* Data Points */}
+                  <td
+                    className={cn(
+                      'px-3 md:px-4 py-2 md:py-3 text-muted-foreground',
+                      text('xs', 'sm'),
+                    )}
+                  >
+                    {row.dataPoints ?? '-'}
+                  </td>
+                  {/* APR */}
+                  <td className={cn('px-3 md:px-4 py-2 md:py-3 font-medium', text('xs', 'sm'))}>
+                    {row.aprDisplay ??
+                      (typeof row.apr === 'number' ? `${row.apr.toFixed(2)}%` : (row.apr ?? '-'))}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

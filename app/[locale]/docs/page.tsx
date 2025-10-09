@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Script from 'next/script';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
@@ -63,7 +63,9 @@ export default function ApiDocsPage() {
         const local = await fetch(SPEC_URL, { cache: 'no-store' });
         const remoteSpecUrl = buildNosApiUrl('/v3/swagger.json');
         const specResponse = local.ok ? local : await fetch(remoteSpecUrl, { cache: 'no-store' });
-        if (!specResponse.ok) return;
+        if (!specResponse.ok) {
+          return;
+        }
         const spec = await specResponse.json();
         if (cancelled) return;
         const localized = deepLocalize(spec, (k) => tOpen(k));
@@ -258,6 +260,8 @@ export default function ApiDocsPage() {
     localizeLabels(el);
   }, [resolvedTheme, tStoplight]);
 
+  const ElementsApi = 'elements-api' as any;
+
   return (
     <div className="space-y-4">
       <header className="space-y-1">
@@ -266,23 +270,17 @@ export default function ApiDocsPage() {
         <p className="text-xs text-muted-foreground">{t('limitedNotice')}</p>
       </header>
 
-      <div className="rounded-lg border overflow-hidden card-base card-hover">
+      <div className="relative rounded-lg border overflow-hidden card-base card-hover">
         {/* Stoplight Elements web component */}
         <Script
           src="https://unpkg.com/@stoplight/elements/web-components.min.js"
           strategy="afterInteractive"
         />
-        {/* Elements API component (we set apiDescriptionDocument via ref) */}
-        {useMemo(() => {
-          const Elem = 'elements-api' as any;
-          return (
-            <Elem
-              ref={elementsRef as any}
-              className="block min-h-[70vh] bg-card text-foreground"
-              layout="responsive"
-            />
-          );
-        }, [])}
+        <ElementsApi
+          ref={elementsRef as any}
+          className="block min-h-[70vh] bg-card text-foreground"
+          layout="responsive"
+        />
       </div>
     </div>
   );

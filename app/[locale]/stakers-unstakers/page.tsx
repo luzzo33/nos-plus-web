@@ -111,7 +111,11 @@ export default function StakersUnstakersPage() {
     window.history.replaceState({}, '', newUrl);
   }, [selectedRange, activeSection]);
 
-  const { data: widgetResponse } = useQuery<{
+  const {
+    data: widgetResponse,
+    isLoading: widgetLoading,
+    isFetching: widgetFetching,
+  } = useQuery<{
     success: boolean;
     widget: AccountsWidgetData;
     meta?: unknown;
@@ -137,13 +141,21 @@ export default function StakersUnstakersPage() {
     };
   }, [selectedRange, dateRange]);
 
-  const { data: chartResponse } = useQuery<BalancesChartResponse>({
+  const {
+    data: chartResponse,
+    isLoading: chartLoading,
+    isFetching: chartFetching,
+  } = useQuery<BalancesChartResponse>({
     queryKey: ['stakers-unstakers', 'chart', chartParams],
     queryFn: () => apiClient.getStakersUnstakersChart(chartParams),
     refetchInterval: 300000,
   });
 
-  const { data: statsResponse } = useQuery<BalancesStatsResponse>({
+  const {
+    data: statsResponse,
+    isLoading: statsLoading,
+    isFetching: statsFetching,
+  } = useQuery<BalancesStatsResponse>({
     queryKey: ['stakers-unstakers', 'stats', statsRange],
     queryFn: () => apiClient.getStakersUnstakersStats(statsRange),
   });
@@ -180,7 +192,11 @@ export default function StakersUnstakersPage() {
     return params;
   }, [tablePage, tableSort, tableTimeframe, tableDateRange]);
 
-  const { data: tableResponse } = useQuery<BalancesTableResponse>({
+  const {
+    data: tableResponse,
+    isLoading: tableLoading,
+    isFetching: tableFetching,
+  } = useQuery<BalancesTableResponse>({
     queryKey: ['stakers-unstakers', 'table', tableParams],
     queryFn: () => apiClient.getStakersUnstakersTable(tableParams),
   });
@@ -189,6 +205,22 @@ export default function StakersUnstakersPage() {
   const chartData = chartResponse ?? null;
   const stats = statsResponse?.stats ?? null;
   const tableData = tableResponse ?? null;
+  const rawChart = (chartResponse as any)?.chart;
+  const rawChartDataset = Array.isArray(rawChart?.data?.data)
+    ? rawChart.data.data
+    : Array.isArray(rawChart?.data)
+      ? rawChart.data
+      : [];
+  const hasChartData = Array.isArray(rawChartDataset) && rawChartDataset.length > 0;
+  const rawTableRows = Array.isArray((tableResponse as any)?.table?.rows)
+    ? (tableResponse as any)?.table?.rows
+    : Array.isArray((tableResponse as any)?.table?.data)
+      ? (tableResponse as any)?.table?.data
+      : [];
+  const widgetIsLoading = (!widget && (widgetLoading || widgetFetching)) || false;
+  const chartIsLoading = (!hasChartData && (chartLoading || chartFetching)) || false;
+  const statsIsLoading = (!stats && (statsLoading || statsFetching)) || false;
+  const tableIsLoading = (!rawTableRows.length && (tableLoading || tableFetching)) || false;
 
   const handleStatsRangeChange = (range: TimeRange) => {
     viewportRef.current.scrollY = window.scrollY;
@@ -317,15 +349,16 @@ export default function StakersUnstakersPage() {
     <FontScaleProvider>
       <div className="space-y-6 pb-12">
         {/* Header */}
-        <StakersUnstakersHeader widget={widget} mounted={mounted} />
+        <StakersUnstakersHeader widget={widget} mounted={mounted} loading={widgetIsLoading} />
 
         {/* Market Overview */}
-        {mounted && widget && (
+        {(mounted || widgetIsLoading || statsIsLoading) && (
           <MarketOverview
             widget={widget}
             stats={stats}
             statsRange={statsRange}
             mounted={mounted}
+            loading={widgetIsLoading || statsIsLoading}
             onStatsRangeChange={handleStatsRangeChange}
             onRefresh={handleRefresh}
             refreshing={refreshing}
@@ -342,17 +375,18 @@ export default function StakersUnstakersPage() {
         />
 
         {/* Content Sections */}
-        {activeSection === 'overview' && widget && (
+        {activeSection === 'overview' && (widget || widgetIsLoading || statsIsLoading) && (
           <OverviewSection
             widget={widget}
             stats={stats}
             statsRange={statsRange}
             mounted={mounted}
             metric={metric}
+            loading={widgetIsLoading || statsIsLoading}
           />
         )}
 
-        {activeSection === 'chart' && (
+        {activeSection === 'chart' && (chartData || chartIsLoading) && (
           <ChartSection
             chartData={chartData}
             selectedRange={selectedRange}
@@ -362,10 +396,11 @@ export default function StakersUnstakersPage() {
             isMobile={isMobile}
             mounted={mounted}
             metric={metric}
+            loading={chartIsLoading}
           />
         )}
 
-        {activeSection === 'table' && (
+        {activeSection === 'table' && (tableData || tableIsLoading) && (
           <TableSection
             tableData={tableData}
             tableTimeframe={tableTimeframe}
@@ -379,20 +414,28 @@ export default function StakersUnstakersPage() {
             onDownload={downloadData}
             isMobile={isMobile}
             mounted={mounted}
+            loading={tableIsLoading}
           />
         )}
 
-        {activeSection === 'stats' && stats && (
+        {activeSection === 'stats' && (stats || statsIsLoading) && (
           <StatisticsSection
             stats={stats}
             statsRange={statsRange}
             mounted={mounted}
             metric={metric}
+            loading={statsIsLoading}
           />
         )}
 
-        {activeSection === 'analysis' && stats && (
-          <AnalysisSection stats={stats} widget={widget} mounted={mounted} metric={metric} />
+        {activeSection === 'analysis' && (stats || statsIsLoading || widgetIsLoading) && (
+          <AnalysisSection
+            stats={stats}
+            widget={widget}
+            mounted={mounted}
+            metric={metric}
+            loading={statsIsLoading || widgetIsLoading}
+          />
         )}
       </div>
 

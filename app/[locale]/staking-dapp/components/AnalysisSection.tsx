@@ -7,15 +7,23 @@ import { cn, getDateLocale } from '@/lib/utils';
 import { useFontScale } from '../hooks/useFontScale';
 import { useTranslations, useLocale } from 'next-intl';
 import { format } from 'date-fns';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 interface AnalysisSectionProps {
   stats: any;
   widget: any;
   mounted: boolean;
   metric: 'xnos' | 'apr';
+  loading?: boolean;
 }
 
-export function AnalysisSection({ stats, widget, mounted, metric }: AnalysisSectionProps) {
+export function AnalysisSection({
+  stats,
+  widget,
+  mounted,
+  metric,
+  loading = false,
+}: AnalysisSectionProps) {
   const { text } = useFontScale();
   const t = useTranslations('stakingDapp.analysis');
   const ttStats = useTranslations('stakingDapp.stats.tooltips');
@@ -23,7 +31,38 @@ export function AnalysisSection({ stats, widget, mounted, metric }: AnalysisSect
   const locale = useLocale();
   const dfnsLocale = getDateLocale(locale);
 
-  if (!mounted || !stats || !widget) return null;
+  if (!mounted || loading || !stats || !widget) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <div className="card-base p-4 md:p-6 space-y-4">
+          <SkeletonBlock className="h-5 w-52 rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={index} className="space-y-2">
+                <SkeletonBlock className="h-4 w-40 rounded-lg" />
+                <SkeletonBlock className="h-3 w-full rounded-lg" />
+                <SkeletonBlock className="h-3 w-3/4 rounded-lg" />
+                <SkeletonBlock className="h-3 w-5/6 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card-base p-4 md:p-6 space-y-4">
+          <SkeletonBlock className="h-5 w-48 rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={index} className="space-y-2">
+                <SkeletonBlock className="h-3 w-32 rounded-lg" />
+                <SkeletonBlock className="h-3 w-full rounded-lg" />
+                <SkeletonBlock className="h-3 w-3/4 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   const currentValue = Number(widget?.current?.[metric === 'xnos' ? 'xnos' : 'apr']?.value) || 0;
   const avg30 = Number(widget?.ranges?.['30d']?.[metric === 'xnos' ? 'xnos' : 'apr']?.average) || 0;

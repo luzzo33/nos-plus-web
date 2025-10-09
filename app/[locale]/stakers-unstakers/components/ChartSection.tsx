@@ -30,6 +30,7 @@ import type { TooltipProps } from 'recharts';
 
 import { cn, getDateLocale } from '@/lib/utils';
 import { useFontScale } from '../hooks/useFontScale';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 type ChartSize = 'compact' | 'normal' | 'large';
 
@@ -44,6 +45,7 @@ type ChartSectionProps = {
   isMobile: boolean;
   mounted: boolean;
   metric: MetricMode;
+  loading?: boolean;
 };
 
 const timeRanges: TimeRange[] = ['24h', '7d', '30d', '90d', '180d', '1y', 'all'];
@@ -57,6 +59,7 @@ export function ChartSection({
   isMobile,
   mounted,
   metric,
+  loading = false,
 }: ChartSectionProps) {
   const { text } = useFontScale();
   const locale = useLocale();
@@ -80,6 +83,42 @@ export function ChartSection({
   useEffect(() => {
     setTempSelectedRange(selectedRange);
   }, [selectedRange]);
+
+  const showSkeleton = loading || !mounted || !chartData;
+
+  if (showSkeleton) {
+    return (
+      <div className="card-base p-4 md:p-6 space-y-5">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 md:gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 md:gap-3 w-full lg:w-auto">
+            <SkeletonBlock className="h-10 w-full sm:w-44 rounded-lg" />
+            <div className="flex gap-2 w-full sm:w-auto">
+              <SkeletonBlock className="h-10 w-full sm:w-32 rounded-lg" />
+              <SkeletonBlock className="h-10 w-10 rounded-lg" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 w-full lg:w-auto">
+            <SkeletonBlock className="h-10 w-10 rounded-lg" />
+            <SkeletonBlock className="h-10 w-32 rounded-lg" />
+            <SkeletonBlock className="h-10 w-32 rounded-lg" />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-secondary/30 p-3 md:p-4">
+          <SkeletonBlock className="h-[260px] md:h-[380px] w-full rounded-xl" />
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 pt-3 border-t border-border">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="space-y-2">
+              <SkeletonBlock className="h-3 w-20 rounded-lg" />
+              <SkeletonBlock className="h-4 w-16 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const points = useMemo(() => {
     const raw = (chartData as any)?.chart?.data;

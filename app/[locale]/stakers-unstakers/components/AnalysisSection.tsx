@@ -25,6 +25,7 @@ interface AnalysisSectionProps {
   widget: AccountsWidgetData | null;
   mounted: boolean;
   metric: SeriesKey;
+  loading?: boolean;
 }
 
 type SeriesKey = 'total' | 'stakers' | 'unstakers';
@@ -48,7 +49,13 @@ interface InsightPanelConfig {
 const RING_RADIUS = 36;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
-export function AnalysisSection({ stats, widget, mounted, metric }: AnalysisSectionProps) {
+export function AnalysisSection({
+  stats,
+  widget,
+  mounted,
+  metric,
+  loading = false,
+}: AnalysisSectionProps) {
   const { text } = useFontScale();
   const t = useTranslations('stakersUnstakers.analysis');
   const ts = useTranslations('stakersUnstakers.stats');
@@ -76,7 +83,7 @@ export function AnalysisSection({ stats, widget, mounted, metric }: AnalysisSect
     }
   }, [isMobile, activeInsight]);
 
-  if (!mounted || !stats) {
+  if (!mounted || loading || !stats) {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
         <div className="card-base p-4 md:p-6 space-y-4">
