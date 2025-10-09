@@ -1,0 +1,111 @@
+{
+  "loading": "Wird geladen...",
+  "error": "Fehler",
+  "retry": "Erneut versuchen",
+  "noData": "Keine Daten verfügbar",
+  "na": "k. A.",
+  "apply": "Übernehmen",
+  "cancel": "Abbrechen",
+  "clear": "Zurücksetzen",
+  "export": "Exportieren",
+  "download": "Herunterladen",
+  "exportCSV": "Als CSV exportieren",
+  "exportJSON": "Als JSON exportieren",
+  "downloadCSV": "CSV herunterladen",
+  "downloadJSON": "JSON herunterladen",
+  "live": "Live",
+  "historical": "Historisch",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "showing": "Angezeigt",
+  "to": "bis",
+  "of": "von",
+  "uptrend": "Aufwärtstrend",
+  "downtrend": "Abwärtstrend",
+  "page": "Seite",
+  "pages": "Seiten",
+  "resetToDefault": "Auf Standard zurücksetzen",
+  "fontSize": "Schriftgröße",
+  "fontSizeSettings": "Schrifteinstellungen",
+  "customDate": "Benutzerdefiniert",
+  "lastUpdated": "Zuletzt aktualisiert",
+  "current": "Aktuell",
+  "date": "Datum",
+  "stats": "Statistiken",
+  "action": "Aktion",
+  "allTimeHigh": "Allzeithoch",
+  "allTimeLow": "Allzeittief",
+  "table": {
+    "showing": "Angezeigt",
+    "of": "von",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pageSize": "Einträge pro Seite"
+  },
+  "days": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "last90Days": "Letzte 90 Tage"
+  },
+  "timeRanges": {
+    "1h": "1 Std.",
+    "4h": "4 Std.",
+    "24h": "24 Std.",
+    "7d": "7 Tg.",
+    "30d": "30 Tg.",
+    "90d": "90 Tg.",
+    "180d": "180 Tg.",
+    "1y": "1 J.",
+    "all": "Gesamt"
+  },
+  "timeRangeDescriptions": {
+    "1h": "Letzte Stunde",
+    "4h": "Letzte 4 Stunden",
+    "24h": "Letzte 24 Stunden",
+    "7d": "Letzte 7 Tage",
+    "30d": "Letzte 30 Tage",
+    "90d": "Letzte 90 Tage",
+    "180d": "Letzte 180 Tage",
+    "1y": "Letztes Jahr",
+    "all": "Gesamter Zeitraum"
+  },
+  "chart": {
+    "compact": "Kompakt",
+    "normal": "Normal",
+    "large": "Groß",
+    "selectDateRange": "Datumsbereich auswählen",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum"
+  },
+  "source": "Quelle",
+  "sources": {
+    "live": "Live",
+    "historical": "Historisch"
+  },
+  "dataPoints": "Datenpunkte",
+  "moderate": "Mittel",
+  "low": "Niedrig",
+  "high": "Hoch",
+  "from": "von",
+  "trend": {
+    "up": "Aufwärtstrend",
+    "down": "Abwärtstrend",
+    "neutral": "Neutral"
+  },
+  "average": "Durchschnitt",
+  "maximum": "Maximum",
+  "minimum": "Minimum",
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "goHome": "Zur Startseite"
+  },
+  "cookieBanner": {
+    "title": "Cookies für EU-Besucher",
+    "body": "Dieser Hinweis erscheint, weil Sie aus der Europäischen Union zugreifen. Wir verwenden nur notwendige Cookies – bitte prüfen und akzeptieren Sie sie.",
+    "review": "Cookie-Richtlinie ansehen",
+    "accept": "Cookies akzeptieren"
+  }
+}

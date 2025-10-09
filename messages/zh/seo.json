@@ -1,0 +1,112 @@
+{
+  "siteName": "NOS.plus",
+  "defaults": {
+    "title": "NOS.plus - Nosana 分析平台",
+    "description": "在 NOS.plus 仪表盘中实时监控 Nosana (NOS) 的价格、网络健康度、质押表现与流动性数据。",
+    "keywords": [
+      "Nosana",
+      "NOS",
+      "Nosana 分析",
+      "Nosana 质押",
+      "Nosana 价格",
+      "DePIN 仪表盘",
+      "加密情报"
+    ],
+    "ogImage": "/android-chrome-512x512.png",
+    "twitterHandle": "@nos_plus"
+  },
+  "pages": {
+    "home": {
+      "title": "NOS.plus – Nosana (NOS) 实时仪表盘",
+      "description": "使用实时市场数据跟踪 Nosana 代币表现、质押活动、流动性与 DePIN 关键指标。"
+    },
+    "analysis": {
+      "title": "Nosana 市场分析 | NOS.plus",
+      "description": "获取价格趋势、成交量分析与 AI 驱动指标，为 Nosana 投资与治理决策提供参考。"
+    },
+    "apiKeys": {
+      "title": "创建 NOS.plus API 密钥",
+      "description": "生成安全的 API 密钥，将 Nosana 市场数据、质押洞察与分析接入你的工作流。"
+    },
+    "apiTest": {
+      "title": "体验 NOS.plus API",
+      "description": "在浏览器中直接调用 Nosana 的实时接口，获取价格、持币、质押等数据。"
+    },
+    "auth": {
+      "login": {
+        "title": "登录 NOS.plus",
+        "description": "登录以访问个性化 Nosana 仪表盘、已保存的小组件及高级分析。"
+      },
+      "register": {
+        "title": "注册 NOS.plus 账号",
+        "description": "注册后可解锁自定义布局、提醒通知以及专属的 Nosana 分析功能。"
+      }
+    },
+    "blog": {
+      "index": {
+        "title": "Nosana 新闻与更新 | NOS.plus 博客",
+        "description": "获取 Nosana 路线图更新、生态新闻与产品发布的官方精选内容。"
+      },
+      "article": {
+        "title": "Nosana 深度解读 | NOS.plus 博客",
+        "description": "阅读关于 Nosana 生态、DePIN 趋势与网络战略的深入文章。"
+      }
+    },
+    "docs": {
+      "title": "NOS.plus 文档",
+      "description": "查看集成指南、API 规范与最佳实践，快速上手 NOS.plus 分析能力。"
+    },
+    "holders": {
+      "title": "Nosana 持币者情报",
+      "description": "实时分析钱包分布、巨鲸动向与资金流入流出情况。"
+    },
+    "monitor": {
+      "title": "Nosana 专业监控面板",
+      "description": "构建多图表 NOS 仪表盘，实时查看深度、动能与质押全景。"
+    },
+    "price": {
+      "title": "Nosana 价格仪表盘",
+      "description": "查看 NOS 价格走势图、波动率、流动性来源与交易所表现。"
+    },
+    "privacy": {
+      "title": "隐私政策 | NOS.plus",
+      "description": "了解 NOS.plus 如何收集、处理并保护来自 Nosana 社区的分析数据。"
+    },
+    "raydium": {
+      "title": "Raydium 池数据分析",
+      "description": "跟踪 NOS-USDC 流动性、APR 与 AMM 深度，优化你的 Raydium 策略。"
+    },
+    "simple": {
+      "title": "Nosana 简洁仪表盘",
+      "description": "通过轻量级、移动友好的仪表盘掌握 Nosana 价格与质押动态。"
+    },
+    "stakingDapp": {
+      "title": "Nosana 质押 dApp",
+      "description": "质押 NOS、监控 xNOS 收益，并以实时 APR 数据管理你的仓位。"
+    },
+    "stakingDetails": {
+      "title": "Nosana 质押分析",
+      "description": "深入了解验证者表现、锁仓周期与巨鲸行为，洞察 Nosana 质押网络。"
+    },
+    "stakersUnstakers": {
+      "title": "质押/解押监控",
+      "description": "对比新的质押与解押，评估资金净流向与社区情绪。"
+    },
+    "status": {
+      "title": "NOS.plus 服务状态",
+      "description": "查看当前运行状态、历史事件与各组件的可用性。"
+    },
+    "terms": {
+      "title": "服务条款 | NOS.plus",
+      "description": "阅读规范 NOS.plus 使用、数据处理与服务承诺的条款。"
+    },
+    "verifyEmail": {
+      "title": "验证你的 NOS.plus 邮箱",
+      "description": "完成验证以保护账户安全并启用高级分析功能。"
+    },
+    "volume": {
+      "title": "Nosana 成交量分析",
+      "description": "衡量各交易平台的 NOS 成交量，识别流动性变化与市场动量。"
+    }
+  }
+}

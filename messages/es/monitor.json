@@ -1,0 +1,28 @@
+{
+  "title": "Monitor",
+  "subtitle": "Eventos normalizados en tiempo real (órdenes límite, DCA) con filtros",
+  "totalEvents": "Eventos totales",
+  "limitOrders": "Órdenes límite",
+  "dca": "DCA",
+  "venue": "Mercado",
+  "base": "Base",
+  "quote": "Cotizada",
+  "wallet": "Billetera",
+  "kind": {
+    "all": "Todos los tipos"
+  },
+  "side": {
+    "all": "Todos los lados"
+  },
+  "prev": "Anterior",
+  "next": "Siguiente",
+  "pagination": "Total",
+  "pages": "Páginas",
+  "localeNotice": {
+    "title": "Localización en camino",
+    "description": "Este panel solo está disponible en inglés por ahora. Se está preparando el soporte en {language}.",
+    "dontShowAgain": "No volver a mostrar",
+    "continue": "Continuar en inglés",
+    "leave": "Volver"
+  }
+}

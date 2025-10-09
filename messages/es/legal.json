@@ -1,0 +1,220 @@
+{
+  "meta": {
+    "lastUpdated": "Última actualización: 28 de septiembre de 2025",
+    "tosTitle": "Condiciones de uso",
+    "privacyTitle": "Aviso de privacidad"
+  },
+  "terms": {
+    "hero": {
+      "title": "Condiciones de uso",
+      "subtitle": "Estas condiciones regulan el uso de NOS.plus, una plataforma comunitaria independiente creada para el ecosistema Nosana. El servicio ofrece paneles, monitores y APIs en modalidad best-effort y no es un producto comercial."
+    },
+    "sections": {
+      "overview": {
+        "title": "1. Aceptación",
+        "body": [
+          "Al usar NOS.plus aceptas estas condiciones. La plataforma se ofrece sin coste como un servicio de buena fe para la comunidad de Nosana.",
+          "Si compartes NOS.plus con otras personas (por ejemplo en tu comunidad o equipo), asegúrate de que entienden y aceptan estas mismas condiciones."
+        ]
+      },
+      "services": {
+        "title": "2. Qué ofrece NOS.plus",
+        "body": [
+          "NOS.plus es un servicio independiente desarrollado por y para la comunidad. La disponibilidad de funciones puede variar según los recursos y las prioridades comunitarias."
+        ],
+        "items": [
+          "Paneles sobre actividad del token, staking, distribución y estadísticas del ecosistema.",
+          "Monitores en streaming para muros en el libro de órdenes, actividad de swaps y novedades del programa Jupiter.",
+          "Feeds de API y WebSocket para desarrolladores y personas que crean herramientas para la comunidad.",
+          "Herramientas experimentales y prototipos que pueden incorporarse o retirarse sin previo aviso."
+        ]
+      },
+      "accounts": {
+        "title": "3. Cuentas y claves",
+        "body": [
+          "Algunas funciones pueden requerir una clave API o un inicio de sesión ligero para prevenir abusos. Estos controles de acceso existen únicamente para proteger la plataforma; no hay planes de pago ni niveles premium.",
+          "Si recibes una clave, mantenla privada y úsala de forma responsable."
+        ],
+        "items": [
+          "Mantén seguros tus tokens y claves.",
+          "Informa a la persona responsable (por Twitter/X o correo) si crees que una clave se ha visto comprometida.",
+          "Las claves pueden limitarse o revocarse si generan problemas para el proyecto."
+        ]
+      },
+      "acceptableUse": {
+        "title": "4. Uso aceptable",
+        "body": [
+          "NOS.plus es un recurso compartido de la comunidad. Por favor, no lo uses de forma indebida ni alteres la infraestructura compartida."
+        ],
+        "items": [
+          "No realices pruebas de seguridad, ataques de fuerza bruta ni scraping automatizado más allá del uso normal de la API.",
+          "No satures el servicio con tráfico innecesario.",
+          "No utilices NOS.plus para actividades ilegales, fraude o suplantación.",
+          "Cuando compartas datos, acredita a NOS.plus y evita presentarlos como información oficial de Nosana."
+        ]
+      },
+      "dataRights": {
+        "title": "5. Datos y contenido",
+        "body": [
+          "Todos los paneles, código y conjuntos de datos aquí publicados siguen siendo propiedad de la persona que mantiene NOS.plus, salvo que se indique lo contrario.",
+          "Los datos on-chain y de exchanges pertenecen a sus redes y participantes. NOS.plus solo recopila y presenta información que ya es pública.",
+          "Puedes reutilizar los análisis de NOS.plus para proyectos personales o comunitarios, pero brinda atribución cuando redistribuyas grandes porciones."
+        ]
+      },
+      "apiAccess": {
+        "title": "6. API y límites",
+        "body": [
+          "Las APIs y streams se ofrecen bajo el principio de mejor esfuerzo. Son gratuitas, pero su capacidad es limitada.",
+          "Si el uso amenaza la estabilidad o sobrecarga los recursos, las claves pueden ser restringidas o bloqueadas."
+        ],
+        "items": [
+          "Mantente dentro de los límites compartidos de la comunidad.",
+          "Cachea las respuestas cuando sea posible.",
+          "Respeta cualquier encabezado Retry-After u otras señales de espera."
+        ]
+      },
+      "fees": {
+        "title": "7. Pagos",
+        "body": ["NOS.plus es completamente gratuito. No hay suscripciones, facturación ni cargos."]
+      },
+      "availability": {
+        "title": "8. Disponibilidad",
+        "body": [
+          "NOS.plus opera con un compromiso de mejor esfuerzo; no se garantiza el tiempo de actividad.",
+          "Los servicios pueden pausarse por mantenimiento, correcciones o incidentes en proveedores externos (nodos RPC, feeds de exchanges, etc.).",
+          "Durante un incidente se pueden publicar actualizaciones en la página de estado o a través de los canales comunitarios."
+        ]
+      },
+      "disclaimers": {
+        "title": "9. Avisos legales",
+        "body": [
+          "NOS.plus tiene fines exclusivamente informativos y educativos.",
+          "Nada aquí constituye asesoramiento financiero o de inversión.",
+          "Los datos se agregan a partir de fuentes públicas y pueden estar incompletos o contener errores."
+        ]
+      },
+      "liability": {
+        "title": "10. Limitación de responsabilidad",
+        "body": [
+          "NOS.plus se proporciona \"tal cual\", sin garantías de ningún tipo.",
+          "Asumes todo riesgo por pérdidas, daños o decisiones tomadas con base en los datos de NOS.plus."
+        ]
+      },
+      "changes": {
+        "title": "11. Actualizaciones",
+        "body": [
+          "Estas condiciones pueden ajustarse conforme evolucione el proyecto. Las actualizaciones se publicarán con una nueva fecha. Si sigues usando el servicio, aceptas los cambios."
+        ]
+      },
+      "contact": {
+        "title": "12. Contacto",
+        "body": [
+          "Si tienes preguntas o problemas, comunícate a través de los canales comunitarios:"
+        ],
+        "items": ["Twitter / X: https://x.com/nos_plus", "Correo: support@nos.plus"]
+      }
+    }
+  },
+  "privacy": {
+    "hero": {
+      "title": "Aviso de privacidad",
+      "subtitle": "Este aviso explica cómo NOS.plus, una plataforma independiente dirigida por la comunidad, gestiona la información cuando utilizas nuestros paneles, monitores y APIs. NOS.plus recopila únicamente los datos personales necesarios."
+    },
+    "sections": {
+      "intro": {
+        "title": "1. Resumen",
+        "body": [
+          "NOS.plus funciona como una iniciativa comunitaria independiente centrada en aportar transparencia al ecosistema Nosana.",
+          "La recopilación de datos se limita a lo necesario para mantener operativo el sitio y las APIs."
+        ]
+      },
+      "dataWeCollect": {
+        "title": "2. Datos que recopilamos",
+        "body": [
+          "Solo se recopilan los datos necesarios para la estabilidad y la protección frente a abusos."
+        ],
+        "items": [
+          "Si registras una clave API: tu correo (si lo proporcionas) y metadatos de la clave.",
+          "Registros básicos: solicitudes, errores y eventos de conexión (para depurar y aplicar límites).",
+          "Mensajes opcionales de soporte que envíes por correo o Twitter/X.",
+          "No se utilizan rastreadores de marketing, anuncios de terceros ni cookies de perfilado."
+        ]
+      },
+      "usage": {
+        "title": "3. Cómo usamos los datos",
+        "body": ["La información recopilada se usa únicamente para operar y mejorar NOS.plus."],
+        "items": [
+          "Servir paneles y respuestas de la API.",
+          "Monitorear abusos, aplicar límites y solucionar problemas.",
+          "Mejorar funciones a partir de tendencias de uso anonimizadas.",
+          "Responder cuando contactas al soporte."
+        ]
+      },
+      "platformData": {
+        "title": "4. Datos de blockchain y mercados",
+        "body": [
+          "La mayoría de los datos mostrados en NOS.plus proviene de blockchains públicas, exchanges o fuentes comunitarias.",
+          "No son datos personales; se procesan y muestran para ofrecer transparencia e insight."
+        ]
+      },
+      "sharing": {
+        "title": "5. Compartición",
+        "body": [
+          "Los datos personales nunca se venden. Solo se comparten cuando es necesario para operar el servicio o cumplir la ley."
+        ],
+        "items": [
+          "Proveedores de infraestructura (servidores, bases de datos) bajo los acuerdos de confidencialidad habituales.",
+          "Autoridades, si la ley lo exige.",
+          "Estadísticas agregadas y anonimizadas que puedan compartirse con la comunidad."
+        ]
+      },
+      "retention": {
+        "title": "6. Conservación",
+        "body": [
+          "Los datos personales (como registros de claves API) se conservan solo el tiempo necesario para operar el servicio.",
+          "Los registros se rotan en ventanas cortas, salvo que sea necesario conservarlos más tiempo para depuración o investigación de abuso."
+        ]
+      },
+      "security": {
+        "title": "7. Seguridad",
+        "body": [
+          "Se aplican medidas técnicas razonables (cifrado en tránsito, controles de acceso, monitorización) para proteger los datos, pero la plataforma dispone de recursos limitados y no puede garantizar una seguridad absoluta."
+        ]
+      },
+      "international": {
+        "title": "8. Alcance internacional",
+        "body": [
+          "Los servidores pueden ubicarse en distintas regiones. Al usar NOS.plus aceptas que los datos se procesen en la ubicación donde se encuentren los servidores."
+        ]
+      },
+      "choices": {
+        "title": "9. Tus opciones",
+        "body": [
+          "Puedes solicitar la eliminación de tus datos de cuenta o registros de claves API en cualquier momento contactando a la persona responsable."
+        ],
+        "items": [
+          "Envía un correo a support@nos.plus para eliminar o modificar tus datos.",
+          "Cancela cualquier comunicación opcional si llegaras a recibirla.",
+          "Desactiva las cookies en tu navegador (solo se usa almacenamiento de sesión básico)."
+        ]
+      },
+      "children": {
+        "title": "10. Menores",
+        "body": [
+          "NOS.plus no está dirigido a menores de 16 años. No se recopilan deliberadamente datos personales de menores."
+        ]
+      },
+      "updates": {
+        "title": "11. Cambios",
+        "body": [
+          "Esta política puede actualizarse con el tiempo. La versión más reciente siempre estará publicada aquí."
+        ]
+      },
+      "contact": {
+        "title": "12. Contacto",
+        "body": ["Para solicitudes de privacidad o preguntas, utiliza los canales comunitarios:"],
+        "items": ["Twitter / X: https://x.com/nos_plus", "Correo: support@nos.plus"]
+      }
+    }
+  }
+}

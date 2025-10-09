@@ -1,0 +1,76 @@
+{
+  "title": "服务状态",
+  "subtitle": "NOS API 的实时运行状况、正常运行时间与历史事件概览。",
+  "loading": "正在加载状态...",
+  "environment": "运行环境",
+  "started": "启动时间",
+  "uptime": "运行时间",
+  "lastUpdated": "最近更新 {value}",
+  "actions": {
+    "refresh": "刷新",
+    "autoRefresh": "每 60 秒自动刷新"
+  },
+  "labels": {
+    "ok": "运行正常",
+    "maintenance": "维护中",
+    "degraded": "性能下降",
+    "incident": "故障",
+    "unknown": "未知"
+  },
+  "descriptions": {
+    "ok": "所有系统运行正常。",
+    "maintenance": "当前正在执行计划维护。",
+    "degraded": "部分功能可能受到限制。",
+    "incident": "检测到正在进行的故障。",
+    "unknown": "暂时无法获取状态信息。"
+  },
+  "error": {
+    "title": "无法加载状态",
+    "retry": "重试"
+  },
+  "cards": {
+    "environment": "运行环境",
+    "environmentHint": "正在使用的部署环境",
+    "version": "版本",
+    "versionHint": "当前上线的构建",
+    "uptime": "运行时间",
+    "uptimeHint": "启动于 {time}",
+    "lastUpdated": "最近更新时间"
+  },
+  "eventTypes": {
+    "deployment": "部署",
+    "incident": "故障",
+    "recovery": "恢复"
+  },
+  "eventDescriptions": {
+    "deployment": "记录的成功部署",
+    "incident": "平台记录的故障事件",
+    "recovery": "解决故障后的恢复记录"
+  },
+  "eventStatuses": {
+    "ok": "已恢复",
+    "maintenance": "维护中",
+    "incident": "故障",
+    "unknown": "状态未知"
+  },
+  "limits": {
+    "title": "请求限额",
+    "subtitle": "公开端点的当前请求配额。",
+    "lastEvaluated": "评估时间 {value}",
+    "perWindow": "每 {window} 请求",
+    "noWindow": "请求",
+    "estimated": "约 {value}/分钟",
+    "window": "窗口：{value}",
+    "empty": "尚未发布限额数据。",
+    "keys": {
+      "v3": "核心 API (v3)",
+      "monitor": "监控 API"
+    }
+  },
+  "events": {
+    "title": "近期事件",
+    "subtitle": "平台报告的部署、故障与恢复。",
+    "showing": "显示 {shown} / {total} 条事件",
+    "empty": "暂无近期事件。"
+  }
+}

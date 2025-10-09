@@ -1,0 +1,99 @@
+{
+  "title": "Service Status",
+  "subtitle": "Live health overview, uptime details, and historical events for the NOS API platform.",
+  "loading": "Loading live status...",
+  "environment": "Environment",
+  "started": "Started",
+  "uptime": "Uptime",
+  "lastUpdated": "Last updated {value}",
+  "actions": {
+    "refresh": "Refresh",
+    "autoRefresh": "Updates every 60s"
+  },
+  "labels": {
+    "ok": "Operational",
+    "maintenance": "Maintenance",
+    "degraded": "Degraded performance",
+    "incident": "Incident",
+    "unknown": "Unknown"
+  },
+  "descriptions": {
+    "ok": "All systems are running normally.",
+    "maintenance": "We are currently performing scheduled maintenance.",
+    "degraded": "Some functionality may be limited.",
+    "incident": "We have detected an active incident.",
+    "unknown": "Status information is currently unavailable."
+  },
+  "error": {
+    "title": "Unable to load status",
+    "retry": "Retry"
+  },
+  "cards": {
+    "environment": "Environment",
+    "environmentHint": "Running environment",
+    "version": "Version",
+    "versionHint": "Currently deployed build",
+    "uptime": "Uptime",
+    "uptimeHint": "Started {time}",
+    "lastUpdated": "Last update"
+  },
+  "eventTypes": {
+    "deployment": "Deployment",
+    "incident": "Incident",
+    "recovery": "Recovery",
+    "maintenance": "Maintenance"
+  },
+  "eventDescriptions": {
+    "deployment": "Successful deployments recorded",
+    "incident": "Incidents tracked by the platform",
+    "recovery": "Recoveries resolving previous incidents",
+    "maintenance": "Planned maintenance windows and rolling restarts"
+  },
+  "eventStatuses": {
+    "ok": "Recovered",
+    "maintenance": "Maintenance",
+    "incident": "Incident",
+    "unknown": "Status unknown"
+  },
+  "limits": {
+    "title": "Rate limits",
+    "subtitle": "Current request quotas available for public access endpoints.",
+    "lastEvaluated": "Evaluated {value}",
+    "perWindow": "requests every {window}",
+    "noWindow": "requests",
+    "estimated": "~{value}/minute",
+    "window": "Window: {value}",
+    "empty": "No limit data published by the service.",
+    "keys": {
+      "v3": "Core API (v3)",
+      "monitor": "Monitor API"
+    }
+  },
+  "limitProfiles": {
+    "metadata": {
+      "tier": "Tier: {value}",
+      "burstRpm": "Burst: {value} req/minute",
+      "monthlyQuota": "Monthly quota: {value}"
+    },
+    "windows": {
+      "hour": "Per hour",
+      "day": "Per day"
+    },
+    "profiles": {
+      "anonymous": {
+        "title": "Anonymous API key",
+        "description": "API keys issued without a verified email address."
+      },
+      "selfService": {
+        "title": "Self-service API key",
+        "description": "Verified accounts receive these limits when creating keys via nos.plus."
+      }
+    }
+  },
+  "events": {
+    "title": "Recent events",
+    "subtitle": "Deployments, incidents, and recoveries reported by the platform.",
+    "showing": "Showing {shown} of {total} events",
+    "empty": "No recent events have been recorded."
+  }
+}

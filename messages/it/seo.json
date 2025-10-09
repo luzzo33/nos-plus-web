@@ -1,0 +1,112 @@
+{
+  "siteName": "NOS.plus",
+  "defaults": {
+    "title": "NOS.plus - Analitiche per Nosana",
+    "description": "Monitora prezzo, salute della rete, staking e liquidità di Nosana (NOS) con il cruscotto completo di NOS.plus.",
+    "keywords": [
+      "Nosana",
+      "NOS",
+      "analitica Nosana",
+      "staking Nosana",
+      "prezzo Nosana",
+      "dashboard DePIN",
+      "intelligence cripto"
+    ],
+    "ogImage": "/android-chrome-512x512.png",
+    "twitterHandle": "@nos_plus"
+  },
+  "pages": {
+    "home": {
+      "title": "NOS.plus – Dashboard in tempo reale per Nosana (NOS)",
+      "description": "Segui performance del token, attività di staking, liquidità e metriche DePIN di Nosana con dati di mercato live."
+    },
+    "analysis": {
+      "title": "Analisi di mercato Nosana | NOS.plus",
+      "description": "Accedi a trend di prezzo, analisi dei volumi e indicatori basati su AI per guidare le decisioni nell’ecosistema Nosana."
+    },
+    "apiKeys": {
+      "title": "Crea chiavi API di NOS.plus",
+      "description": "Genera chiavi sicure per integrare nei tuoi workflow dati di mercato, intelligence di staking e analitiche di Nosana."
+    },
+    "apiTest": {
+      "title": "Prova l’API di NOS.plus",
+      "description": "Esegui richieste agli endpoint Nosana in tempo reale per prezzi, holders, statistiche di staking e altro direttamente dal browser."
+    },
+    "auth": {
+      "login": {
+        "title": "Accedi a NOS.plus",
+        "description": "Accedi per utilizzare dashboard personalizzati, widget salvati e analitiche premium su Nosana."
+      },
+      "register": {
+        "title": "Crea un account NOS.plus",
+        "description": "Registrati per sbloccare layout personalizzati, avvisi e analisi esclusive su Nosana."
+      }
+    },
+    "blog": {
+      "index": {
+        "title": "Notizie e aggiornamenti Nosana | Blog di NOS.plus",
+        "description": "Rimani aggiornato su roadmap, notizie dall’ecosistema e rilasci di prodotto curati dal team NOS.plus."
+      },
+      "article": {
+        "title": "Approfondimenti su Nosana | Blog di NOS.plus",
+        "description": "Articoli dettagliati sull’ecosistema Nosana, trend DePIN e strategia della rete."
+      }
+    },
+    "docs": {
+      "title": "Documentazione NOS.plus",
+      "description": "Esplora guide di integrazione, specifiche API e best practice per costruire con l’analitica di NOS.plus."
+    },
+    "holders": {
+      "title": "Intelligence sui holder di Nosana",
+      "description": "Analizza distribuzione dei wallet, movimenti delle balene e flussi in entrata e uscita in tempo reale."
+    },
+    "monitor": {
+      "title": "Monitor professionale per Nosana",
+      "description": "Configura dashboard multi-grafico con profondità di mercato, momentum e copertura staking in tempo reale."
+    },
+    "price": {
+      "title": "Dashboard del prezzo Nosana",
+      "description": "Consulta grafici di prezzo NOS, volatilità, fonti di liquidità e performance sulle varie piattaforme."
+    },
+    "privacy": {
+      "title": "Informativa sulla privacy | NOS.plus",
+      "description": "Scopri come NOS.plus raccoglie, elabora e protegge i dati analitici della community Nosana."
+    },
+    "raydium": {
+      "title": "Analitiche del pool Raydium",
+      "description": "Monitora liquidità, APR e profondità AMM della coppia NOS-USDC per ottimizzare la tua strategia su Raydium."
+    },
+    "simple": {
+      "title": "Dashboard semplificata per Nosana",
+      "description": "Tieni sotto controllo prezzo e staking di Nosana con un pannello leggero ottimizzato per dispositivi mobili."
+    },
+    "stakingDapp": {
+      "title": "dApp di staking Nosana",
+      "description": "Metti in staking NOS, tieni traccia delle ricompense xNOS e gestisci le posizioni con APR in tempo reale."
+    },
+    "stakingDetails": {
+      "title": "Analitiche sullo staking di Nosana",
+      "description": "Esamina performance dei validatori, periodi di lock-up e movimenti delle whale nel programma di staking."
+    },
+    "stakersUnstakers": {
+      "title": "Monitor stakers vs unstakers",
+      "description": "Confronta nuovi staking e unlock per valutare i flussi netti e il sentiment della community."
+    },
+    "status": {
+      "title": "Stato dei servizi NOS.plus",
+      "description": "Visualizza lo stato attuale, la cronologia degli incidenti e la disponibilità dei servizi NOS.plus."
+    },
+    "terms": {
+      "title": "Termini di servizio | NOS.plus",
+      "description": "Consulta le policy che regolano l’utilizzo di NOS.plus, la gestione dei dati e gli impegni del servizio."
+    },
+    "verifyEmail": {
+      "title": "Verifica l’email di NOS.plus",
+      "description": "Completa la verifica per proteggere il tuo account e abilitare le analitiche premium."
+    },
+    "volume": {
+      "title": "Analisi del volume Nosana",
+      "description": "Misura i volumi di trading NOS sulle diverse piattaforme, individua cambi di liquidità e segnali di momentum."
+    }
+  }
+}

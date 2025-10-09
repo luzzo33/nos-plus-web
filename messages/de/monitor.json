@@ -1,0 +1,28 @@
+{
+  "title": "Monitor",
+  "subtitle": "Normalisierte Echtzeitereignisse (Limit Orders, DCA) mit Filtern",
+  "totalEvents": "Ereignisse gesamt",
+  "limitOrders": "Limit-Aufträge",
+  "dca": "DCA",
+  "venue": "Handelsplatz",
+  "base": "Basiswährung",
+  "quote": "Kurswährung",
+  "wallet": "Wallet",
+  "kind": {
+    "all": "Alle Arten"
+  },
+  "side": {
+    "all": "Alle Richtungen"
+  },
+  "prev": "Zurück",
+  "next": "Weiter",
+  "pagination": "Gesamt",
+  "pages": "Seiten",
+  "localeNotice": {
+    "title": "Lokalisierung folgt in Kürze",
+    "description": "Dieses Dashboard ist derzeit nur auf Englisch verfügbar. {language}-Unterstützung wird vorbereitet.",
+    "dontShowAgain": "Nicht erneut anzeigen",
+    "continue": "Auf Englisch fortfahren",
+    "leave": "Zurück gehen"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "title": "Estado del servicio",
+  "subtitle": "Resumen en vivo de salud, tiempo de actividad y eventos históricos de la API de NOS.",
+  "loading": "Cargando estado...",
+  "environment": "Entorno",
+  "started": "Iniciado",
+  "uptime": "Tiempo en línea",
+  "lastUpdated": "Actualizado por última vez {value}",
+  "actions": {
+    "refresh": "Actualizar",
+    "autoRefresh": "Se actualiza cada 60 s"
+  },
+  "labels": {
+    "ok": "Operativo",
+    "maintenance": "Mantenimiento",
+    "degraded": "Rendimiento degradado",
+    "incident": "Incidente",
+    "unknown": "Desconocido"
+  },
+  "descriptions": {
+    "ok": "Todos los sistemas funcionan con normalidad.",
+    "maintenance": "Actualmente realizamos mantenimiento programado.",
+    "degraded": "Algunas funciones pueden estar limitadas.",
+    "incident": "Se detectó un incidente activo.",
+    "unknown": "La información de estado no está disponible por ahora."
+  },
+  "error": {
+    "title": "No se pudo cargar el estado",
+    "retry": "Reintentar"
+  },
+  "cards": {
+    "environment": "Entorno",
+    "environmentHint": "Entorno de ejecución",
+    "version": "Versión",
+    "versionHint": "Compilación actualmente desplegada",
+    "uptime": "Tiempo en línea",
+    "uptimeHint": "Iniciado {time}",
+    "lastUpdated": "Última actualización"
+  },
+  "eventTypes": {
+    "deployment": "Despliegue",
+    "incident": "Incidente",
+    "recovery": "Recuperación"
+  },
+  "eventDescriptions": {
+    "deployment": "Despliegues exitosos registrados",
+    "incident": "Incidentes registrados por la plataforma",
+    "recovery": "Recuperaciones que resolvieron incidentes"
+  },
+  "eventStatuses": {
+    "ok": "Recuperado",
+    "maintenance": "Mantenimiento",
+    "incident": "Incidente",
+    "unknown": "Estado desconocido"
+  },
+  "limits": {
+    "title": "Límites de tasa",
+    "subtitle": "Cuotas de solicitudes actuales para los endpoints públicos.",
+    "lastEvaluated": "Evaluado {value}",
+    "perWindow": "solicitudes cada {window}",
+    "noWindow": "solicitudes",
+    "estimated": "~{value}/minuto",
+    "window": "Ventana: {value}",
+    "empty": "El servicio no publicó límites.",
+    "keys": {
+      "v3": "API principal (v3)",
+      "monitor": "API Monitor"
+    }
+  },
+  "events": {
+    "title": "Eventos recientes",
+    "subtitle": "Despliegues, incidentes y recuperaciones reportados por la plataforma.",
+    "showing": "Mostrando {shown} de {total} eventos",
+    "empty": "No se registraron eventos recientes."
+  }
+}

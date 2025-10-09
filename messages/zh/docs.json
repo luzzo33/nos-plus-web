@@ -1,0 +1,60 @@
+{
+  "title": "Nos API 文档",
+  "subtitle": "面向价格、成交量与持有人的稳定生产级接口",
+  "limitedNotice": "目前公开提供的接口仅包括价格、成交量和持有者。更多接口即将上线，我们会在 Twitter/X 上发布消息，并在此页面同步展示。",
+  "intro": {
+    "title": "概览",
+    "text": "所有接口都在 /v3 版本下提供并返回 JSON，请为每次请求携带 API 密钥。",
+    "baseUrl": "基础 URL"
+  },
+  "auth": {
+    "title": "认证",
+    "text": "可在 X-API-Key 或 Authorization: Bearer 头中携带密钥。",
+    "headerApiKey": "X-API-Key: YOUR_API_KEY",
+    "headerBearer": "Authorization: Bearer YOUR_API_KEY",
+    "note": "可在顶部导航的“工具 → API 密钥”页面申请密钥。"
+  },
+  "toc": {
+    "title": "接口列表"
+  },
+  "shared": {
+    "viewUi": "打开交互文档",
+    "params": {
+      "range": "时间范围",
+      "quote": "计价货币"
+    }
+  },
+  "prices": {
+    "title": "价格",
+    "desc": "NOS 的现货价格、图表与统计数据。"
+  },
+  "volume": {
+    "title": "成交量",
+    "desc": "跨市场聚合的成交量及清晰归属。"
+  },
+  "holders": {
+    "title": "持有人",
+    "desc": "持有人总数、图表与分布指标。"
+  },
+  "dynamic": {
+    "volumeSummary": "24 小时成交量 {current}（较 24 小时前 {change24h}）"
+  },
+  "more": {
+    "title": "更多",
+    "swaggerUi": "打开 Swagger UI"
+  },
+  "stoplight": {
+    "request": "请求",
+    "queryParameters": "查询参数",
+    "responses": "响应",
+    "responseExample": "响应示例",
+    "endpoints": "接口",
+    "schemas": "模式",
+    "poweredBy": "由 Stoplight 提供",
+    "sendRequest": "发送 API 请求",
+    "allowedValues": "允许的取值：",
+    "body": "请求体",
+    "notSet": "未设置",
+    "selectAnOption": "请选择"
+  }
+}

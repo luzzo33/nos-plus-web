@@ -1,0 +1,60 @@
+{
+  "title": "Documentazione Nos API",
+  "subtitle": "Endpoint stabili e pronti per la produzione per prezzo, volume e titolari",
+  "limitedNotice": "Al momento sono pubblici solo gli endpoint di prezzo, volume e holder. Ne arriveranno altri a breve: annunceremo le release su Twitter/X e li vedrai qui non appena saranno disponibili.",
+  "intro": {
+    "title": "Panoramica",
+    "text": "Tutti gli endpoint sono versionati sotto /v3 e restituiscono JSON. Usa la tua chiave API in ogni richiesta.",
+    "baseUrl": "URL di base"
+  },
+  "auth": {
+    "title": "Autenticazione",
+    "text": "Inserisci la chiave nell'header X-API-Key oppure in Authorization: Bearer.",
+    "headerApiKey": "X-API-Key: YOUR_API_KEY",
+    "headerBearer": "Authorization: Bearer YOUR_API_KEY",
+    "note": "Puoi richiedere una chiave dal menu Strumenti → Chiavi API nella barra superiore."
+  },
+  "toc": {
+    "title": "Endpoint"
+  },
+  "shared": {
+    "viewUi": "Apri UI",
+    "params": {
+      "range": "Intervallo",
+      "quote": "Valuta di quotazione"
+    }
+  },
+  "prices": {
+    "title": "Prezzi",
+    "desc": "Prezzi spot, grafici e statistiche per NOS."
+  },
+  "volume": {
+    "title": "Volume",
+    "desc": "Volume di scambio aggregato sui vari mercati con attribuzione chiara."
+  },
+  "holders": {
+    "title": "Titolari",
+    "desc": "Numero totale di titolari, grafici e metriche di distribuzione."
+  },
+  "dynamic": {
+    "volumeSummary": "Volume 24h {current} ({change24h} vs 24h)"
+  },
+  "more": {
+    "title": "Altro",
+    "swaggerUi": "Apri Swagger UI"
+  },
+  "stoplight": {
+    "request": "Richiesta",
+    "queryParameters": "Parametri di query",
+    "responses": "Risposte",
+    "responseExample": "Esempio di risposta",
+    "endpoints": "Endpoint",
+    "schemas": "Schemi",
+    "poweredBy": "powered by Stoplight",
+    "sendRequest": "Invia richiesta API",
+    "allowedValues": "Valori consentiti:",
+    "body": "Body",
+    "notSet": "Non impostato",
+    "selectAnOption": "seleziona un'opzione"
+  }
+}

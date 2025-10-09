@@ -1,0 +1,21 @@
+# Simple Dashboard Review Checklist
+
+- [x] Audit of existing widgets mapped to new sections (`components/simple-dashboard/README.md`)
+- [x] `/simple` route renders separate shell without advanced dashboard dependencies
+- [x] Preset toggle (Overview / Trader Desk / Research) updates content ordering
+- [x] Density toggle switches spacing tokens on section cards
+- [x] Sticky summary strip shows price, 24h Δ, 7d Δ, volume, staked %
+- [x] Market Snapshot uses live price widget + stats with sparkline and range hints
+- [x] Trend & Momentum exposes 24h/7d/30d chart ranges and recent volume pulses
+- [x] Liquidity & Volume displays DEX vs CEX split, Raydium health, and spike highlights
+- [x] Holders & Distribution integrates growth ranges and top bracket breakdown
+- [x] Staking & Rewards combines APR, xNOS totals, and staker/unstaker net flow
+- [x] Risk & Sentiment combines sentiment index with volatility-based alerts
+- [x] News & Updates pulls latest blog posts with external links
+- [x] Live Pulse streams monitor stats for aggregate + top venues
+- [x] Scoped styling via `SimpleDashboardShell.module.css` (no global leakage)
+- [x] Loading / empty / error states implemented for every section
+- [ ] Manual QA across target breakpoints (320 → 430 mobile, desktop container width)
+- [ ] Light/dark mode visual review
+- [ ] Reduced motion behaviour review
+- [ ] Screenshot capture (mobile + desktop) for review package

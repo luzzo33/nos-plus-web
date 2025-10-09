@@ -1,0 +1,111 @@
+{
+  "loading": "加载中…",
+  "error": "错误",
+  "retry": "重试",
+  "noData": "暂无数据",
+  "na": "无",
+  "apply": "应用",
+  "cancel": "取消",
+  "clear": "清除",
+  "export": "导出",
+  "download": "下载",
+  "exportCSV": "导出为 CSV",
+  "exportJSON": "导出为 JSON",
+  "downloadCSV": "下载 CSV",
+  "downloadJSON": "下载 JSON",
+  "live": "实时",
+  "historical": "历史",
+  "previous": "上一页",
+  "next": "下一页",
+  "showing": "显示",
+  "to": "至",
+  "of": "共",
+  "uptrend": "上升趋势",
+  "downtrend": "下降趋势",
+  "page": "页",
+  "pages": "页数",
+  "resetToDefault": "重置为默认",
+  "fontSize": "字体大小",
+  "fontSizeSettings": "字体设置",
+  "customDate": "自定义",
+  "lastUpdated": "最近更新",
+  "current": "当前",
+  "date": "日期",
+  "stats": "统计",
+  "action": "操作",
+  "allTimeHigh": "历史最高价",
+  "allTimeLow": "历史最低价",
+  "table": {
+    "showing": "显示",
+    "of": "共",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageSize": "每页条数"
+  },
+  "days": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "last7Days": "过去 7 天",
+    "last30Days": "过去 30 天",
+    "last90Days": "过去 90 天"
+  },
+  "timeRanges": {
+    "1h": "1 小时",
+    "4h": "4 小时",
+    "24h": "24 小时",
+    "7d": "7 天",
+    "30d": "30 天",
+    "90d": "90 天",
+    "180d": "180 天",
+    "1y": "1 年",
+    "all": "全部"
+  },
+  "timeRangeDescriptions": {
+    "1h": "过去 1 小时",
+    "4h": "过去 4 小时",
+    "24h": "过去 24 小时",
+    "7d": "过去 7 天",
+    "30d": "过去 30 天",
+    "90d": "过去 90 天",
+    "180d": "过去 180 天",
+    "1y": "过去 1 年",
+    "all": "全时段"
+  },
+  "chart": {
+    "compact": "紧凑",
+    "normal": "标准",
+    "large": "较大",
+    "selectDateRange": "选择日期范围",
+    "startDate": "开始日期",
+    "endDate": "结束日期"
+  },
+  "source": "来源",
+  "sources": {
+    "live": "实时",
+    "historical": "历史"
+  },
+  "dataPoints": "数据点",
+  "moderate": "中等",
+  "low": "低",
+  "high": "高",
+  "from": "自",
+  "trend": {
+    "up": "上升趋势",
+    "down": "下降趋势",
+    "neutral": "横盘"
+  },
+  "average": "平均值",
+  "maximum": "最大值",
+  "minimum": "最小值",
+  "notFound": {
+    "title": "页面未找到",
+    "description": "您访问的页面不存在或已被移动。",
+    "goHome": "返回首页"
+  },
+  "cookieBanner": {
+    "title": "欧盟访客的 Cookie 提示",
+    "body": "由于您位于欧盟，我们仅使用必要的 Cookie。请阅读并接受后继续浏览。",
+    "review": "查看 Cookie 政策",
+    "accept": "接受 Cookie"
+  }
+}

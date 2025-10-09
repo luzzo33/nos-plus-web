@@ -1,0 +1,28 @@
+{
+  "title": "Monitor",
+  "subtitle": "Real-time normalized events (limit orders, DCA) with filters",
+  "totalEvents": "Total events",
+  "limitOrders": "Limit orders",
+  "dca": "DCA",
+  "venue": "Venue",
+  "base": "Base",
+  "quote": "Quote",
+  "wallet": "Wallet",
+  "kind": {
+    "all": "All kinds"
+  },
+  "side": {
+    "all": "All sides"
+  },
+  "prev": "Prev",
+  "next": "Next",
+  "pagination": "Total",
+  "pages": "Pages",
+  "localeNotice": {
+    "title": "Localization coming soon",
+    "description": "This dashboard is currently only available in English. {language} support is being prepared.",
+    "dontShowAgain": "Don't show again",
+    "continue": "Continue in English",
+    "leave": "Go back"
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "info": {
+    "title": "NOS+ API",
+    "description": "Umfassende API für Nosana-(NOS)-Tokendaten, einschließlich Preise, Volumen, Holder und Staking-Informationen."
+  },
+  "tags": {
+    "prices": "Endpunkte für Preisdaten",
+    "volume": "Endpunkte für Handelsvolumen",
+    "holders": "Analysen zu Token-Inhabern",
+    "staking": "Staking-Kennzahlen und Daten",
+    "flow": "Endpunkte für Flow-Analysen",
+    "sentiment": "Analyse der Marktstimmung",
+    "forecast": "Endpunkte für Preisprognosen"
+  },
+  "shared": {
+    "params": {
+      "range": "Datumsbereich",
+      "interval": "Aggregationsintervall",
+      "cumulative": "Kumulative Reihe einbeziehen",
+      "groupBy": "Gruppierungsschlüssel",
+      "sort": "Sortierspalte",
+      "order": "Sortierreihenfolge",
+      "page": "Seitennummer",
+      "pageSize": "Einträge pro Seite"
+    }
+  },
+  "prices": {
+    "chart": {
+      "summary": "Preischart-Daten",
+      "response": "Chartdaten",
+      "description": "Zeitreihen-Preisdaten inklusive OHLC-Kerzen, Kennzahlen und Metadaten."
+    },
+    "widget": {
+      "summary": "Preisdaten für Widgets",
+      "response": "Widget-Payload",
+      "description": "Aktueller Spotpreis, Spannweiten und Sparkline-Daten für UI-Widgets."
+    },
+    "stats": {
+      "summary": "Preisstatistiken",
+      "response": "Statistik-Payload",
+      "description": "Aggregierte Preisstatistiken, Verteilungskennzahlen und technische Trendindikatoren."
+    },
+    "table": {
+      "summary": "Preistabellen-Daten",
+      "response": "Preistabellen mit Paginierung",
+      "description": "Paginierte Preiszeilen mit Änderungsberechnungen und formatierten Hilfswerten."
+    },
+    "index": {
+      "summary": "Endpunktübersicht",
+      "description": "Listet alle Preis-Endpunkte mit Pfaden und unterstützten Parametern auf.",
+      "response": "Metadaten zu Endpunkten gruppiert nach Funktion."
+    }
+  },
+  "volume": {
+    "chart": {
+      "summary": "Volumenchart-Daten",
+      "response": "Chartdaten",
+      "description": "Zeitreihen zum Handelsvolumen mit Aggregaten, Zusammenfassungen und Metadaten."
+    },
+    "widget": {
+      "summary": "Volumendaten für Widgets",
+      "response": "Widget-Payload",
+      "description": "Aktueller Volumen-Snapshot mit Spannweiten und Ranglisten."
+    },
+    "stats": {
+      "summary": "Volumenstatistiken",
+      "response": "Statistik-Payload",
+      "description": "Detaillierte Handelsvolumenstatistiken, Verteilungen, Muster und Trendanalysen."
+    },
+    "table": {
+      "summary": "Volumentabellen-Daten",
+      "response": "Tabellendaten",
+      "description": "Paginierte Volumenzeilen mit formatierten Ausgabewerten."
+    },
+    "index": {
+      "summary": "Endpunktübersicht",
+      "description": "Listet alle Volumen-Endpunkte mit Pfaden und unterstützten Parametern auf.",
+      "response": "Metadaten zu Endpunkten gruppiert nach Funktion."
+    }
+  },
+  "responses": {
+    "unauthorized": "Für diesen Endpunkt ist eine Authentifizierung erforderlich.",
+    "rateLimited": "Anfragelimit überschritten. Bitte nach der Abkühlzeit erneut versuchen."
+  },
+  "holders": {
+    "index": {
+      "summary": "Endpunktübersicht",
+      "description": "Listet alle Endpunkte für Holder-Analysen mit Pfaden und unterstützten Parametern auf.",
+      "response": "Metadaten zu Endpunkten gruppiert nach Funktion."
+    },
+    "chart": {
+      "summary": "Holder-Chart-Daten",
+      "description": "Zeitreihen der Holder-Anzahlen mit Kennzahlen und Metadaten.",
+      "response": "Zeitreihen-Payload für Holder."
+    },
+    "widget": {
+      "summary": "Holderdaten für Widgets",
+      "description": "Aktueller Holder-Snapshot mit Veränderungsspannen, Wachstumskennzahlen und Meilensteinen.",
+      "response": "Widget-Payload."
+    },
+    "stats": {
+      "summary": "Holder-Statistiken",
+      "description": "Aggregierte Holder-Statistiken, Verteilungskennzahlen, Projektionen und Wachstumseinblicke.",
+      "response": "Statistik-Payload."
+    },
+    "table": {
+      "summary": "Holdertabellen-Daten",
+      "description": "Paginierte Holder-Zeilen mit formatierten Hilfswerten.",
+      "response": "Tabellen-Payload."
+    }
+  },
+  "flow": {
+    "trace": {
+      "summary": "Token-Flow verfolgen",
+      "description": "Startet eine Hintergrundverfolgung, um NOS-Tokenbewegungen über Wallets hinweg zu beobachten.",
+      "response": "Metadaten zum Trace-Job und Graph-Payload."
+    },
+    "cache": {
+      "summary": "Zwischengespeicherte Verfolgung abrufen",
+      "description": "Gibt ein zuvor berechnetes Verfolgungsergebnis anhand des Cache-Schlüssels zurück, ohne neu zu rechnen.",
+      "response": "Zwischengespeicherte Trace-Payload oder Hinweis auf Fehltreffer."
+    },
+    "job": {
+      "summary": "Status eines Trace-Jobs",
+      "description": "Prüfen Sie den Verarbeitungsstatus eines Trace-Jobs anhand seines Schlüssels.",
+      "response": "Status-Payload mit Fortschrittsdetails."
+    }
+  },
+  "sentiment": {
+    "index": {
+      "summary": "Endpunktübersicht",
+      "description": "Listet alle Stimmungs-Endpunkte mit Pfaden und unterstützten Parametern auf.",
+      "response": "Metadaten zu Endpunkten gruppiert nach Funktion."
+    },
+    "chart": {
+      "summary": "Stimmungs-Chart-Daten",
+      "description": "Zeitreihe des Fear-&-Greed-Index mit Stimmungszonen, optionalen gleitenden Durchschnitten und Komponentenübersicht.",
+      "response": "Chart-Payload mit Datenpunkten und zusammenfassenden Metadaten."
+    },
+    "table": {
+      "summary": "Stimmungstabellen-Daten",
+      "description": "Paginierte Fear-&-Greed-Index-Zeilen mit Stimmungsetiketten, Änderungen und Verteilungssummen.",
+      "response": "Tabellen-Payload mit Zeilen, Paginierung und Analysen."
+    },
+    "widget": {
+      "summary": "Stimmungsdaten für Widgets",
+      "description": "Aktueller Stimmungs-Snapshot mit Anzeigeeinstellungen, Trendvergleichen und Kontextinformationen.",
+      "response": "Widget-Payload für Dashboards und Kennzahlenkarten."
+    },
+    "stats": {
+      "summary": "Stimmungsstatistiken",
+      "description": "Umfassende Analysen inklusive historischer Spannweiten, Verteilungen, Muster und Datenqualitätskennzahlen.",
+      "response": "Statistik-Payload nach Insights gruppiert."
+    }
+  },
+  "forecast": {
+    "index": {
+      "summary": "Endpunktübersicht",
+      "description": "Listet alle Prognose-Endpunkte mit Pfaden und unterstützten Parametern auf.",
+      "response": "Metadaten zu Endpunkten gruppiert nach Funktion."
+    },
+    "chart": {
+      "summary": "Prognosechart-Daten",
+      "description": "Historische Preise kombiniert mit projizierten Werten und Konfidenzbändern für vorausschauende Analysen.",
+      "response": "Chart-Payload inklusive Genauigkeitsmetadaten und Prognoseintervallen."
+    },
+    "table": {
+      "summary": "Prognosetabellen-Daten",
+      "description": "Tabellarische Prognose mit Kurszielen, Vertrauenswerten und Wahrscheinlichkeitshelfern.",
+      "response": "Tabellen-Payload mit Zeilen, Kennzahlen und Spaltenbeschreibungen."
+    },
+    "widget": {
+      "summary": "Prognosedaten für Widgets",
+      "description": "Verdichteter Prognose-Snapshot mit aktuellem Preis, Zielhorizonten, Modellgenauigkeit und Signalen.",
+      "response": "Widget-Payload für Dashboards und Benachrichtigungen."
+    },
+    "stats": {
+      "summary": "Prognosestatistiken",
+      "description": "Umfassende Prognoseanalysen zu Genauigkeit, technischen Indikatoren und historischer Performance.",
+      "response": "Statistik-Payload nach Insights gruppiert."
+    }
+  }
+}

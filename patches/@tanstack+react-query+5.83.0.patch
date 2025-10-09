@@ -1,0 +1,21 @@
+diff --git a/node_modules/@tanstack/react-query/build/modern/HydrationBoundary.js b/node_modules/@tanstack/react-query/build/modern/HydrationBoundary.js
+index 4df4a80..377a43f 100644
+--- a/node_modules/@tanstack/react-query/build/modern/HydrationBoundary.js
++++ b/node_modules/@tanstack/react-query/build/modern/HydrationBoundary.js
+@@ -2,7 +2,7 @@
+ 
+ // src/HydrationBoundary.tsx
+ import * as React from "react";
+-import { hydrate } from "@tanstack/query-core";
++import * as QueryCore from "@tanstack/query-core";
+ import { useQueryClient } from "./QueryClientProvider.js";
+ var HydrationBoundary = ({
+   children,
+@@ -11,6 +11,7 @@ var HydrationBoundary = ({
+   queryClient
+ }) => {
+   const client = useQueryClient(queryClient);
++  const hydrate = QueryCore.hydrate;
+   const optionsRef = React.useRef(options);
+   optionsRef.current = options;
+   const hydrationQueue = React.useMemo(() => {

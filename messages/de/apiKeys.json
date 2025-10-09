@@ -1,0 +1,121 @@
+{
+  "title": "API-Schlüssel",
+  "subtitle": "Stellen Sie Schlüssel für die NOS-API aus und verwalten Sie sie.",
+  "authRequired": "Sie müssen sich anmelden, um API-Schlüssel zu verwalten.",
+  "testNotice": {
+    "message": "Diese Funktion befindet sich derzeit in einer Testphase. Wenn Sie auf Probleme stoßen oder Fragen haben, melden Sie sich unter <email>luzzo@nos.plus</email> oder via <discord>Discord</discord>/<twitter>Twitter</twitter>. Für höhere Limits nutzen Sie bitte dieselben Kanäle."
+  },
+  "guest": {
+    "subtitle": "Erzeugen Sie einen kostenlosen API-Schlüssel ohne ein Konto.",
+    "limit": "Sie können während dieser Testphase bis zu {limit} Schlüssel erstellen.",
+    "freeTierLabel": "Kostenlose Stufe",
+    "freeTierHint": "Beinhaltet begrenzte Nutzung für Tests.",
+    "generate": "Kostenlosen Schlüssel generieren",
+    "managePrompt": "Sie benötigen höhere Limits oder Teamfunktionen? Melden Sie sich an, um kontobasierte Schlüssel zu verwalten.",
+    "loginCta": "Anmelden oder Konto erstellen"
+  },
+  "lookup": {
+    "title": "API-Schlüssel prüfen",
+    "subtitle": "Fügen Sie einen NOS-API-Schlüssel ein, um eine schreibgeschützte Nutzungsübersicht zu sehen. Der Klartextschlüssel wird nicht gespeichert.",
+    "readOnly": "Schreibgeschützte Übersicht",
+    "apiKeyLabel": "API-Schlüssel",
+    "apiKeyPlaceholder": "nos_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "windowLabel": "Zeitfenster (Minuten)",
+    "windowHint": "Zwischen 5 und 1440 Minuten. Standard ist 60.",
+    "loading": "Wird gesucht…",
+    "submit": "Nutzung anzeigen",
+    "detailsTitle": "Schlüsseldetails",
+    "label": "Bezeichnung",
+    "tier": "Stufe",
+    "status": "Status",
+    "createdAt": "Erstellt",
+    "lastUsedAt": "Zuletzt verwendet",
+    "never": "Nie",
+    "rateLimitHour": "Stündliches Limit",
+    "rateLimitDay": "Tageslimit",
+    "issuedBy": "Ausgestellt von",
+    "perHour": "/ Stunde",
+    "perDay": "/ Tag",
+    "summaryTitle": "Nutzung in den letzten {window} Minuten",
+    "totalCalls": "Gesamtaufrufe",
+    "successCalls": "Erfolgreiche Aufrufe",
+    "errorCalls": "Fehlerhafte Aufrufe",
+    "avgLatency": "Durchschnittliche Latenz",
+    "unknown": "Unbekannt",
+    "none": "Nicht festgelegt",
+    "errors": {
+      "API_KEY_REQUIRED": "Geben Sie den API-Schlüssel ein, den Sie prüfen möchten.",
+      "NOT_FOUND": "Kein Schlüssel entspricht diesem Wert.",
+      "LIMIT_REACHED": "Sie haben kürzlich einen Schlüssel nachgeschlagen. Bitte versuchen Sie es in Kürze erneut.",
+      "LOOKUP_FAILED": "Die Nutzung dieses Schlüssels konnte nicht geladen werden.",
+      "generic": "Dieser Schlüssel kann derzeit nicht verifiziert werden."
+    }
+  },
+  "loading": "Wird geladen…",
+  "newKey": {
+    "title": "Ihr neuer Schlüssel",
+    "reminder": "Kopieren Sie diesen Schlüssel jetzt. Aus Sicherheitsgründen wird er nicht erneut angezeigt.",
+    "dismiss": "Diese Meldung ausblenden",
+    "close": "Schließen"
+  },
+  "request": {
+    "title": "Schlüssel anfordern",
+    "subtitle": "Wählen Sie eine Stufe und schließen Sie das Captcha ab, um einen neuen Schlüssel zu erzeugen.",
+    "label": "Bezeichnung (optional)",
+    "labelPlaceholder": "z. B. Staging-Dashboard",
+    "tier": "Stufe",
+    "submit": "Schlüssel generieren",
+    "loading": "Anfrage läuft…",
+    "captchaHelp": "Lösen Sie das Captcha unten, um zu bestätigen, dass Sie ein Mensch sind. Der Schlüssel wird nur einmal angezeigt, speichern Sie ihn daher sicher.",
+    "cancel": "Abbrechen",
+    "limitReached": "Maximum von {limit} Schlüsseln erreicht. Widerrufen Sie einen bestehenden Schlüssel oder beantragen Sie höhere Limits."
+  },
+  "keys": {
+    "title": "Vorhandene Schlüssel",
+    "count": "{count, plural, one {# Schlüssel} other {# Schlüssel}}",
+    "empty": "Noch keine Schlüssel. Generieren Sie oben einen, um zu starten.",
+    "defaultLabel": "Unbenannter Schlüssel",
+    "lastFour": "Endet auf {lastFour}",
+    "createdAt": "Erstellt am {date}",
+    "tier": "Stufe: {tier}",
+    "status": {
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "revoked": "Widerrufen"
+    },
+    "revoke": "Widerrufen",
+    "viewUsage": "Nutzung anzeigen",
+    "hideUsage": "Nutzung ausblenden"
+  },
+  "usage": {
+    "title": "Nutzungsübersicht",
+    "totalCalls": "Gesamtaufrufe (letzte Stunde)",
+    "errors": "Fehler",
+    "avgLatency": "Durchschnittliche Latenz",
+    "recentActivity": "Aktuelle Aktivitäten",
+    "table": {
+      "time": "Zeit",
+      "route": "Route",
+      "method": "Methode",
+      "status": "Status",
+      "latency": "Latenz"
+    },
+    "noActivity": "Noch keine Aktivitäten erfasst.",
+    "dailyHeadline": "Tageswerte",
+    "calls": "{count, plural, one {# Aufruf} other {# Aufrufe}}",
+    "errorsShort": "{count, plural, one {# Fehler} other {# Fehler}}",
+    "noDaily": "Keine aktuelle Tagesnutzung."
+  },
+  "errors": {
+    "CAPTCHA_REQUIRED": "Schließen Sie das Captcha ab, bevor Sie einen Schlüssel anfordern.",
+    "CAPTCHA_INVALID": "Die Captcha-Überprüfung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "TURNSTILE_NOT_CONFIGURED": "Captcha ist nicht konfiguriert; bitte wenden Sie sich an den Support.",
+    "TIER_NOT_FOUND": "Die ausgewählte Stufe ist nicht verfügbar.",
+    "DUPLICATE_CLIENT": "Sie besitzen bereits einen Schlüssel für dieses Konto bzw. Gerät.",
+    "SERVER_ERROR": "Serverfehler. Bitte versuchen Sie es in Kürze erneut.",
+    "LIMIT_REACHED": "Sie haben die maximale Anzahl an Schlüsseln für dieses Konto erreicht.",
+    "MAX_KEYS_REACHED": "Sie haben die maximale Anzahl an Schlüsseln für dieses Konto erreicht.",
+    "AUTH_REQUIRED": "Bitte melden Sie sich an, um Kontoschlüssel zu verwalten, oder nutzen Sie oben die kostenlose Stufe ohne Konto.",
+    "generic": "Die Anfrage konnte nicht verarbeitet werden."
+  }
+}

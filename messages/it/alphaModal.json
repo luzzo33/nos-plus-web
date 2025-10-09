@@ -1,0 +1,16 @@
+{
+  "title": "Versione alpha",
+  "version": "v1.0-alpha",
+  "welcome": "Benvenuto in questa versione alpha.",
+  "expectationsTitle": "Cosa aspettarsi",
+  "expectations": {
+    "updates": "Gli aggiornamenti vengono pubblicati frequentemente",
+    "changes": "Il sito può cambiare rapidamente",
+    "bugs": "Potresti incontrare bug"
+  },
+  "helpTitle": "Aiutaci a migliorare il progetto!",
+  "helpDescription": "Il tuo feedback è prezioso. Segnala bug e condividi suggerimenti:",
+  "github": "GitHub",
+  "twitter": "Twitter",
+  "gotIt": "Ho capito!"
+}

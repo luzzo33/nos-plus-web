@@ -1,0 +1,146 @@
+{
+  "title": "Staking DApp",
+  "contractBalance": "Balance del contrato",
+  "stakers": "Stakers",
+  "subtitle": "Analítica de xNOS y APR",
+  "header": {
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Última actualización"
+  },
+  "sections": {
+    "overview": "Resumen",
+    "chart": "Gráfico",
+    "table": "Tabla",
+    "stats": "Estadísticas",
+    "analysis": "Análisis"
+  },
+  "marketOverview": {
+    "title": "Resumen de staking",
+    "range": "Rango",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Actualizado",
+    "change": "Cambio",
+    "allTimeHigh": "Máximo histórico",
+    "volatility": "Volatilidad",
+    "ranking": "Ranking",
+    "ofAvg": "del promedio",
+    "moderate": "Moderado",
+    "tooltips": {
+      "currentMetric": "Muestra el valor actual de la métrica seleccionada.",
+      "rangeHighLow": "Valores máximo y mínimo del periodo seleccionado."
+    }
+  },
+  "overview": {
+    "xnosChanges": "Cambios de xNOS",
+    "xnosRanges": "Rangos de xNOS",
+    "showLess": "Mostrar menos",
+    "avg": "Promedio",
+    "current": "Actual",
+    "xnosStatistics": "Estadísticas de xNOS",
+    "currentXnos": "xNOS actual",
+    "averageXnos": "xNOS promedio",
+    "medianXnos": "xNOS mediano",
+    "volatility": "Volatilidad",
+    "dataPoints": "Puntos de datos",
+    "statisticsCalculated": "Estadísticas calculadas para",
+    "period": "Periodo",
+    "apyAdjustmentsTitle": "Ajustes de APY",
+    "subtitle": "Principales cambios en el calendario APY y motivos",
+    "labels": {
+      "change": "Cambio",
+      "date": "Fecha"
+    },
+    "phase1": {
+      "title": "Fase 1",
+      "change": "Reducción de ~30 %",
+      "date": "14 de enero de 2024",
+      "reason": "Primer paso para normalizar gradualmente las recompensas"
+    },
+    "phase2": {
+      "title": "Fase 2",
+      "change": "Halving aproximado del APY",
+      "date": "21 de mayo de 2024",
+      "reason": "Alinear el calendario de emisiones con la sostenibilidad a largo plazo"
+    },
+    "why": {
+      "title": "¿Por qué los cambios?",
+      "health": {
+        "title": "Salud del protocolo",
+        "desc": "Recompensas más suaves y sostenibles fortalecen la estabilidad a largo plazo."
+      },
+      "growth": {
+        "title": "Crecimiento del ecosistema",
+        "desc": "Permite reinvertir en adopción y expansión."
+      },
+      "dynamic": {
+        "title": "Ajuste dinámico",
+        "desc": "Se adapta a las condiciones del mercado en lugar de seguir una política rígida."
+      }
+    },
+    "stakeCta": "Hacer staking de NOS"
+  },
+  "chart": {
+    "customDateRange": "Rango de fechas personalizado",
+    "selectDateRange": "Seleccionar rango de fechas",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "applyTimeframe": "Aplicar periodo",
+    "lineChart": "Gráfico de líneas",
+    "areaChart": "Gráfico de áreas",
+    "candlestickChart": "Gráfico de velas",
+    "noChartData": "No hay datos disponibles",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "average": "Promedio",
+    "maximum": "Máximo",
+    "minimum": "Mínimo",
+    "dataPoints": "Puntos de datos",
+    "annotations": {
+      "phase1": "Fase 1: reducción ~30 %",
+      "phase2": "Fase 2: halving del APY"
+    }
+  },
+  "table": {
+    "dateRange": "Rango de fechas",
+    "export": "Exportar",
+    "exportAsCSV": "Exportar como CSV",
+    "exportAsJSON": "Exportar como JSON"
+  },
+  "stats": {
+    "keyMetrics": "Métricas clave",
+    "averageXnos": "xNOS promedio",
+    "xnosRange": "Rango de xNOS",
+    "aprAverage": "APR promedio",
+    "dailyVolatility": "Volatilidad diaria",
+    "coverage": "Cobertura",
+    "aprStreak": "Racha de APR",
+    "xnosStreak": "Racha de xNOS",
+    "maxDrawdown": "Drawdown máximo",
+    "tooltips": {
+      "dailyVolatility": "Volatilidad móvil para el rango seleccionado."
+    }
+  },
+  "analysis": {
+    "summaryTitle": "Resumen del análisis de staking",
+    "currentConditions": "Condiciones actuales",
+    "todaysValue": "El valor de hoy es",
+    "relativeToRecent": "en relación con los valores recientes",
+    "currentValue": "Valor actual",
+    "valueAt": "Valor en",
+    "of30dayAverage": "del promedio de 30 días",
+    "volatilityLevel": "Nivel de volatilidad",
+    "metricTrends": "Tendencias de la métrica",
+    "trend": "Tendencia",
+    "averageValue": "Valor promedio",
+    "keyRaydiumMetrics": "Métricas clave",
+    "percentileRank": "Percentil",
+    "volatility": "Volatilidad",
+    "dataQuality": "Calidad de datos",
+    "historicalPerformance": "Desempeño histórico",
+    "avg": "Promedio",
+    "allTimeHighMetric": "Máximo histórico de {metric}",
+    "allTimeLowMetric": "Mínimo histórico de {metric}"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "title": "Chiavi API",
+  "subtitle": "Genera e gestisci le chiavi per la Nos API.",
+  "authRequired": "Devi effettuare l'accesso per gestire le chiavi API.",
+  "testNotice": {
+    "message": "Questa funzionalità è attualmente in fase di prova. Se riscontri problemi o hai domande, scrivici a <email>luzzo@nos.plus</email> oppure tramite <discord>Discord</discord>/<twitter>Twitter</twitter>. Per limiti più alti usa gli stessi canali."
+  },
+  "guest": {
+    "subtitle": "Genera una chiave API gratuita senza creare un account.",
+    "limit": "Durante questa fase di test puoi creare fino a {limit} chiavi.",
+    "freeTierLabel": "Piano gratuito",
+    "freeTierHint": "Include un utilizzo con limiti adatto alle prove.",
+    "generate": "Genera chiave gratuita",
+    "managePrompt": "Ti servono limiti maggiori o funzionalità per il team? Accedi per gestire le chiavi associate all'account.",
+    "loginCta": "Accedi o crea un account"
+  },
+  "lookup": {
+    "title": "Verifica una chiave API",
+    "subtitle": "Incolla una chiave della Nos API per visualizzare un riepilogo in sola lettura. La chiave in chiaro non viene salvata.",
+    "readOnly": "Riepilogo in sola lettura",
+    "apiKeyLabel": "Chiave API",
+    "apiKeyPlaceholder": "nos_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "windowLabel": "Intervallo di tempo (minuti)",
+    "windowHint": "Tra 5 e 1440 minuti. Il valore predefinito è 60.",
+    "loading": "Ricerca in corso…",
+    "submit": "Mostra utilizzo",
+    "detailsTitle": "Dettagli della chiave",
+    "label": "Etichetta",
+    "tier": "Livello",
+    "status": "Stato",
+    "createdAt": "Creata",
+    "lastUsedAt": "Ultimo utilizzo",
+    "never": "Mai",
+    "rateLimitHour": "Limite orario",
+    "rateLimitDay": "Limite giornaliero",
+    "issuedBy": "Emessa da",
+    "perHour": "/ ora",
+    "perDay": "/ giorno",
+    "summaryTitle": "Utilizzo negli ultimi {window} minuti",
+    "totalCalls": "Chiamate totali",
+    "successCalls": "Chiamate riuscite",
+    "errorCalls": "Chiamate con errore",
+    "avgLatency": "Latenza media",
+    "unknown": "Sconosciuto",
+    "none": "Nessun limite",
+    "errors": {
+      "API_KEY_REQUIRED": "Inserisci la chiave API che vuoi verificare.",
+      "NOT_FOUND": "Nessuna chiave corrisponde a quel valore.",
+      "LIMIT_REACHED": "Hai appena effettuato una verifica. Riprova tra poco.",
+      "LOOKUP_FAILED": "Impossibile caricare l'utilizzo di quella chiave.",
+      "generic": "Non è possibile verificare la chiave in questo momento."
+    }
+  },
+  "loading": "Caricamento…",
+  "newKey": {
+    "title": "La tua nuova chiave",
+    "reminder": "Copia subito la chiave. Per motivi di sicurezza non verrà mostrata di nuovo.",
+    "dismiss": "Nascondi questo messaggio",
+    "close": "Chiudi"
+  },
+  "request": {
+    "title": "Richiedi una chiave",
+    "subtitle": "Seleziona un livello e completa il captcha per generare una nuova chiave.",
+    "label": "Etichetta (opzionale)",
+    "labelPlaceholder": "es. dashboard-staging",
+    "tier": "Livello",
+    "submit": "Genera chiave",
+    "loading": "Richiesta in corso…",
+    "captchaHelp": "Completa il captcha per confermare che sei umano. La chiave verrà mostrata una sola volta: conservala in modo sicuro.",
+    "cancel": "Annulla",
+    "limitReached": "Hai raggiunto il limite di {limit} chiavi. Revoca una chiave esistente oppure chiedi limiti più alti."
+  },
+  "keys": {
+    "title": "Chiavi esistenti",
+    "count": "{count, plural, one {# chiave} other {# chiavi}}",
+    "empty": "Non hai ancora chiavi. Generane una qui sopra per iniziare.",
+    "defaultLabel": "Chiave senza titolo",
+    "lastFour": "Termina con {lastFour}",
+    "createdAt": "Creata il {date}",
+    "tier": "Livello: {tier}",
+    "status": {
+      "active": "Attiva",
+      "paused": "In pausa",
+      "revoked": "Revocata"
+    },
+    "revoke": "Revoca",
+    "viewUsage": "Mostra utilizzo",
+    "hideUsage": "Nascondi utilizzo"
+  },
+  "usage": {
+    "title": "Panoramica utilizzo",
+    "totalCalls": "Chiamate totali (ultima ora)",
+    "errors": "Errori",
+    "avgLatency": "Latenza media",
+    "recentActivity": "Attività recente",
+    "table": {
+      "time": "Ora",
+      "route": "Route",
+      "method": "Metodo",
+      "status": "Stato",
+      "latency": "Latenza"
+    },
+    "noActivity": "Nessuna attività registrata.",
+    "dailyHeadline": "Totali giornalieri",
+    "calls": "{count, plural, one {# chiamata} other {# chiamate}}",
+    "errorsShort": "{count, plural, one {# errore} other {# errori}}",
+    "noDaily": "Nessun dato giornaliero recente."
+  },
+  "errors": {
+    "CAPTCHA_REQUIRED": "Completa il captcha prima di richiedere una chiave.",
+    "CAPTCHA_INVALID": "Verifica captcha non riuscita. Riprova.",
+    "TURNSTILE_NOT_CONFIGURED": "Captcha non configurato; contatta il supporto.",
+    "TIER_NOT_FOUND": "Il livello selezionato non è disponibile.",
+    "DUPLICATE_CLIENT": "Hai già una chiave per questo account/dispositivo.",
+    "SERVER_ERROR": "Errore del server. Riprova tra poco.",
+    "LIMIT_REACHED": "Hai raggiunto il numero massimo di chiavi per questo account.",
+    "MAX_KEYS_REACHED": "Hai raggiunto il numero massimo di chiavi per questo account.",
+    "AUTH_REQUIRED": "Accedi per gestire le chiavi dell'account oppure usa il piano gratuito senza registrarti.",
+    "generic": "Impossibile completare la richiesta."
+  }
+}

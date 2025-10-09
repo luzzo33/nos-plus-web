@@ -1,0 +1,146 @@
+{
+  "title": "Staking DApp",
+  "contractBalance": "Saldo del contratto",
+  "stakers": "Stakers",
+  "subtitle": "Analisi di xNOS e APR",
+  "header": {
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Ultimo aggiornamento"
+  },
+  "sections": {
+    "overview": "Panoramica",
+    "chart": "Grafico",
+    "table": "Tabella",
+    "stats": "Statistiche",
+    "analysis": "Analisi"
+  },
+  "marketOverview": {
+    "title": "Panoramica dello staking",
+    "range": "Intervallo",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Aggiornato",
+    "change": "Variazione",
+    "allTimeHigh": "Massimo storico",
+    "volatility": "Volatilità",
+    "ranking": "Ranking",
+    "ofAvg": "rispetto alla media",
+    "moderate": "Moderato",
+    "tooltips": {
+      "currentMetric": "Mostra il valore corrente della metrica selezionata.",
+      "rangeHighLow": "Valori minimo e massimo all'interno dell'intervallo selezionato."
+    }
+  },
+  "overview": {
+    "xnosChanges": "Variazioni xNOS",
+    "xnosRanges": "Intervalli xNOS",
+    "showLess": "Mostra meno",
+    "avg": "Media",
+    "current": "Attuale",
+    "xnosStatistics": "Statistiche xNOS",
+    "currentXnos": "xNOS attuale",
+    "averageXnos": "xNOS medio",
+    "medianXnos": "xNOS mediano",
+    "volatility": "Volatilità",
+    "dataPoints": "Punti dati",
+    "statisticsCalculated": "Statistiche calcolate per",
+    "period": "Periodo",
+    "apyAdjustmentsTitle": "Adeguamenti APY",
+    "subtitle": "Principali aggiornamenti del calendario APY e motivazioni",
+    "labels": {
+      "change": "Variazione",
+      "date": "Data"
+    },
+    "phase1": {
+      "title": "Fase 1",
+      "change": "Riduzione ~30 %",
+      "date": "14 gennaio 2024",
+      "reason": "Primo passo per normalizzare gradualmente le ricompense"
+    },
+    "phase2": {
+      "title": "Fase 2",
+      "change": "Halving approssimativo dell'APY",
+      "date": "21 maggio 2024",
+      "reason": "Allineare il piano di emissione alla sostenibilità di lungo periodo"
+    },
+    "why": {
+      "title": "Perché questi cambiamenti?",
+      "health": {
+        "title": "Salute del protocollo",
+        "desc": "Ricompense più regolari e sostenibili migliorano la stabilità nel lungo termine."
+      },
+      "growth": {
+        "title": "Crescita dell'ecosistema",
+        "desc": "Permette di reinvestire in crescita e adozione."
+      },
+      "dynamic": {
+        "title": "Allineamento dinamico",
+        "desc": "Si adatta alle condizioni di mercato invece di seguire una policy rigida."
+      }
+    },
+    "stakeCta": "Metti in staking i NOS"
+  },
+  "chart": {
+    "customDateRange": "Intervallo di date personalizzato",
+    "selectDateRange": "Seleziona intervallo di date",
+    "startDate": "Data di inizio",
+    "endDate": "Data di fine",
+    "applyTimeframe": "Applica periodo",
+    "lineChart": "Grafico a linee",
+    "areaChart": "Grafico ad area",
+    "candlestickChart": "Grafico a candele",
+    "noChartData": "Nessun dato disponibile",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "average": "Media",
+    "maximum": "Massimo",
+    "minimum": "Minimo",
+    "dataPoints": "Punti dati",
+    "annotations": {
+      "phase1": "Fase 1: riduzione ~30 %",
+      "phase2": "Fase 2: halving APY"
+    }
+  },
+  "table": {
+    "dateRange": "Intervallo di date",
+    "export": "Esporta",
+    "exportAsCSV": "Esporta come CSV",
+    "exportAsJSON": "Esporta come JSON"
+  },
+  "stats": {
+    "keyMetrics": "Metriche principali",
+    "averageXnos": "xNOS medio",
+    "xnosRange": "Intervallo xNOS",
+    "aprAverage": "APR medio",
+    "dailyVolatility": "Volatilità giornaliera",
+    "coverage": "Copertura",
+    "aprStreak": "Serie APR",
+    "xnosStreak": "Serie xNOS",
+    "maxDrawdown": "Drawdown massimo",
+    "tooltips": {
+      "dailyVolatility": "Volatilità mobile sull'intervallo selezionato."
+    }
+  },
+  "analysis": {
+    "summaryTitle": "Sintesi dell'analisi di staking",
+    "currentConditions": "Condizioni attuali",
+    "todaysValue": "Il valore odierno è",
+    "relativeToRecent": "rispetto ai valori recenti",
+    "currentValue": "Valore attuale",
+    "valueAt": "Valore al",
+    "of30dayAverage": "della media a 30 giorni",
+    "volatilityLevel": "Livello di volatilità",
+    "metricTrends": "Trend della metrica",
+    "trend": "Trend",
+    "averageValue": "Valore medio",
+    "keyRaydiumMetrics": "Metriche principali",
+    "percentileRank": "Percentile",
+    "volatility": "Volatilità",
+    "dataQuality": "Qualità dei dati",
+    "historicalPerformance": "Performance storica",
+    "avg": "Media",
+    "allTimeHighMetric": "Massimo storico di {metric}",
+    "allTimeLowMetric": "Minimo storico di {metric}"
+  }
+}

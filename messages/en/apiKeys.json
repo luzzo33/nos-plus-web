@@ -1,0 +1,121 @@
+{
+  "title": "API Keys",
+  "subtitle": "Issue and manage keys for the Nos API.",
+  "authRequired": "You need to sign in to manage API keys.",
+  "testNotice": {
+    "message": "This feature is currently in a test phase. If you encounter any issues or have questions, please reach out at <email>luzzo@nos.plus</email> or via <discord>Discord</discord>/<twitter>Twitter</twitter>. For higher limits, contact through the same channels."
+  },
+  "guest": {
+    "subtitle": "Generate a free API key without creating an account.",
+    "limit": "You can create up to {limit} keys during this test phase.",
+    "freeTierLabel": "Free Tier",
+    "freeTierHint": "Includes capped usage suitable for testing.",
+    "generate": "Generate free key",
+    "managePrompt": "Need higher limits or team features? Sign in to manage account-based keys.",
+    "loginCta": "Sign in or create an account"
+  },
+  "lookup": {
+    "title": "Check an API key",
+    "subtitle": "Paste any NOS API key to view a read-only usage snapshot. The plaintext key is not stored.",
+    "readOnly": "Read-only snapshot",
+    "apiKeyLabel": "API key",
+    "apiKeyPlaceholder": "nos_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "windowLabel": "Time window (minutes)",
+    "windowHint": "Between 5 and 1440 minutes. Defaults to 60.",
+    "loading": "Looking up…",
+    "submit": "Show usage",
+    "detailsTitle": "Key details",
+    "label": "Label",
+    "tier": "Tier",
+    "status": "Status",
+    "createdAt": "Created",
+    "lastUsedAt": "Last used",
+    "never": "Never",
+    "rateLimitHour": "Hourly limit",
+    "rateLimitDay": "Daily limit",
+    "issuedBy": "Issued by",
+    "perHour": "/ hour",
+    "perDay": "/ day",
+    "summaryTitle": "Usage in the last {window} minutes",
+    "totalCalls": "Total calls",
+    "successCalls": "Successful calls",
+    "errorCalls": "Error calls",
+    "avgLatency": "Average latency",
+    "unknown": "Unknown",
+    "none": "Not set",
+    "errors": {
+      "API_KEY_REQUIRED": "Enter the API key you want to inspect.",
+      "NOT_FOUND": "No key matches that value.",
+      "LIMIT_REACHED": "You’ve recently looked up a key. Please try again in a moment.",
+      "LOOKUP_FAILED": "Usage for that key could not be loaded.",
+      "generic": "Unable to verify that key right now."
+    }
+  },
+  "loading": "Loading…",
+  "newKey": {
+    "title": "Your new key",
+    "reminder": "Copy this key now. For security reasons it won’t be shown again.",
+    "dismiss": "Hide this message",
+    "close": "Dismiss"
+  },
+  "request": {
+    "title": "Request a key",
+    "subtitle": "Select a tier and complete the captcha to mint a new key.",
+    "label": "Label (optional)",
+    "labelPlaceholder": "e.g. staging dashboard",
+    "tier": "Tier",
+    "submit": "Generate key",
+    "loading": "Requesting…",
+    "captchaHelp": "Complete the captcha below to verify you're human. The key will only be shown once, so store it safely.",
+    "cancel": "Cancel",
+    "limitReached": "Maximum of {limit} keys reached. Revoke an existing key or request higher limits."
+  },
+  "keys": {
+    "title": "Existing keys",
+    "count": "{count, plural, one {# key} other {# keys}}",
+    "empty": "No keys yet. Generate one above to get started.",
+    "defaultLabel": "Untitled key",
+    "lastFour": "Ends in {lastFour}",
+    "createdAt": "Created {date}",
+    "tier": "Tier: {tier}",
+    "status": {
+      "active": "Active",
+      "paused": "Paused",
+      "revoked": "Revoked"
+    },
+    "revoke": "Revoke",
+    "viewUsage": "View usage",
+    "hideUsage": "Hide usage"
+  },
+  "usage": {
+    "title": "Usage overview",
+    "totalCalls": "Total calls (last hour)",
+    "errors": "Errors",
+    "avgLatency": "Average latency",
+    "recentActivity": "Recent activity",
+    "table": {
+      "time": "Time",
+      "route": "Route",
+      "method": "Method",
+      "status": "Status",
+      "latency": "Latency"
+    },
+    "noActivity": "No activity recorded yet.",
+    "dailyHeadline": "Daily totals",
+    "calls": "{count, plural, one {# call} other {# calls}}",
+    "errorsShort": "{count, plural, one {# error} other {# errors}}",
+    "noDaily": "No recent daily usage."
+  },
+  "errors": {
+    "CAPTCHA_REQUIRED": "Complete the captcha before requesting a key.",
+    "CAPTCHA_INVALID": "Captcha validation failed. Please try again.",
+    "TURNSTILE_NOT_CONFIGURED": "Captcha is not configured; please contact support.",
+    "TIER_NOT_FOUND": "Selected tier is unavailable.",
+    "DUPLICATE_CLIENT": "You already have a key for this account/device.",
+    "SERVER_ERROR": "Server error. Please try again shortly.",
+    "LIMIT_REACHED": "You’ve reached the maximum number of keys for this account.",
+    "MAX_KEYS_REACHED": "You’ve reached the maximum number of keys for this account.",
+    "AUTH_REQUIRED": "Please sign in to manage account keys or use the free tier above without an account.",
+    "generic": "Unable to process the request."
+  }
+}

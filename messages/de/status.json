@@ -1,0 +1,99 @@
+{
+  "title": "Servicestatus",
+  "subtitle": "Live-Statusübersicht, Verfügbarkeitsdetails und historische Ereignisse der NOS-API-Plattform.",
+  "loading": "Live-Status wird geladen...",
+  "environment": "Umgebung",
+  "started": "Gestartet",
+  "uptime": "Laufzeit",
+  "lastUpdated": "Zuletzt aktualisiert {value}",
+  "actions": {
+    "refresh": "Aktualisieren",
+    "autoRefresh": "Aktualisierung alle 60 s"
+  },
+  "labels": {
+    "ok": "Betriebsbereit",
+    "maintenance": "Wartung",
+    "degraded": "Eingeschränkte Leistung",
+    "incident": "Störung",
+    "unknown": "Unbekannt"
+  },
+  "descriptions": {
+    "ok": "Alle Systeme laufen normal.",
+    "maintenance": "Es findet derzeit eine geplante Wartung statt.",
+    "degraded": "Einige Funktionen sind eventuell eingeschränkt.",
+    "incident": "Es wurde eine aktive Störung erkannt.",
+    "unknown": "Statusinformationen sind derzeit nicht verfügbar."
+  },
+  "error": {
+    "title": "Status kann nicht geladen werden",
+    "retry": "Erneut versuchen"
+  },
+  "cards": {
+    "environment": "Umgebung",
+    "environmentHint": "Laufende Umgebung",
+    "version": "Version",
+    "versionHint": "Derzeit ausgerollter Build",
+    "uptime": "Laufzeit",
+    "uptimeHint": "Gestartet am {time}",
+    "lastUpdated": "Letzte Aktualisierung"
+  },
+  "eventTypes": {
+    "deployment": "Deployment",
+    "incident": "Störung",
+    "recovery": "Wiederherstellung",
+    "maintenance": "Wartung"
+  },
+  "eventDescriptions": {
+    "deployment": "Erfasste erfolgreiche Deployments",
+    "incident": "Vom System registrierte Störungen",
+    "recovery": "Wiederherstellungen, die vorangegangene Störungen beheben",
+    "maintenance": "Geplante Wartungsfenster und Rolling-Restarts"
+  },
+  "eventStatuses": {
+    "ok": "Behoben",
+    "maintenance": "Wartung",
+    "incident": "Störung",
+    "unknown": "Status unbekannt"
+  },
+  "limits": {
+    "title": "Rate Limits",
+    "subtitle": "Aktuelle Anfragekontingente für öffentliche Endpunkte.",
+    "lastEvaluated": "Ausgewertet {value}",
+    "perWindow": "Anfragen pro {window}",
+    "noWindow": "Anfragen",
+    "estimated": "~{value}/Minute",
+    "window": "Fenster: {value}",
+    "empty": "Keine Limitdaten vom Dienst veröffentlicht.",
+    "keys": {
+      "v3": "Core API (v3)",
+      "monitor": "Monitor-API"
+    }
+  },
+  "limitProfiles": {
+    "metadata": {
+      "tier": "Tarif: {value}",
+      "burstRpm": "Burst: {value} Anfragen/Minute",
+      "monthlyQuota": "Monatliches Kontingent: {value}"
+    },
+    "windows": {
+      "hour": "Pro Stunde",
+      "day": "Pro Tag"
+    },
+    "profiles": {
+      "anonymous": {
+        "title": "Anonymer API-Schlüssel",
+        "description": "API-Schlüssel ohne verifizierte E-Mail-Adresse."
+      },
+      "selfService": {
+        "title": "Self-Service API-Schlüssel",
+        "description": "Verifizierte Konten erhalten diese Limits beim Erstellen über nos.plus."
+      }
+    }
+  },
+  "events": {
+    "title": "Aktuelle Ereignisse",
+    "subtitle": "Deployments, Störungen und Wiederherstellungen laut Plattformmeldung.",
+    "showing": "Es werden {shown} von {total} Ereignissen angezeigt",
+    "empty": "Keine aktuellen Ereignisse aufgezeichnet."
+  }
+}

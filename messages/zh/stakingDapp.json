@@ -1,0 +1,157 @@
+{
+  "title": "质押 Dapp",
+  "contractBalance": "Contract Balance",
+  "stakers": "Stakers",
+  "subtitle": "Nosana 质押合约的 xNOS 与 APR 分析",
+  "header": {
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "最后更新时间"
+  },
+  "sections": {
+    "overview": "概览",
+    "chart": "图表",
+    "table": "表格",
+    "stats": "统计",
+    "analysis": "分析"
+  },
+  "marketOverview": {
+    "title": "Staking Overview",
+    "range": "Range",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Updated",
+    "change": "Change",
+    "allTimeHigh": "All Time High",
+    "volatility": "Volatility",
+    "ranking": "Ranking",
+    "ofAvg": "of avg",
+    "moderate": "Moderate",
+    "tooltips": {
+      "currentMetric": "Shows the current value for the selected metric.",
+      "rangeHighLow": "Low and high values across the selected range."
+    }
+  },
+  "overview": {
+    "xnosChanges": "xNOS 变化",
+    "xnosRanges": "xNOS 区间",
+    "showLess": "显示更少",
+    "avg": "平均",
+    "current": "当前",
+    "xnosStatistics": "xNOS 统计",
+    "currentXnos": "当前 xNOS",
+    "averageXnos": "平均 xNOS",
+    "medianXnos": "中位 xNOS",
+    "volatility": "波动率",
+    "dataPoints": "数据点",
+    "statisticsCalculated": "统计计算自",
+    "period": "周期",
+    "apyAdjustmentsTitle": "APY 调整",
+    "subtitle": "战略性 APY 调整，确保协议长期可持续性和质押者增长",
+    "labels": {
+      "change": "变更",
+      "date": "日期",
+      "reason": "原因"
+    },
+    "phase1": {
+      "title": "阶段 1",
+      "change": "~30% 降低",
+      "date": "2024-01-14",
+      "reason": "调整 APY 以平衡激励与可持续性"
+    },
+    "phase2": {
+      "title": "阶段 2",
+      "change": "~APY 减半",
+      "date": "2024-05-21",
+      "reason": "使奖励与网络增长和长期健康相匹配"
+    },
+    "why": {
+      "title": "为何调整",
+      "health": {
+        "title": "协议健康",
+        "desc": "在市场周期中保持可持续的质押奖励。"
+      },
+      "growth": {
+        "title": "质押者增长",
+        "desc": "鼓励健康参与并减少稀释。"
+      },
+      "dynamic": {
+        "title": "动态调整",
+        "desc": "反映不断变化的网络条件与使用。"
+      }
+    },
+    "stakeCta": "前往 Nosana 进行质押",
+    "aprChanges": "APR 变化",
+    "aprRanges": "APR 区间",
+    "aprStatistics": "APR 统计",
+    "averageAPR": "平均 APR",
+    "medianAPR": "中位 APR",
+    "showAllRanges": "显示所有区间",
+    "currentAPR": "当前 APR"
+  },
+  "chart": {
+    "customDateRange": "自定义日期范围",
+    "selectDateRange": "选择日期范围",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "applyTimeframe": "应用时间范围",
+    "lineChart": "折线图",
+    "areaChart": "面积图",
+    "candlestickChart": "Candlestick Chart",
+    "noChartData": "暂无图表数据",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "average": "平均",
+    "maximum": "最大",
+    "minimum": "最小",
+    "dataPoints": "数据点",
+    "annotations": {
+      "phase1": "阶段 1：~30% 降低",
+      "phase2": "阶段 2：~APY 减半",
+      "toggle": "标注",
+      "on": "开",
+      "off": "关"
+    }
+  },
+  "table": {
+    "dateRange": "Date Range",
+    "export": "Export",
+    "exportAsCSV": "Export as CSV",
+    "exportAsJSON": "Export as JSON"
+  },
+  "stats": {
+    "keyMetrics": "Key Metrics",
+    "averageXnos": "Average xNOS",
+    "xnosRange": "xNOS Range",
+    "aprAverage": "APR Average",
+    "dailyVolatility": "Daily Volatility",
+    "coverage": "Coverage",
+    "aprStreak": "APR Streak",
+    "xnosStreak": "xNOS Streak",
+    "maxDrawdown": "Max Drawdown",
+    "tooltips": {
+      "dailyVolatility": "Rolling volatility for the selected range."
+    }
+  },
+  "analysis": {
+    "summaryTitle": "Staking Analysis Summary",
+    "currentConditions": "Current Conditions",
+    "todaysValue": "Today's value is",
+    "relativeToRecent": "relative to recent",
+    "currentValue": "Current Value",
+    "valueAt": "Value at",
+    "of30dayAverage": "of 30-day Average",
+    "volatilityLevel": "Volatility Level",
+    "metricTrends": "Metric Trends",
+    "trend": "Trend",
+    "averageValue": "Average Value",
+    "keyRaydiumMetrics": "Key Metrics",
+    "percentileRank": "Percentile Rank",
+    "volatility": "Volatility",
+    "dataQuality": "Data Quality",
+    "historicalPerformance": "Historical Performance",
+    "avg": "Avg",
+    "allTimeHighMetric": "All-Time High {metric}",
+    "allTimeLowMetric": "All-Time Low {metric}"
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "meta": {
+    "lastUpdated": "Last updated: September 28, 2025",
+    "tosTitle": "Terms of Use",
+    "privacyTitle": "Privacy Notice"
+  },
+  "terms": {
+    "hero": {
+      "title": "Terms of Use",
+      "subtitle": "These terms govern your use of NOS.plus, an independent community platform curated for the Nosana ecosystem. The service provides dashboards, monitors, and APIs on a best-effort basis and is not a commercial product."
+    },
+    "sections": {
+      "overview": {
+        "title": "1. Acceptance",
+        "body": [
+          "By using NOS.plus you agree to these terms. The platform is provided at no cost as a goodwill service for the Nosana community.",
+          "If you share NOS.plus with others (for example within your community or team), please ensure they understand and accept the same terms."
+        ]
+      },
+      "services": {
+        "title": "2. What NOS.plus Offers",
+        "body": [
+          "NOS.plus is an independent, community-built service. Feature availability may evolve based on resources and community priorities."
+        ],
+        "items": [
+          "Dashboards for token activity, staking, distribution, and ecosystem statistics.",
+          "Streaming monitors for order-book walls, swap activity, and Jupiter program updates.",
+          "API and WebSocket feeds for developers and community builders.",
+          "Experimental tools and prototypes that may be introduced or retired without prior notice."
+        ]
+      },
+      "accounts": {
+        "title": "3. Accounts and Keys",
+        "body": [
+          "Some features may require an API key or lightweight login to prevent abuse. Access controls exist solely to protect the platform; there is no paid plan or premium tier.",
+          "If you receive a key, keep it private and use it responsibly."
+        ],
+        "items": [
+          "Keep tokens and keys secure.",
+          "Notify the maintainer (via Twitter/X or email) if you believe a key is compromised.",
+          "Keys may be rate-limited or revoked if they cause issues for the project."
+        ]
+      },
+      "acceptableUse": {
+        "title": "4. Acceptable Use",
+        "body": [
+          "NOS.plus is a shared community resource. Please do not misuse it or disrupt the shared infrastructure."
+        ],
+        "items": [
+          "No security probing, brute force, or automated scraping beyond normal API use.",
+          "Do not overload the service with unnecessary traffic.",
+          "Do not use NOS.plus for illegal activity, fraud, or impersonation.",
+          "When sharing data, credit NOS.plus and avoid presenting it as official Nosana output."
+        ]
+      },
+      "dataRights": {
+        "title": "5. Data and Content",
+        "body": [
+          "All dashboards, code, and datasets curated here remain owned by the NOS.plus maintainer unless otherwise noted.",
+          "On-chain and exchange data belong to the respective networks and participants. NOS.plus only collects and presents what is already public.",
+          "You may reuse NOS.plus insights for personal or community projects, but please provide attribution when redistributing significant portions."
+        ]
+      },
+      "apiAccess": {
+        "title": "6. API and Rate Limits",
+        "body": [
+          "APIs and streams are provided on a best-effort basis. They are free to use but limited in capacity.",
+          "If usage threatens stability or overwhelms resources, keys may be throttled or blocked."
+        ],
+        "items": [
+          "Stay within the shared community limits.",
+          "Cache responses where possible.",
+          "Respect any Retry-After headers or backoff signals."
+        ]
+      },
+      "fees": {
+        "title": "7. Payments",
+        "body": ["NOS.plus is entirely free. There are no subscriptions, billing, or charges."]
+      },
+      "availability": {
+        "title": "8. Availability",
+        "body": [
+          "NOS.plus operates on a best-effort schedule; uptime is not guaranteed.",
+          "Services may be paused for maintenance, bug fixes, or upstream incidents (RPC nodes, exchange feeds, etc.).",
+          "During incidents, updates may be posted on the status page or shared through community channels."
+        ]
+      },
+      "disclaimers": {
+        "title": "9. Disclaimers",
+        "body": [
+          "NOS.plus is for informational and educational purposes only.",
+          "Nothing here is financial or investment advice.",
+          "Data is aggregated from public sources and may be incomplete or inaccurate."
+        ]
+      },
+      "liability": {
+        "title": "10. Limitation of Liability",
+        "body": [
+          "NOS.plus is provided \"as is\" without warranties of any kind.",
+          "You assume all risk for any losses, damages, or decisions made using NOS.plus data."
+        ]
+      },
+      "changes": {
+        "title": "11. Updates",
+        "body": [
+          "These terms may be adjusted as the project evolves. Updates will be posted with a new date. Continued use means you accept the changes."
+        ]
+      },
+      "contact": {
+        "title": "12. Contact",
+        "body": ["For questions or issues, reach out via the community channels:"],
+        "items": ["Twitter / X: https://x.com/nos_plus", "Email: support@nos.plus"]
+      }
+    }
+  },
+  "privacy": {
+    "hero": {
+      "title": "Privacy Notice",
+      "subtitle": "This notice explains how NOS.plus, an independent community-led platform, handles information when you use our dashboards, monitors, and APIs. NOS.plus collects as little personal data as necessary."
+    },
+    "sections": {
+      "intro": {
+        "title": "1. Overview",
+        "body": [
+          "NOS.plus operates as an independent community initiative focused on transparency across the Nosana ecosystem.",
+          "Data collection is limited to what is required to keep the site and APIs functional."
+        ]
+      },
+      "dataWeCollect": {
+        "title": "2. Data Collected",
+        "body": ["Only the data necessary for stability and abuse protection is collected."],
+        "items": [
+          "If you register an API key: your email (if provided) and key metadata.",
+          "Basic logs: requests, errors, connection events (for debugging and rate limiting).",
+          "Optional support messages you send by email or Twitter/X.",
+          "No marketing trackers, third-party ads, or profiling cookies are used."
+        ]
+      },
+      "usage": {
+        "title": "3. How Data Is Used",
+        "body": ["Collected information is used only to operate and improve NOS.plus."],
+        "items": [
+          "Serve dashboards and API responses.",
+          "Monitor abuse, enforce rate limits, and debug issues.",
+          "Improve features based on anonymous usage trends.",
+          "Respond if you contact support."
+        ]
+      },
+      "platformData": {
+        "title": "4. Blockchain and Market Data",
+        "body": [
+          "Most data shown on NOS.plus comes from public blockchains, exchanges, or community sources.",
+          "This is not personal data. It is processed and displayed for transparency and insight."
+        ]
+      },
+      "sharing": {
+        "title": "5. Sharing",
+        "body": [
+          "Personal data is never sold. Sharing happens only when required to operate the service or comply with law."
+        ],
+        "items": [
+          "Infrastructure providers (servers, databases) under normal confidentiality obligations.",
+          "Authorities, if legally required.",
+          "Aggregated, anonymized stats may be shared with the community."
+        ]
+      },
+      "retention": {
+        "title": "6. Retention",
+        "body": [
+          "Personal data (like API key records) is kept only as long as necessary to operate the service.",
+          "Logs roll on short windows, except when kept longer for debugging or abuse investigation."
+        ]
+      },
+      "security": {
+        "title": "7. Security",
+        "body": [
+          "We use reasonable technical measures (encryption in transit, access controls, monitoring) to protect data, but the platform is resource-constrained and absolute security cannot be guaranteed."
+        ]
+      },
+      "international": {
+        "title": "8. International",
+        "body": [
+          "Servers may be located in different regions. By using NOS.plus you consent to data being processed wherever the servers run."
+        ]
+      },
+      "choices": {
+        "title": "9. Your Choices",
+        "body": [
+          "You may request deletion of your account data or API key records at any time by contacting the maintainer."
+        ],
+        "items": [
+          "Email support@nos.plus for data removal or changes.",
+          "Opt out of optional communications if any are ever sent.",
+          "Disable cookies in your browser (only basic session storage is used)."
+        ]
+      },
+      "children": {
+        "title": "10. Children",
+        "body": [
+          "NOS.plus is not directed to children under 16. No personal data from minors is knowingly collected."
+        ]
+      },
+      "updates": {
+        "title": "11. Updates",
+        "body": [
+          "This policy may be updated over time. The latest version will always be posted here."
+        ]
+      },
+      "contact": {
+        "title": "12. Contact",
+        "body": ["For privacy requests or questions, reach out via community channels:"],
+        "items": ["Twitter / X: https://x.com/nos_plus", "Email: support@nos.plus"]
+      }
+    }
+  }
+}

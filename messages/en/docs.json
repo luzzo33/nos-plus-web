@@ -1,0 +1,60 @@
+{
+  "title": "Nos API Documentation",
+  "subtitle": "Stable, production-ready endpoints for price, volume, and holders",
+  "limitedNotice": "Right now we expose price, volume, and holders publicly. More endpoints are coming soon — watch Twitter/X for release announcements and check back here for updates.",
+  "intro": {
+    "title": "Overview",
+    "text": "All endpoints are versioned under /v3 and return JSON. Use your API key on every request.",
+    "baseUrl": "Base URL"
+  },
+  "auth": {
+    "title": "Authentication",
+    "text": "Provide your key in either the X-API-Key header or Authorization: Bearer header.",
+    "headerApiKey": "X-API-Key: YOUR_API_KEY",
+    "headerBearer": "Authorization: Bearer YOUR_API_KEY",
+    "note": "You can request a key under Tools → API Keys in the top navigation."
+  },
+  "toc": {
+    "title": "Endpoints"
+  },
+  "shared": {
+    "viewUi": "Open UI",
+    "params": {
+      "range": "Range",
+      "quote": "Quote"
+    }
+  },
+  "prices": {
+    "title": "Prices",
+    "desc": "Spot prices, charts, and stats for NOS."
+  },
+  "volume": {
+    "title": "Volume",
+    "desc": "Aggregated trading volume across venues with clean attribution."
+  },
+  "holders": {
+    "title": "Holders",
+    "desc": "Total holders, charts, and distribution metrics."
+  },
+  "dynamic": {
+    "volumeSummary": "24h Volume {current} ({change24h} vs 24h)"
+  },
+  "more": {
+    "title": "More",
+    "swaggerUi": "Open Swagger UI"
+  },
+  "stoplight": {
+    "request": "Request",
+    "queryParameters": "Query Parameters",
+    "responses": "Responses",
+    "responseExample": "Response Example",
+    "endpoints": "Endpoints",
+    "schemas": "Schemas",
+    "poweredBy": "powered by Stoplight",
+    "sendRequest": "Send API Request",
+    "allowedValues": "Allowed values:",
+    "body": "Body",
+    "notSet": "Not Set",
+    "selectAnOption": "select an option"
+  }
+}

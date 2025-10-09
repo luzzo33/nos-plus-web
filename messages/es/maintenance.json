@@ -1,0 +1,22 @@
+{
+  "title": "Modo mantenimiento",
+  "description": "Ingresa la contraseña para continuar en el sitio.",
+  "passwordPlaceholder": "Contraseña",
+  "unlock": "Desbloquear",
+  "checking": "Comprobando…",
+  "loading": "Cargando…",
+  "toggle": {
+    "light": "Modo claro",
+    "dark": "Modo oscuro"
+  },
+  "errors": {
+    "incorrect": "Contraseña incorrecta",
+    "requestFailed": "La solicitud falló",
+    "server": "Error del servidor. Inténtalo de nuevo.",
+    "unable": "No se pudo verificar la contraseña"
+  },
+  "unlockPage": {
+    "title": "Endpoint de desbloqueo de mantenimiento",
+    "description": "Esta ruta se usa internamente para enviar la contraseña de mantenimiento. Puedes volver a la página de mantenimiento."
+  }
+}

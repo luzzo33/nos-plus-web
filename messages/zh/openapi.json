@@ -1,0 +1,183 @@
+{
+  "info": {
+    "title": "NOS+ API",
+    "description": "Comprehensive API for Nosana (NOS) token data including prices, volume, holders, and staking information."
+  },
+  "tags": {
+    "prices": "Price data endpoints",
+    "volume": "Trading volume endpoints",
+    "holders": "Token holder analytics",
+    "staking": "Staking metrics and data",
+    "flow": "Flow analytics endpoints",
+    "sentiment": "Market sentiment analytics",
+    "forecast": "Price forecast endpoints"
+  },
+  "shared": {
+    "params": {
+      "range": "Date range",
+      "interval": "Aggregation interval",
+      "cumulative": "Include cumulative series",
+      "groupBy": "Grouping key",
+      "sort": "Sort column",
+      "order": "Sort order",
+      "page": "Page number",
+      "pageSize": "Page size"
+    }
+  },
+  "prices": {
+    "chart": {
+      "summary": "Price chart data",
+      "response": "Chart data",
+      "description": "Time-series price data including OHLC candles, summary metrics, and metadata."
+    },
+    "widget": {
+      "summary": "Price widget data",
+      "response": "Widget payload",
+      "description": "Latest spot price, range metrics, and sparkline data for UI widgets."
+    },
+    "stats": {
+      "summary": "Price statistics",
+      "response": "Statistics payload",
+      "description": "Aggregated price statistics, distribution metrics, and technical trend indicators."
+    },
+    "table": {
+      "summary": "Price table data",
+      "response": "Price table data with pagination",
+      "description": "Paginated price rows with change calculations and formatted display helpers."
+    },
+    "index": {
+      "summary": "Endpoint overview",
+      "description": "Lists all price endpoints with their paths and supported parameters.",
+      "response": "Endpoint metadata grouped by feature."
+    }
+  },
+  "volume": {
+    "chart": {
+      "summary": "Volume chart data",
+      "response": "Chart data",
+      "description": "Time-series trading volume with aggregates, summaries, and metadata."
+    },
+    "widget": {
+      "summary": "Volume widget data",
+      "response": "Widget payload",
+      "description": "Current volume snapshot with range statistics and rankings."
+    },
+    "stats": {
+      "summary": "Volume statistics",
+      "response": "Statistics payload",
+      "description": "Detailed trading volume statistics, distributions, patterns, and trend insights."
+    },
+    "table": {
+      "summary": "Volume table data",
+      "response": "Table data",
+      "description": "Paginated trading volume rows with formatted output helpers."
+    },
+    "index": {
+      "summary": "Endpoint overview",
+      "description": "Lists all volume endpoints with their paths and supported parameters.",
+      "response": "Endpoint metadata grouped by feature."
+    }
+  },
+  "responses": {
+    "unauthorized": "Authentication required to call this endpoint.",
+    "rateLimited": "Request rate exceeded. Retry after the cooldown."
+  },
+  "holders": {
+    "index": {
+      "summary": "Endpoint overview",
+      "description": "Lists all holder analytics endpoints with their paths and supported parameters.",
+      "response": "Endpoint metadata grouped by feature."
+    },
+    "chart": {
+      "summary": "Holder chart data",
+      "description": "Time-series holder counts with summary metrics and metadata.",
+      "response": "Holder time-series payload."
+    },
+    "widget": {
+      "summary": "Holder widget data",
+      "description": "Current holder snapshot with change ranges, growth metrics, and milestones.",
+      "response": "Widget payload."
+    },
+    "stats": {
+      "summary": "Holder statistics",
+      "description": "Aggregated holder statistics, distribution metrics, projections, and growth insights.",
+      "response": "Statistics payload."
+    },
+    "table": {
+      "summary": "Holder table data",
+      "description": "Paginated holder rows with formatted display helpers.",
+      "response": "Table payload."
+    }
+  },
+  "flow": {
+    "trace": {
+      "summary": "Trace token flow",
+      "description": "Start a background trace to follow NOS token movements across wallets.",
+      "response": "Trace job metadata and graph payload."
+    },
+    "cache": {
+      "summary": "Fetch cached trace",
+      "description": "Return a previously computed trace result by cache key without recomputing.",
+      "response": "Cached trace payload or cache miss indication."
+    },
+    "job": {
+      "summary": "Trace job status",
+      "description": "Check the processing status of a trace job using its key.",
+      "response": "Status payload with progress details."
+    }
+  },
+  "sentiment": {
+    "index": {
+      "summary": "Endpoint overview",
+      "description": "Lists all sentiment endpoints with their paths and supported parameters.",
+      "response": "Endpoint metadata grouped by feature."
+    },
+    "chart": {
+      "summary": "Sentiment chart data",
+      "description": "Time-series Fear & Greed index with sentiment zones, optional moving averages, and component breakdowns.",
+      "response": "Chart payload containing data points and summary metadata."
+    },
+    "table": {
+      "summary": "Sentiment table data",
+      "description": "Paginated Fear & Greed index rows with sentiment labels, changes, and distribution summary.",
+      "response": "Table payload with rows, pagination, and summary insights."
+    },
+    "widget": {
+      "summary": "Sentiment widget data",
+      "description": "Current sentiment snapshot with gauge configuration, trend comparisons, and contextual insights.",
+      "response": "Widget payload for dashboards and stat cards."
+    },
+    "stats": {
+      "summary": "Sentiment statistics",
+      "description": "Comprehensive analytics including historical ranges, distributions, patterns, and data quality metrics.",
+      "response": "Statistics payload grouped by insights."
+    }
+  },
+  "forecast": {
+    "index": {
+      "summary": "Endpoint overview",
+      "description": "Lists all forecast endpoints with their paths and supported parameters.",
+      "response": "Endpoint metadata grouped by feature."
+    },
+    "chart": {
+      "summary": "Forecast chart data",
+      "description": "Historical prices blended with projected values and confidence bands for forward-looking analysis.",
+      "response": "Chart payload including accuracy metadata and forecast intervals."
+    },
+    "table": {
+      "summary": "Forecast table data",
+      "description": "Tabular forecast breakdown with price targets, confidence, and probability helpers.",
+      "response": "Table payload with rows, summary statistics, and column descriptors."
+    },
+    "widget": {
+      "summary": "Forecast widget data",
+      "description": "Condensed forecast snapshot featuring current price, horizon targets, model accuracy, and signals.",
+      "response": "Widget payload for dashboards and alert surfaces."
+    },
+    "stats": {
+      "summary": "Forecast statistics",
+      "description": "Comprehensive forecast analytics covering accuracy, technical indicators, and historical performance.",
+      "response": "Statistics payload grouped by insights."
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "loading": "Cargando...",
+  "error": "Error",
+  "retry": "Reintentar",
+  "noData": "No hay datos disponibles",
+  "na": "N/D",
+  "apply": "Aplicar",
+  "cancel": "Cancelar",
+  "clear": "Restablecer",
+  "export": "Exportar",
+  "download": "Descargar",
+  "exportCSV": "Exportar como CSV",
+  "exportJSON": "Exportar como JSON",
+  "downloadCSV": "Descargar CSV",
+  "downloadJSON": "Descargar JSON",
+  "live": "En vivo",
+  "historical": "Histórico",
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "showing": "Mostrando",
+  "to": "a",
+  "of": "de",
+  "uptrend": "Tendencia alcista",
+  "downtrend": "Tendencia bajista",
+  "page": "Página",
+  "pages": "páginas",
+  "resetToDefault": "Restablecer valores predeterminados",
+  "fontSize": "Tamaño de fuente",
+  "fontSizeSettings": "Ajustes de fuente",
+  "customDate": "Personalizado",
+  "lastUpdated": "Última actualización",
+  "current": "Actual",
+  "date": "Fecha",
+  "stats": "Estadísticas",
+  "action": "Acción",
+  "allTimeHigh": "Máximo histórico",
+  "allTimeLow": "Mínimo histórico",
+  "table": {
+    "showing": "Mostrando",
+    "of": "de",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageSize": "Elementos por página"
+  },
+  "days": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "last7Days": "Últimos 7 días",
+    "last30Days": "Últimos 30 días",
+    "last90Days": "Últimos 90 días"
+  },
+  "timeRanges": {
+    "1h": "1H",
+    "4h": "4H",
+    "24h": "24H",
+    "7d": "7D",
+    "30d": "30D",
+    "90d": "90D",
+    "180d": "180D",
+    "1y": "1A",
+    "all": "Todo"
+  },
+  "timeRangeDescriptions": {
+    "1h": "Última hora",
+    "4h": "Últimas 4 horas",
+    "24h": "Últimas 24 horas",
+    "7d": "Últimos 7 días",
+    "30d": "Últimos 30 días",
+    "90d": "Últimos 90 días",
+    "180d": "Últimos 180 días",
+    "1y": "Último año",
+    "all": "Todo el tiempo"
+  },
+  "chart": {
+    "compact": "Compacto",
+    "normal": "Normal",
+    "large": "Grande",
+    "selectDateRange": "Seleccionar rango de fechas",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin"
+  },
+  "source": "Fuente",
+  "sources": {
+    "live": "En vivo",
+    "historical": "Histórico"
+  },
+  "dataPoints": "puntos de datos",
+  "moderate": "Moderado",
+  "low": "Bajo",
+  "high": "Alto",
+  "from": "desde",
+  "trend": {
+    "up": "Tendencia alcista",
+    "down": "Tendencia bajista",
+    "neutral": "Neutral"
+  },
+  "average": "Promedio",
+  "maximum": "Máximo",
+  "minimum": "Mínimo",
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o ha sido movida.",
+    "goHome": "Ir al inicio"
+  },
+  "cookieBanner": {
+    "title": "Cookies para visitantes de la UE",
+    "body": "Ves este aviso porque navegas desde la Unión Europea. Solo usamos cookies esenciales; revísalas y acéptalas para continuar.",
+    "review": "Revisar política de cookies",
+    "accept": "Aceptar cookies"
+  }
+}

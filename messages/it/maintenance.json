@@ -1,0 +1,22 @@
+{
+  "title": "Modalità manutenzione",
+  "description": "Inserisci la password per continuare sul sito.",
+  "passwordPlaceholder": "Password",
+  "unlock": "Sblocca",
+  "checking": "Verifica in corso…",
+  "loading": "Caricamento…",
+  "toggle": {
+    "light": "Modalità chiara",
+    "dark": "Modalità scura"
+  },
+  "errors": {
+    "incorrect": "Password errata",
+    "requestFailed": "Richiesta non riuscita",
+    "server": "Errore del server. Riprova.",
+    "unable": "Impossibile verificare la password"
+  },
+  "unlockPage": {
+    "title": "Endpoint di sblocco manutenzione",
+    "description": "Questo percorso è usato internamente per inviare la password di manutenzione. Puoi tornare alla pagina di manutenzione."
+  }
+}

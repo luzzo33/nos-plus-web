@@ -1,0 +1,99 @@
+{
+  "title": "Stato del servizio",
+  "subtitle": "Panoramica in tempo reale di stato, uptime ed eventi storici della piattaforma NOS API.",
+  "loading": "Caricamento stato...",
+  "environment": "Ambiente",
+  "started": "Avvio",
+  "uptime": "Uptime",
+  "lastUpdated": "Ultimo aggiornamento {value}",
+  "actions": {
+    "refresh": "Aggiorna",
+    "autoRefresh": "Si aggiorna ogni 60 s"
+  },
+  "labels": {
+    "ok": "Operativo",
+    "maintenance": "Manutenzione",
+    "degraded": "Prestazioni degradate",
+    "incident": "Incidente",
+    "unknown": "Sconosciuto"
+  },
+  "descriptions": {
+    "ok": "Tutti i sistemi funzionano normalmente.",
+    "maintenance": "È in corso una manutenzione programmata.",
+    "degraded": "Alcune funzionalità potrebbero essere limitate.",
+    "incident": "È stato rilevato un incidente attivo.",
+    "unknown": "Le informazioni sullo stato non sono disponibili al momento."
+  },
+  "error": {
+    "title": "Impossibile caricare lo stato",
+    "retry": "Riprova"
+  },
+  "cards": {
+    "environment": "Ambiente",
+    "environmentHint": "Ambiente di esecuzione",
+    "version": "Versione",
+    "versionHint": "Build attualmente distribuita",
+    "uptime": "Uptime",
+    "uptimeHint": "Avviato il {time}",
+    "lastUpdated": "Ultimo aggiornamento"
+  },
+  "eventTypes": {
+    "deployment": "Deployment",
+    "incident": "Incidente",
+    "recovery": "Ripristino",
+    "maintenance": "Manutenzione"
+  },
+  "eventDescriptions": {
+    "deployment": "Deployment riusciti registrati",
+    "incident": "Incidenti segnalati dalla piattaforma",
+    "recovery": "Ripristini che hanno risolto incidenti precedenti",
+    "maintenance": "Finestre di manutenzione pianificate e rolling restart"
+  },
+  "eventStatuses": {
+    "ok": "Risolto",
+    "maintenance": "Manutenzione",
+    "incident": "Incidente",
+    "unknown": "Stato sconosciuto"
+  },
+  "limits": {
+    "title": "Limiti di richiesta",
+    "subtitle": "Quote correnti disponibili per gli endpoint pubblici.",
+    "lastEvaluated": "Valutato {value}",
+    "perWindow": "richieste ogni {window}",
+    "noWindow": "richieste",
+    "estimated": "~{value}/minuto",
+    "window": "Finestra: {value}",
+    "empty": "Il servizio non ha pubblicato limiti.",
+    "keys": {
+      "v3": "API principale (v3)",
+      "monitor": "API Monitor"
+    }
+  },
+  "limitProfiles": {
+    "metadata": {
+      "tier": "Livello: {value}",
+      "burstRpm": "Burst: {value} richieste/minuto",
+      "monthlyQuota": "Quota mensile: {value}"
+    },
+    "windows": {
+      "hour": "All'ora",
+      "day": "Al giorno"
+    },
+    "profiles": {
+      "anonymous": {
+        "title": "API key anonima",
+        "description": "API key emesse senza un'email verificata."
+      },
+      "selfService": {
+        "title": "API key self-service",
+        "description": "Gli account verificati ricevono questi limiti creando le chiavi da nos.plus."
+      }
+    }
+  },
+  "events": {
+    "title": "Eventi recenti",
+    "subtitle": "Deployment, incidenti e ripristini riportati dalla piattaforma.",
+    "showing": "Mostrati {shown} su {total} eventi",
+    "empty": "Nessun evento recente registrato."
+  }
+}

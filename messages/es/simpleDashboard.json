@@ -1,0 +1,266 @@
+{
+  "summary": {
+    "title": "Key Metrics",
+    "loading": "Loading live snapshot…",
+    "updated": "Updated recently",
+    "ariaLabel": "Simple dashboard sticky summary",
+    "price": "Price",
+    "change24h": "24h Δ",
+    "change7d": "7d Δ",
+    "volume24h": "24h Volume",
+    "staked": "Staked %",
+    "unavailable": "Temporarily unavailable"
+  },
+  "presets": {
+    "label": "Layouts",
+    "overview": {
+      "label": "Overview",
+      "description": "Executive snapshot for quick scanning"
+    },
+    "trader": {
+      "label": "Trader Desk",
+      "description": "Order flow, liquidity, live venues"
+    },
+    "research": {
+      "label": "Research",
+      "description": "Longer-term fundamentals and cohorts"
+    }
+  },
+  "density": {
+    "label": "Density",
+    "compact": "Compact",
+    "comfort": "Comfort"
+  },
+  "quickNav": {
+    "ariaLabel": "Simple dashboard quick navigation"
+  },
+  "actions": {
+    "retry": "Retry",
+    "openMarkets": "Open Monitor"
+  },
+  "states": {
+    "errorFallback": "We could not load this data right now.",
+    "emptyFallback": "No data available yet."
+  },
+  "common": {
+    "up": "Up",
+    "down": "Down"
+  },
+  "sections": {
+    "marketSnapshot": {
+      "title": "Market Snapshot",
+      "subtitle": "Price posture, trading range, market cap",
+      "sinceMidnight": "Since midnight {time}",
+      "more": {
+        "marketCap": "Market cap",
+        "fullyDiluted": "Fully diluted cap",
+        "circulating": "Circulating supply",
+        "maxSupply": "Max supply"
+      },
+      "empty": "Price metrics are temporarily unavailable.",
+      "labels": {
+        "price": "Spot Price",
+        "change1h": "1h Δ",
+        "change24h": "24h Δ",
+        "change7d": "7d Δ",
+        "high24h": "24h High",
+        "low24h": "24h Low",
+        "marketCap": "Market cap",
+        "fullyDiluted": "Fully diluted"
+      },
+      "noSparkline": "Sparkline offline"
+    },
+    "trendMomentum": {
+      "title": "Trend & Momentum",
+      "subtitle": "Range toggles, price velocity, micro volume feed",
+      "more": {
+        "average": "Average price",
+        "volatility": "Volatility",
+        "change": "Change vs range start"
+      },
+      "empty": "No chart data returned for this range.",
+      "labels": {
+        "momentum": "Momentum",
+        "recentVolume": "Recent volume pulses"
+      },
+      "momentum": {
+        "strong": "Pressure building",
+        "cooling": "Cooling off",
+        "stable": "Balancing"
+      }
+    },
+    "liquidityVolume": {
+      "title": "Liquidity & Volume",
+      "subtitle": "DEX vs CEX share, Raydium health, depth highlights",
+      "labels": {
+        "split": "DEX / CEX split",
+        "updated": "Updated {time}",
+        "exchanges": "{count} venues",
+        "dexShare": "DEX share",
+        "cexShare": "CEX share",
+        "dexTotal": "{value} via DEX",
+        "cexTotal": "{value} via CEX",
+        "raydium": "Raydium Deck",
+        "raydiumLiq": "Liquidity",
+        "lastUpdate": "Last refresh {time}",
+        "apr": "APR",
+        "aprChange": "{value} vs 24h",
+        "aprTrendUnknown": "No recent APR change",
+        "healthScore": "Pool health",
+        "liquidityFactor": "Liquidity",
+        "stabilityFactor": "Stability",
+        "spikes": "High-volume windows",
+        "topVenues": "Top venues",
+        "volumeShort": "vol",
+        "unknownVenue": "Unnamed venue"
+      },
+      "common": {
+        "up": "Up",
+        "down": "Down"
+      },
+      "more": {
+        "depth": "Depth (avg)",
+        "volatility": "Volatility",
+        "streak": "Streak",
+        "streakValue": "{length} days {direction}"
+      },
+      "noSplit": "Venue split temporarily unavailable.",
+      "noHighlights": "No notable spikes in the selected window.",
+      "noRaydium": "Raydium metrics unavailable right now.",
+      "empty": "Liquidity metrics are not available."
+    },
+    "holdersDistribution": {
+      "title": "Holders & Distribution",
+      "subtitle": "Growth cohort, bracket spread, whale share",
+      "range": "Range",
+      "more": {
+        "nextMilestone": "Next milestone",
+        "progress": "Progress",
+        "estimate": "Est. date"
+      },
+      "labels": {
+        "currentHolders": "Current holders",
+        "updated": "Updated {time}",
+        "change24h": "24h change",
+        "change7d": "7d change",
+        "change30d": "30d change",
+        "rangeStats": "{range} range stats",
+        "average": "Average",
+        "rangeHigh": "Range high",
+        "rangeLow": "Range low",
+        "trend": "Trend",
+        "brackets": "Top brackets"
+      },
+      "trends": {
+        "up": "Expanding",
+        "down": "Cooling",
+        "neutral": "Stable"
+      },
+      "brackets": {
+        "micro": "Micro (≤ 100 NOS)",
+        "small": "Small (100-1K)",
+        "medium": "Medium (1K-10K)",
+        "large": "Large (10K-50K)",
+        "xlarge": "X-Large (50K-100K)",
+        "whale": "Whales (100K-1M)",
+        "megaWhale": "Mega Whales (1M+)"
+      },
+      "noRangeData": "No range snapshot for this period.",
+      "noDistribution": "Distribution data unavailable.",
+      "empty": "Holder data is currently offline."
+    },
+    "stakingRewards": {
+      "title": "Staking & Rewards",
+      "subtitle": "xNOS supply, APR trend, staking flow cadence",
+      "labels": {
+        "staked": "Staked supply",
+        "updated": "Updated {time}",
+        "change24h": "24h change",
+        "change7d": "7d change",
+        "apr": "Effective APR",
+        "tier": "{tier} tier",
+        "change30d": "30d change",
+        "netFlow": "Net flow (accounts)",
+        "stakers": "Stakers",
+        "unstakers": "Unstakers",
+        "net": "24h net",
+        "forecast": "30-day forecast",
+        "rewardCadence": "Reward cadence",
+        "estimate30d": "Supply drift (30d)",
+        "note": "Projection",
+        "nonPromissory": "Illustrative only"
+      },
+      "cadence": {
+        "daily": "Daily distribution"
+      },
+      "noAccounts": "Account flow metrics unavailable.",
+      "empty": "Staking metrics are temporarily unavailable."
+    },
+    "riskSentiment": {
+      "title": "Risk & Sentiment",
+      "subtitle": "Sentiment index, volatility band, current alerts",
+      "labels": {
+        "index": "Sentiment index",
+        "noSummary": "No summary provided",
+        "market": "Market tone",
+        "social": "Social buzz",
+        "development": "Development",
+        "alerts": "Alerts",
+        "price": "Price",
+        "volume": "Volume",
+        "transactions": "Transactions",
+        "participants": "Participants"
+      },
+      "more": {
+        "volatility": "Volatility",
+        "support": "Key support",
+        "resistance": "Key resistance"
+      },
+      "alerts": {
+        "extreme": "Extreme reading",
+        "extremeMessage": "{zone} zone detected",
+        "volatility": "Volatility spike",
+        "volatilityMessage": "Price volatility {value}%",
+        "priceMove": "Price swing",
+        "priceMoveMessage": "{value}% vs start",
+        "sentimentMove": "Sentiment swing",
+        "sentimentMoveMessage": "{value}"
+      },
+      "noAlerts": "No active alerts.",
+      "empty": "Sentiment data is currently unavailable."
+    },
+    "newsUpdates": {
+      "title": "News & Updates",
+      "subtitle": "Latest announcements and long-form coverage",
+      "more": {
+        "allUpdates": "View all updates"
+      },
+      "readTime": "{minutes} min read",
+      "readMore": "Read more",
+      "empty": "No recent posts were found."
+    },
+    "livePulse": {
+      "title": "Live Pulse",
+      "subtitle": "Rolling exchange blend, velocity, participation",
+      "status": {
+        "online": "Live",
+        "offline": "Offline"
+      },
+      "updated": "Updated {time}",
+      "labels": {
+        "snapshot": "Aggregate snapshot",
+        "last24h": "Past 24 hours",
+        "price": "Price",
+        "volume": "Volume",
+        "transactions": "Transactions",
+        "participants": "Buyers / Sellers",
+        "topVenues": "Leading venues",
+        "unknownVenue": "Unknown venue",
+        "lastPrice": "Last {value}",
+        "volumeShort": "vol"
+      },
+      "noVenues": "No venues reported yet.",
+      "empty": "Live pulse data not available."
+    }
+  }
+}

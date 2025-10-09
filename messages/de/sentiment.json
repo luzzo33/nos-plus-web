@@ -1,0 +1,44 @@
+{
+  "title": "Community-Stimmung",
+  "subtitle": "Wie die Community heute über Nosana denkt",
+  "loading": "Stimmungsdaten werden geladen...",
+  "labels": {
+    "bullish": "Bullisch",
+    "bearish": "Bärisch"
+  },
+  "descriptions": {
+    "bullish": "Fühlt sich optimistisch",
+    "bearish": "Fühlt sich vorsichtig"
+  },
+  "meta": {
+    "totalVotes24h": "Gesamtstimmen (24h)",
+    "votesToday": "{count, plural, one {{count} Stimme heute} other {{count} Stimmen heute}}",
+    "lastUpdate": "Zuletzt: {time}"
+  },
+  "errors": {
+    "loadFailed": "Stimmungsdaten konnten nicht geladen werden",
+    "submitFailed": "Stimmungsabgabe fehlgeschlagen",
+    "submitRetry": "Stimme konnte nicht gesendet werden. Bitte versuche es erneut."
+  },
+  "messages": {
+    "alreadyVoted": "Du hast heute {sentiment} gestimmt",
+    "alreadyTodayCountdown": "Du hast heute {sentiment} gestimmt. Nächste Stimme in {hours} Std",
+    "alreadySimple": "Du hast {sentiment} gestimmt",
+    "thanks": "Danke für deine {sentiment}-Stimme!",
+    "thanksCountdown": "Danke! Du hast {sentiment} gestimmt. Nächste Stimme in {hours} Std",
+    "alreadyVotedToday": "Du hast heute bereits abgestimmt"
+  },
+  "cta": {
+    "alreadyVoted": "Du hast heute abgestimmt:",
+    "castVote": "Stimme jetzt ab:",
+    "prompt": "Wie fühlst du dich heute zu NOS?",
+    "close": "Schließen",
+    "submitting": "Wird gesendet..."
+  },
+  "time": {
+    "noVotes": "Noch keine Stimmen",
+    "justNow": "Gerade eben",
+    "minutesAgo": "Vor {count} Min",
+    "hoursAgo": "Vor {count} Std"
+  }
+}

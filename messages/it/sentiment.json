@@ -1,0 +1,44 @@
+{
+  "title": "Sentimento della community",
+  "subtitle": "Come si sente oggi la community su Nosana",
+  "loading": "Caricamento dei dati sul sentimento...",
+  "labels": {
+    "bullish": "Rialzista",
+    "bearish": "Ribassista"
+  },
+  "descriptions": {
+    "bullish": "Sensazione ottimista",
+    "bearish": "Sensazione cauta"
+  },
+  "meta": {
+    "totalVotes24h": "voti totali (24h)",
+    "votesToday": "{count, plural, one {{count} voto oggi} other {{count} voti oggi}}",
+    "lastUpdate": "Ultimo: {time}"
+  },
+  "errors": {
+    "loadFailed": "Impossibile caricare i dati sul sentimento",
+    "submitFailed": "Impossibile inviare il voto",
+    "submitRetry": "Impossibile inviare il voto. Riprova."
+  },
+  "messages": {
+    "alreadyVoted": "Hai votato {sentiment} oggi",
+    "alreadyTodayCountdown": "Hai votato {sentiment} oggi. Prossimo voto tra {hours}h",
+    "alreadySimple": "Hai votato {sentiment}",
+    "thanks": "Grazie per aver votato {sentiment}!",
+    "thanksCountdown": "Grazie! Hai votato {sentiment}. Prossimo voto tra {hours}h",
+    "alreadyVotedToday": "Hai già votato oggi"
+  },
+  "cta": {
+    "alreadyVoted": "Hai già votato oggi:",
+    "castVote": "Esprimi il tuo voto:",
+    "prompt": "Come ti senti oggi riguardo a NOS?",
+    "close": "Chiudi",
+    "submitting": "Invio in corso..."
+  },
+  "time": {
+    "noVotes": "Ancora nessun voto",
+    "justNow": "Proprio ora",
+    "minutesAgo": "{count} min fa",
+    "hoursAgo": "{count} h fa"
+  }
+}

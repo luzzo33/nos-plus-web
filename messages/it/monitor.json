@@ -1,0 +1,28 @@
+{
+  "title": "Monitor",
+  "subtitle": "Eventi normalizzati in tempo reale (ordini limite, DCA) con filtri",
+  "totalEvents": "Eventi totali",
+  "limitOrders": "Ordini limite",
+  "dca": "DCA",
+  "venue": "Mercato",
+  "base": "Base",
+  "quote": "Valuta di quotazione",
+  "wallet": "Wallet",
+  "kind": {
+    "all": "Tutte le tipologie"
+  },
+  "side": {
+    "all": "Entrambe le direzioni"
+  },
+  "prev": "Precedente",
+  "next": "Successivo",
+  "pagination": "Totale",
+  "pages": "Pagine",
+  "localeNotice": {
+    "title": "Localizzazione in arrivo",
+    "description": "Questo cruscotto è al momento disponibile solo in inglese. Il supporto per {language} è in preparazione.",
+    "dontShowAgain": "Non mostrare più",
+    "continue": "Continua in inglese",
+    "leave": "Torna indietro"
+  }
+}

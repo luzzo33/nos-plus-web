@@ -1,0 +1,60 @@
+{
+  "title": "Nos-API-Dokumentation",
+  "subtitle": "Stabile, produktionsreife Endpunkte für Preis, Volumen und Holder",
+  "limitedNotice": "Aktuell stellen wir nur die Endpunkte für Preis, Volumen und Holder öffentlich bereit. Weitere folgen in Kürze – Ankündigungen gibt es auf Twitter/X und neue Endpunkte findest du dann auch hier.",
+  "intro": {
+    "title": "Überblick",
+    "text": "Alle Endpunkte sind unter /v3 versioniert und geben JSON zurück. Verwenden Sie Ihren API-Schlüssel bei jeder Anfrage.",
+    "baseUrl": "Basis-URL"
+  },
+  "auth": {
+    "title": "Authentifizierung",
+    "text": "Übermitteln Sie Ihren Schlüssel entweder im Header X-API-Key oder im Authorization: Bearer-Header.",
+    "headerApiKey": "X-API-Key: YOUR_API_KEY",
+    "headerBearer": "Authorization: Bearer YOUR_API_KEY",
+    "note": "Einen Schlüssel können Sie oben unter Tools → API-Schlüssel anfordern."
+  },
+  "toc": {
+    "title": "Endpunkte"
+  },
+  "shared": {
+    "viewUi": "UI öffnen",
+    "params": {
+      "range": "Bereich",
+      "quote": "Kurswährung"
+    }
+  },
+  "prices": {
+    "title": "Preise",
+    "desc": "Spotpreise, Diagramme und Statistiken für NOS."
+  },
+  "volume": {
+    "title": "Volumen",
+    "desc": "Aggregiertes Handelsvolumen über verschiedene Plätze mit sauberer Zuordnung."
+  },
+  "holders": {
+    "title": "Holder",
+    "desc": "Holder gesamt, Diagramme und Verteilungskennzahlen."
+  },
+  "dynamic": {
+    "volumeSummary": "24h-Volumen {current} ({change24h} ggü. 24h)"
+  },
+  "more": {
+    "title": "Mehr",
+    "swaggerUi": "Swagger UI öffnen"
+  },
+  "stoplight": {
+    "request": "Anfrage",
+    "queryParameters": "Abfrageparameter",
+    "responses": "Antworten",
+    "responseExample": "Antwortbeispiel",
+    "endpoints": "Endpunkte",
+    "schemas": "Schemas",
+    "poweredBy": "powered by Stoplight",
+    "sendRequest": "API-Anfrage senden",
+    "allowedValues": "Zulässige Werte:",
+    "body": "Body",
+    "notSet": "Nicht gesetzt",
+    "selectAnOption": "Option auswählen"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "description": "Cruscotto in tempo reale per prezzi, statistiche e analisi di Nosana (NOS).",
+  "product": "Prodotto",
+  "resources": "Risorse",
+  "community": "Comunità",
+  "nosanaOfficial": "Nosana ufficiale",
+  "nosPlusCommunity": "NOS.plus / Community",
+  "documentation": "Documentazione",
+  "apiStatus": "Stato API",
+  "apiDocs": "Documentazione API",
+  "changelog": "Registro delle modifiche",
+  "support": "Supporto",
+  "privacyPolicy": "Informativa sulla privacy",
+  "termsOfService": "Termini di servizio",
+  "allRightsReserved": "Tutti i diritti riservati.",
+  "communityTagline": "2025 NOS.plus. Per la community di Nosana 💚",
+  "statusHeading": "Stato del servizio",
+  "statusDescription": "Istante in tempo reale dalla piattaforma NOS API.",
+  "statusLink": "Visualizza stato completo",
+  "statusUpdated": "Aggiornato {time}",
+  "statusUnavailable": "Stato al momento non disponibile.",
+  "links": {
+    "staking": "Staking",
+    "dashboard": "Dashboard",
+    "blog": "Blog",
+    "twitter": "Twitter / X",
+    "telegram": "Telegram",
+    "github": "GitHub",
+    "discord": "Discord",
+    "medium": "Medium",
+    "linkedin": "LinkedIn",
+    "youtube": "YouTube",
+    "telegramBot": "Telegram Bot",
+    "communityTelegram": "Telegram della community"
+  },
+  "social": {
+    "twitter": "NOS.plus su Twitter / X",
+    "telegramBot": "Bot Telegram di NOS.plus",
+    "github": "NOS.plus su GitHub"
+  }
+}

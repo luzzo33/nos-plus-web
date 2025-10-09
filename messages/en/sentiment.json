@@ -1,0 +1,44 @@
+{
+  "title": "Community Sentiment",
+  "subtitle": "How the community feels about Nosana today",
+  "loading": "Loading sentiment data...",
+  "labels": {
+    "bullish": "Bullish",
+    "bearish": "Bearish"
+  },
+  "descriptions": {
+    "bullish": "Feeling optimistic",
+    "bearish": "Feeling cautious"
+  },
+  "meta": {
+    "totalVotes24h": "total votes (24h)",
+    "votesToday": "{count, plural, one {{count} vote today} other {{count} votes today}}",
+    "lastUpdate": "Last: {time}"
+  },
+  "errors": {
+    "loadFailed": "Failed to load sentiment data",
+    "submitFailed": "Failed to submit vote",
+    "submitRetry": "Failed to submit vote. Please try again."
+  },
+  "messages": {
+    "alreadyVoted": "You voted {sentiment} today",
+    "alreadyTodayCountdown": "You voted {sentiment} today. Next vote in {hours}h",
+    "alreadySimple": "You voted {sentiment}",
+    "thanks": "Thanks for voting {sentiment}!",
+    "thanksCountdown": "Thanks! You voted {sentiment}. Next vote in {hours}h",
+    "alreadyVotedToday": "You have already voted today"
+  },
+  "cta": {
+    "alreadyVoted": "You voted today:",
+    "castVote": "Cast your vote:",
+    "prompt": "How do you feel about NOS today?",
+    "close": "Close",
+    "submitting": "Submitting..."
+  },
+  "time": {
+    "noVotes": "No votes yet",
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago"
+  }
+}

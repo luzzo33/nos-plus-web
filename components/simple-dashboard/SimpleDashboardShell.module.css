@@ -1,0 +1,165 @@
+.root {
+  --simple-space-1: 6px;
+  --simple-space-2: 8px;
+  --simple-space-3: 12px;
+  --simple-space-4: 16px;
+  --simple-space-5: 20px;
+  --simple-radius-card: 16px;
+  --simple-radius-chip: 12px;
+  --simple-surface: hsla(var(--muted), 0.35);
+  --simple-card: hsla(var(--background), 0.92);
+  --simple-border: hsla(var(--border), 0.45);
+  --simple-shadow-base: 0 12px 24px -20px rgba(15, 23, 42, 0.45);
+  --simple-shadow-hover: 0 18px 28px -18px rgba(15, 23, 42, 0.5);
+  --simple-text-primary: hsla(var(--foreground), 0.94);
+  --simple-text-secondary: hsla(var(--muted-foreground), 0.8);
+  --simple-pos: hsla(var(--chart-pos), 0.9);
+  --simple-neg: hsla(var(--chart-neg), 0.9);
+  --simple-nav-height: 48px;
+  position: relative;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.03), transparent 38%);
+  border-radius: var(--simple-radius-card);
+  box-shadow: var(--simple-shadow-base);
+}
+
+.surface {
+  background: var(--simple-card);
+  border-radius: calc(var(--simple-radius-card) + 8px);
+  border: 1px solid hsla(var(--border-card), 0.35);
+  overflow: hidden;
+  position: relative;
+}
+
+.container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: var(--simple-space-4) var(--simple-space-4) var(--simple-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--simple-space-4);
+}
+
+.navShell {
+  position: sticky;
+  top: calc(var(--simple-space-4) + var(--simple-nav-height));
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(9, 12, 23, 0.35), rgba(9, 12, 23, 0.05));
+  backdrop-filter: blur(18px);
+  border-radius: var(--simple-radius-card);
+  border: 1px solid hsla(var(--border-card), 0.3);
+  box-shadow: var(--simple-shadow-base);
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: var(--simple-space-2);
+  padding: var(--simple-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.navList::-webkit-scrollbar {
+  display: none;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navButton {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--simple-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: var(--simple-radius-chip);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+  min-width: 120px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.navButtonActive {
+  color: var(--simple-text-primary);
+}
+
+.navButton:hover,
+.navButton:focus-visible {
+  outline: none;
+  color: var(--simple-text-primary);
+  background: hsla(var(--border-card), 0.08);
+}
+
+.navUnderline {
+  position: absolute;
+  inset: auto var(--simple-space-1) 6px var(--simple-space-1);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--simple-pos), var(--simple-neg));
+  transform-origin: left;
+}
+
+.summarySticky {
+  position: sticky;
+  top: var(--simple-space-4);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: var(--simple-space-2);
+  padding: var(--simple-space-2);
+  background: linear-gradient(180deg, rgba(9, 12, 23, 0.65), rgba(9, 12, 23, 0.35));
+  border-radius: var(--simple-radius-card);
+  border: 1px solid hsla(var(--border-card), 0.28);
+  box-shadow: var(--simple-shadow-base);
+  backdrop-filter: blur(20px);
+}
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--simple-space-2);
+}
+
+.section {
+  isolation: isolate;
+}
+
+@media (max-width: 1024px) {
+  .navShell {
+    display: none;
+  }
+
+  .container {
+    padding: var(--simple-space-3);
+    gap: var(--simple-space-3);
+  }
+}
+
+@media (max-width: 768px) {
+  .summarySticky {
+    flex-direction: column;
+    gap: var(--simple-space-2);
+    top: var(--simple-space-3);
+  }
+
+  .summaryRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .summaryRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--simple-space-1);
+  }
+
+  .container {
+    padding: var(--simple-space-3) var(--simple-space-2) var(--simple-space-4);
+  }
+}

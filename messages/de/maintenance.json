@@ -1,0 +1,22 @@
+{
+  "title": "Wartungsmodus",
+  "description": "Gib das Passwort ein, um zur Seite zu gelangen.",
+  "passwordPlaceholder": "Passwort",
+  "unlock": "Entsperren",
+  "checking": "Überprüfen…",
+  "loading": "Wird geladen…",
+  "toggle": {
+    "light": "Heller Modus",
+    "dark": "Dunkler Modus"
+  },
+  "errors": {
+    "incorrect": "Falsches Passwort",
+    "requestFailed": "Anfrage fehlgeschlagen",
+    "server": "Serverfehler. Bitte versuche es erneut.",
+    "unable": "Passwort konnte nicht verifiziert werden"
+  },
+  "unlockPage": {
+    "title": "Wartungs-Entsperr-Endpunkt",
+    "description": "Dieser Pfad wird intern verwendet, um das Wartungspasswort zu senden. Du kannst zur Wartungsseite zurückkehren."
+  }
+}

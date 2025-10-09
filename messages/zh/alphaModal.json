@@ -1,0 +1,16 @@
+{
+  "title": "Alpha 版本",
+  "version": "v1.0-alpha",
+  "welcome": "欢迎体验本次 Alpha 版本。",
+  "expectationsTitle": "你可以期待",
+  "expectations": {
+    "updates": "我们会频繁发布更新",
+    "changes": "站点可能快速迭代",
+    "bugs": "可能遇到一些问题或缺陷"
+  },
+  "helpTitle": "欢迎帮助我们改进！",
+  "helpDescription": "非常期待你的反馈，请将问题或建议告诉我们：",
+  "github": "GitHub",
+  "twitter": "Twitter",
+  "gotIt": "知道了"
+}

@@ -1,0 +1,111 @@
+{
+  "loading": "Caricamento...",
+  "error": "Errore",
+  "retry": "Riprova",
+  "noData": "Nessun dato disponibile",
+  "na": "N/D",
+  "apply": "Applica",
+  "cancel": "Annulla",
+  "clear": "Reimposta",
+  "export": "Esporta",
+  "download": "Scarica",
+  "exportCSV": "Esporta come CSV",
+  "exportJSON": "Esporta come JSON",
+  "downloadCSV": "Scarica CSV",
+  "downloadJSON": "Scarica JSON",
+  "live": "Live",
+  "historical": "Storico",
+  "previous": "Precedente",
+  "next": "Successivo",
+  "showing": "Visualizzazione",
+  "to": "a",
+  "of": "di",
+  "uptrend": "Trend rialzista",
+  "downtrend": "Trend ribassista",
+  "page": "Pagina",
+  "pages": "pagine",
+  "resetToDefault": "Ripristina impostazioni predefinite",
+  "fontSize": "Dimensione carattere",
+  "fontSizeSettings": "Impostazioni carattere",
+  "customDate": "Personalizzato",
+  "lastUpdated": "Ultimo aggiornamento",
+  "current": "Corrente",
+  "date": "Data",
+  "stats": "Statistiche",
+  "action": "Azione",
+  "allTimeHigh": "Massimo storico",
+  "allTimeLow": "Minimo storico",
+  "table": {
+    "showing": "Visualizzazione",
+    "of": "di",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "pageSize": "Elementi per pagina"
+  },
+  "days": {
+    "today": "Oggi",
+    "yesterday": "Ieri",
+    "last7Days": "Ultimi 7 giorni",
+    "last30Days": "Ultimi 30 giorni",
+    "last90Days": "Ultimi 90 giorni"
+  },
+  "timeRanges": {
+    "1h": "1H",
+    "4h": "4H",
+    "24h": "24H",
+    "7d": "7G",
+    "30d": "30G",
+    "90d": "90G",
+    "180d": "180G",
+    "1y": "1A",
+    "all": "Tutto"
+  },
+  "timeRangeDescriptions": {
+    "1h": "Ultima ora",
+    "4h": "Ultime 4 ore",
+    "24h": "Ultime 24 ore",
+    "7d": "Ultimi 7 giorni",
+    "30d": "Ultimi 30 giorni",
+    "90d": "Ultimi 90 giorni",
+    "180d": "Ultimi 180 giorni",
+    "1y": "Ultimo anno",
+    "all": "Intero periodo"
+  },
+  "chart": {
+    "compact": "Compatto",
+    "normal": "Normale",
+    "large": "Grande",
+    "selectDateRange": "Seleziona intervallo",
+    "startDate": "Data di inizio",
+    "endDate": "Data di fine"
+  },
+  "source": "Fonte",
+  "sources": {
+    "live": "Live",
+    "historical": "Storico"
+  },
+  "dataPoints": "punti dati",
+  "moderate": "Moderato",
+  "low": "Basso",
+  "high": "Alto",
+  "from": "da",
+  "trend": {
+    "up": "Trend rialzista",
+    "down": "Trend ribassista",
+    "neutral": "Neutrale"
+  },
+  "average": "Media",
+  "maximum": "Massimo",
+  "minimum": "Minimo",
+  "notFound": {
+    "title": "Pagina non trovata",
+    "description": "La pagina che stai cercando non esiste o è stata spostata.",
+    "goHome": "Torna alla home"
+  },
+  "cookieBanner": {
+    "title": "Cookie per i visitatori UE",
+    "body": "Visualizzi questo avviso perché stai navigando dall'Unione Europea. Utilizziamo solo cookie essenziali: consultali e accettali per continuare.",
+    "review": "Consulta l'informativa sui cookie",
+    "accept": "Accetta i cookie"
+  }
+}

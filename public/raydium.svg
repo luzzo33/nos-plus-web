@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="raydiumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#41F5FF"/>
+      <stop offset="50%" stop-color="#5A75FF"/>
+      <stop offset="100%" stop-color="#7A3CFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" rx="400" fill="#05070F"/>
+  <path d="M400 140L162 280v240l238 140 238-140V280L400 140zm0 418c-98.13 0-178-79.87-178-178s79.87-178 178-178c63.71 0 123 33.86 155.21 88.68a25 25 0 0 1-43.33 25.8C489.91 273.13 447 250 400 250c-79.4 0-144 64.6-144 144s64.6 144 144 144c47 0 89.91-23.13 111.88-65.48a25 25 0 0 1 43.33 25.8C523 524.14 463.71 558 400 558z" fill="url(#raydiumGrad)"/>
+  <path d="M461.75 339.43a25 25 0 0 1 21.5 37.14L414.89 496.7A25 25 0 0 1 393.4 510h-77.07a25 25 0 0 1-21.49-37.14l68.36-120.13A25 25 0 0 1 387.7 340zm-36 41.57h-29.51l-48.28 84.92h29.51z" fill="#05070F" opacity="0.8"/>
+</svg>

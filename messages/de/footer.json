@@ -1,0 +1,41 @@
+{
+  "description": "Echtzeit-Dashboard für Nosana (NOS) zu Preisen, Statistiken und Analysen.",
+  "product": "Produkt",
+  "resources": "Ressourcen",
+  "community": "Community",
+  "nosanaOfficial": "Nosana offiziell",
+  "nosPlusCommunity": "NOS.plus / Community",
+  "documentation": "Dokumentation",
+  "apiStatus": "API-Status",
+  "apiDocs": "API-Dokumentation",
+  "changelog": "Änderungsprotokoll",
+  "support": "Support",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "termsOfService": "Nutzungsbedingungen",
+  "allRightsReserved": "Alle Rechte vorbehalten.",
+  "communityTagline": "2025 NOS.plus. Für die Nosana-Community 💚",
+  "statusHeading": "Service-Status",
+  "statusDescription": "Live-Snapshot der NOS-API-Plattform.",
+  "statusLink": "Kompletten Status anzeigen",
+  "statusUpdated": "Aktualisiert {time}",
+  "statusUnavailable": "Status derzeit nicht verfügbar.",
+  "links": {
+    "staking": "Staking",
+    "dashboard": "Dashboard",
+    "blog": "Blog",
+    "twitter": "Twitter / X",
+    "telegram": "Telegram",
+    "github": "GitHub",
+    "discord": "Discord",
+    "medium": "Medium",
+    "linkedin": "LinkedIn",
+    "youtube": "YouTube",
+    "telegramBot": "Telegram-Bot",
+    "communityTelegram": "Community-Telegram"
+  },
+  "social": {
+    "twitter": "NOS.plus auf Twitter / X",
+    "telegramBot": "NOS.plus Telegram-Bot",
+    "github": "NOS.plus auf GitHub"
+  }
+}

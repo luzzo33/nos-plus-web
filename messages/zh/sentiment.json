@@ -1,0 +1,44 @@
+{
+  "title": "社区情绪",
+  "subtitle": "了解社区今天对 Nosana 的看法",
+  "loading": "正在加载情绪数据...",
+  "labels": {
+    "bullish": "看涨",
+    "bearish": "看跌"
+  },
+  "descriptions": {
+    "bullish": "感到乐观",
+    "bearish": "保持谨慎"
+  },
+  "meta": {
+    "totalVotes24h": "24 小时总投票数",
+    "votesToday": "今日 {count} 次投票",
+    "lastUpdate": "上次更新：{time}"
+  },
+  "errors": {
+    "loadFailed": "无法加载情绪数据",
+    "submitFailed": "提交投票失败",
+    "submitRetry": "提交投票失败。请重试。"
+  },
+  "messages": {
+    "alreadyVoted": "你今天投了 {sentiment} 票",
+    "alreadyTodayCountdown": "你今天投了 {sentiment} 票。下次投票还有 {hours} 小时",
+    "alreadySimple": "你投了 {sentiment}",
+    "thanks": "感谢你投出 {sentiment}！",
+    "thanksCountdown": "感谢你投出 {sentiment}！下次投票还有 {hours} 小时",
+    "alreadyVotedToday": "你今天已经投过票了"
+  },
+  "cta": {
+    "alreadyVoted": "你今天已投票：",
+    "castVote": "请投下你的一票：",
+    "prompt": "你今天对 NOS 的感觉如何？",
+    "close": "关闭",
+    "submitting": "正在提交..."
+  },
+  "time": {
+    "noVotes": "暂时还没有投票",
+    "justNow": "刚刚",
+    "minutesAgo": "{count} 分钟前",
+    "hoursAgo": "{count} 小时前"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "title": "API 密钥",
+  "subtitle": "生成并管理 Nos API 的访问密钥。",
+  "authRequired": "请先登录以管理 API 密钥。",
+  "testNotice": {
+    "message": "此功能目前处于测试阶段。如果遇到问题或有疑问，请通过<email>luzzo@nos.plus</email> 或 <discord>Discord</discord>/<twitter>Twitter</twitter> 联系我们。如需更高额度，也可以通过这些渠道与我们沟通。"
+  },
+  "guest": {
+    "subtitle": "无需创建账户即可生成免费的 API 密钥。",
+    "limit": "在测试阶段，您最多可以创建 {limit} 个密钥。",
+    "freeTierLabel": "免费层",
+    "freeTierHint": "适合试用的限量配额。",
+    "generate": "生成免费密钥",
+    "managePrompt": "需要更高额度或团队功能？请登录以管理与账户关联的密钥。",
+    "loginCta": "前往登录或注册"
+  },
+  "lookup": {
+    "title": "查询 API 密钥",
+    "subtitle": "粘贴任意 NOS API 密钥以查看只读的使用概览。我们不会保存该密钥。",
+    "readOnly": "仅查看",
+    "apiKeyLabel": "API 密钥",
+    "apiKeyPlaceholder": "nos_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "windowLabel": "时间窗口（分钟）",
+    "windowHint": "介于 5 至 1440 分钟，默认 60。",
+    "loading": "查询中…",
+    "submit": "显示使用情况",
+    "detailsTitle": "密钥详情",
+    "label": "标签",
+    "tier": "套餐",
+    "status": "状态",
+    "createdAt": "创建时间",
+    "lastUsedAt": "最近使用",
+    "never": "从未",
+    "rateLimitHour": "每小时限额",
+    "rateLimitDay": "每日限额",
+    "issuedBy": "签发来源",
+    "perHour": "/ 小时",
+    "perDay": "/ 天",
+    "summaryTitle": "过去 {window} 分钟的使用情况",
+    "totalCalls": "调用总数",
+    "successCalls": "成功调用",
+    "errorCalls": "错误调用",
+    "avgLatency": "平均延迟",
+    "unknown": "未知",
+    "none": "无",
+    "errors": {
+      "API_KEY_REQUIRED": "请输入要查询的 API 密钥。",
+      "NOT_FOUND": "未找到与该密钥匹配的记录。",
+      "LIMIT_REACHED": "您刚刚查询过密钥，请稍后再试。",
+      "LOOKUP_FAILED": "无法加载该密钥的使用情况。",
+      "generic": "当前无法查询该密钥。"
+    }
+  },
+  "loading": "加载中…",
+  "newKey": {
+    "title": "新的密钥",
+    "reminder": "请立即复制该密钥，出于安全考虑之后将无法再次查看。",
+    "dismiss": "隐藏此消息",
+    "close": "关闭"
+  },
+  "request": {
+    "title": "申请密钥",
+    "subtitle": "选择套餐并完成验证码以生成新密钥。",
+    "label": "标签（可选）",
+    "labelPlaceholder": "例如 staging-dashboard",
+    "tier": "套餐",
+    "submit": "生成密钥",
+    "loading": "正在申请…",
+    "captchaHelp": "请完成验证码以验证身份。密钥只会显示一次，请妥善保存。",
+    "cancel": "取消",
+    "limitReached": "您已达到 {limit} 个密钥的上限。如需更多密钥，请先吊销现有密钥或联系我们申请更高额度。"
+  },
+  "keys": {
+    "title": "现有密钥",
+    "count": "{count, plural, one {# 个密钥} other {# 个密钥}}",
+    "empty": "尚无密钥，可在上方生成新密钥。",
+    "defaultLabel": "未命名密钥",
+    "lastFour": "尾号 {lastFour}",
+    "createdAt": "创建于 {date}",
+    "tier": "套餐：{tier}",
+    "status": {
+      "active": "活跃",
+      "paused": "暂停",
+      "revoked": "已吊销"
+    },
+    "revoke": "吊销",
+    "viewUsage": "查看用量",
+    "hideUsage": "隐藏用量"
+  },
+  "usage": {
+    "title": "使用概览",
+    "totalCalls": "总调用次数（近 1 小时）",
+    "errors": "错误次数",
+    "avgLatency": "平均延迟",
+    "recentActivity": "最近调用",
+    "table": {
+      "time": "时间",
+      "route": "路径",
+      "method": "方法",
+      "status": "状态",
+      "latency": "延迟"
+    },
+    "noActivity": "暂无调用记录。",
+    "dailyHeadline": "每日统计",
+    "calls": "{count, plural, one {# 次调用} other {# 次调用}}",
+    "errorsShort": "{count, plural, one {# 次错误} other {# 次错误}}",
+    "noDaily": "近期无使用记录。"
+  },
+  "errors": {
+    "CAPTCHA_REQUIRED": "请先完成验证码。",
+    "CAPTCHA_INVALID": "验证码校验失败。",
+    "TURNSTILE_NOT_CONFIGURED": "验证码未配置，请联系支持。",
+    "TIER_NOT_FOUND": "选择的套餐不可用。",
+    "DUPLICATE_CLIENT": "此账号/设备已拥有密钥。",
+    "SERVER_ERROR": "服务器错误，请稍后重试。",
+    "LIMIT_REACHED": "您已达到该账户允许的最大密钥数量。",
+    "MAX_KEYS_REACHED": "您已达到该账户允许的最大密钥数量。",
+    "AUTH_REQUIRED": "请登录以管理账户密钥，或直接使用上方的免费密钥，无需注册。",
+    "generic": "请求失败，请稍后再试。"
+  }
+}

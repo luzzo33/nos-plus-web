@@ -1,0 +1,49 @@
+# Dependency directories
+node_modules/
+
+# Build output
+.next/
+.next-*
+.next-alpha/
+.next-live/
+.next.prev/
+dist/
+out/
+build/
+
+# Runtime artifacts
+logs/
+tmp/
+tmpfile
+coverage/
+
+# Environment & secrets
+.env*
+.mysql-nos.tmp.cnf
+
+# Deployment configs (keep private)
+deploy/*
+!deploy/private-publish-checklist.md
+.vercel/
+
+# Legacy reference snapshots (kept locally only)
+archive/unused/
+
+# Editor & OS
+.DS_Store
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 🧹 Ignore temporary and markdown docs
+SENTIMENT_SYSTEM_COMPLETE.md
+test-sentiment-system.md
+*-sentiment-*.md
+*-system-*.md
+*.bak
+*.backup
+*.log
+*.tmp
+*.old

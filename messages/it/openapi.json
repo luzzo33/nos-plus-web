@@ -1,0 +1,183 @@
+{
+  "info": {
+    "title": "NOS+ API",
+    "description": "API completa per i dati del token Nosana (NOS), inclusi prezzo, volume, titolari e metriche di staking."
+  },
+  "tags": {
+    "prices": "Endpoint dei dati di prezzo",
+    "volume": "Endpoint del volume di scambio",
+    "holders": "Analisi dei titolari",
+    "staking": "Metriche e dati di staking",
+    "flow": "Endpoint di analisi dei flussi",
+    "sentiment": "Analisi del sentiment di mercato",
+    "forecast": "Endpoint di previsione del prezzo"
+  },
+  "shared": {
+    "params": {
+      "range": "Intervallo date",
+      "interval": "Intervallo di aggregazione",
+      "cumulative": "Includi serie cumulativa",
+      "groupBy": "Chiave di raggruppamento",
+      "sort": "Colonna di ordinamento",
+      "order": "Ordine",
+      "page": "Numero di pagina",
+      "pageSize": "Dimensione pagina"
+    }
+  },
+  "prices": {
+    "chart": {
+      "summary": "Dati del grafico dei prezzi",
+      "response": "Dati del grafico",
+      "description": "Serie temporale dei prezzi con candele OHLC, metriche di sintesi e metadati."
+    },
+    "widget": {
+      "summary": "Dati per widget di prezzo",
+      "response": "Payload del widget",
+      "description": "Prezzo spot più recente, metriche di intervallo e sparkline per componenti UI."
+    },
+    "stats": {
+      "summary": "Statistiche di prezzo",
+      "response": "Payload delle statistiche",
+      "description": "Statistiche aggregate, metriche di distribuzione e indicatori tecnici di trend."
+    },
+    "table": {
+      "summary": "Dati tabellari di prezzo",
+      "response": "Tabella con paginazione",
+      "description": "Righe di prezzo paginate con variazioni calcolate e formattazione pronta per la UI."
+    },
+    "index": {
+      "summary": "Panoramica degli endpoint",
+      "description": "Elenco di tutti gli endpoint di prezzo con percorsi e parametri supportati.",
+      "response": "Metadati degli endpoint raggruppati per funzionalità."
+    }
+  },
+  "volume": {
+    "chart": {
+      "summary": "Dati del grafico di volume",
+      "response": "Dati del grafico",
+      "description": "Serie temporale del volume di scambio con aggregati, riepiloghi e metadati."
+    },
+    "widget": {
+      "summary": "Dati per widget di volume",
+      "response": "Payload del widget",
+      "description": "Istante del volume corrente con statistiche di intervallo e classifiche."
+    },
+    "stats": {
+      "summary": "Statistiche di volume",
+      "response": "Payload delle statistiche",
+      "description": "Statistiche dettagliate, distribuzioni, pattern e insight di trend del volume."
+    },
+    "table": {
+      "summary": "Dati tabellari di volume",
+      "response": "Dati tabellari",
+      "description": "Righe di volume paginate con helper di formattazione."
+    },
+    "index": {
+      "summary": "Panoramica degli endpoint",
+      "description": "Elenco di tutti gli endpoint di volume con percorsi e parametri supportati.",
+      "response": "Metadati degli endpoint raggruppati per funzionalità."
+    }
+  },
+  "responses": {
+    "unauthorized": "È richiesta l'autenticazione per chiamare questo endpoint.",
+    "rateLimited": "Limite di richieste superato. Riprova dopo il raffreddamento."
+  },
+  "holders": {
+    "index": {
+      "summary": "Panoramica degli endpoint",
+      "description": "Elenco degli endpoint di analisi dei titolari con percorsi e parametri supportati.",
+      "response": "Metadati degli endpoint raggruppati per funzionalità."
+    },
+    "chart": {
+      "summary": "Dati del grafico dei titolari",
+      "description": "Serie temporale dei conteggi dei titolari con metriche di riepilogo e metadati.",
+      "response": "Payload della serie storica dei titolari."
+    },
+    "widget": {
+      "summary": "Dati per widget dei titolari",
+      "description": "Istante attuale con variazioni, metriche di crescita e traguardi.",
+      "response": "Payload del widget."
+    },
+    "stats": {
+      "summary": "Statistiche dei titolari",
+      "description": "Statistiche aggregate, metriche di distribuzione, proiezioni e insight di crescita.",
+      "response": "Payload delle statistiche."
+    },
+    "table": {
+      "summary": "Dati tabellari dei titolari",
+      "description": "Righe paginate dei titolari con helper di visualizzazione.",
+      "response": "Payload tabellare."
+    }
+  },
+  "flow": {
+    "trace": {
+      "summary": "Tracciare il flusso di token",
+      "description": "Avvia un'analisi in background per seguire i movimenti di token NOS tra wallet.",
+      "response": "Metadati del job di tracciamento e payload del grafo."
+    },
+    "cache": {
+      "summary": "Recupera un tracciamento in cache",
+      "description": "Restituisce un risultato di tracciamento precedentemente calcolato usando la chiave di cache senza ricalcolare.",
+      "response": "Risultato in cache oppure indicazione di mancato ritrovamento."
+    },
+    "job": {
+      "summary": "Stato del job di tracciamento",
+      "description": "Verifica lo stato di elaborazione di un job di tracciamento tramite la sua chiave.",
+      "response": "Payload di stato con dettagli sui progressi."
+    }
+  },
+  "sentiment": {
+    "index": {
+      "summary": "Panoramica degli endpoint",
+      "description": "Elenco degli endpoint di sentiment con percorsi e parametri supportati.",
+      "response": "Metadati degli endpoint raggruppati per funzionalità."
+    },
+    "chart": {
+      "summary": "Dati del grafico del sentiment",
+      "description": "Serie temporale dell'indice Fear & Greed con zone di sentiment, eventuali medie mobili e scomposizione dei componenti.",
+      "response": "Payload del grafico con punti dati e metadati di sintesi."
+    },
+    "table": {
+      "summary": "Dati tabellari del sentiment",
+      "description": "Righe paginate dell'indice Fear & Greed con etichette di sentiment, variazioni e riepiloghi di distribuzione.",
+      "response": "Payload tabellare con righe, paginazione e insight."
+    },
+    "widget": {
+      "summary": "Dati per widget di sentiment",
+      "description": "Istante di sentiment attuale con configurazione del gauge, confronti di trend e insight contestuali.",
+      "response": "Payload del widget per dashboard e card statistiche."
+    },
+    "stats": {
+      "summary": "Statistiche del sentiment",
+      "description": "Analisi completa con intervalli storici, distribuzioni, pattern e metriche di qualità dei dati.",
+      "response": "Payload delle statistiche raggruppate per insight."
+    }
+  },
+  "forecast": {
+    "index": {
+      "summary": "Panoramica degli endpoint",
+      "description": "Elenco di tutti gli endpoint di previsione con percorsi e parametri supportati.",
+      "response": "Metadati degli endpoint raggruppati per funzionalità."
+    },
+    "chart": {
+      "summary": "Dati del grafico di previsione",
+      "description": "Prezzi storici combinati con valori previsti e bande di confidenza per analisi prospettiche.",
+      "response": "Payload del grafico con metadati di accuratezza e intervalli di previsione."
+    },
+    "table": {
+      "summary": "Dati tabellari di previsione",
+      "description": "Dettaglio tabellare con target di prezzo, confidenza e helper di probabilità.",
+      "response": "Payload tabellare con righe, statistiche di riepilogo e descrittori di colonna."
+    },
+    "widget": {
+      "summary": "Dati per widget di previsione",
+      "description": "Snapshot compatto con prezzo attuale, target per orizzonte, accuratezza del modello e segnali.",
+      "response": "Payload del widget per dashboard e superfici di alert."
+    },
+    "stats": {
+      "summary": "Statistiche di previsione",
+      "description": "Analisi completa su accuratezza, indicatori tecnici e performance storica.",
+      "response": "Payload delle statistiche raggruppato per insight."
+    }
+  }
+}

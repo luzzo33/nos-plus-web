@@ -1,0 +1,146 @@
+{
+  "title": "Staking Dapp",
+  "contractBalance": "Contract Balance",
+  "stakers": "Stakers",
+  "subtitle": "xNOS and APR analytics",
+  "header": {
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Last updated"
+  },
+  "sections": {
+    "overview": "Overview",
+    "chart": "Chart",
+    "table": "Table",
+    "stats": "Stats",
+    "analysis": "Analysis"
+  },
+  "marketOverview": {
+    "title": "Staking Overview",
+    "range": "Range",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "lastUpdated": "Updated",
+    "change": "Change",
+    "allTimeHigh": "All Time High",
+    "volatility": "Volatility",
+    "ranking": "Ranking",
+    "ofAvg": "of avg",
+    "moderate": "Moderate",
+    "tooltips": {
+      "currentMetric": "Shows the current value for the selected metric.",
+      "rangeHighLow": "Low and high values across the selected range."
+    }
+  },
+  "overview": {
+    "xnosChanges": "xNOS Changes",
+    "xnosRanges": "xNOS Ranges",
+    "showLess": "Show Less",
+    "avg": "Avg",
+    "current": "Current",
+    "xnosStatistics": "xNOS Statistics",
+    "currentXnos": "Current xNOS",
+    "averageXnos": "Average xNOS",
+    "medianXnos": "Median xNOS",
+    "volatility": "Volatility",
+    "dataPoints": "Data Points",
+    "statisticsCalculated": "Statistics calculated for",
+    "period": "Period",
+    "apyAdjustmentsTitle": "APY Adjustments",
+    "subtitle": "Major APY schedule updates and rationale",
+    "labels": {
+      "change": "Change",
+      "date": "Date"
+    },
+    "phase1": {
+      "title": "Phase 1",
+      "change": "~30% reduction",
+      "date": "January 14, 2024",
+      "reason": "Initial step to gradually normalize rewards"
+    },
+    "phase2": {
+      "title": "Phase 2",
+      "change": "~APY halving",
+      "date": "May 21, 2024",
+      "reason": "Aligning emission schedule with long-term sustainability"
+    },
+    "why": {
+      "title": "Why the changes?",
+      "health": {
+        "title": "Protocol Health",
+        "desc": "Smoother, more sustainable rewards help long-term stability."
+      },
+      "growth": {
+        "title": "Ecosystem Growth",
+        "desc": "Creates room to reinvest in growth and adoption."
+      },
+      "dynamic": {
+        "title": "Dynamic Alignment",
+        "desc": "Adjusts with market conditions instead of fixed policy."
+      }
+    },
+    "stakeCta": "Stake NOS"
+  },
+  "chart": {
+    "customDateRange": "Custom Date Range",
+    "selectDateRange": "Select Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "applyTimeframe": "Apply Timeframe",
+    "lineChart": "Line Chart",
+    "areaChart": "Area Chart",
+    "candlestickChart": "Candlestick Chart",
+    "noChartData": "No chart data available",
+    "xnos": "xNOS",
+    "apr": "APR",
+    "average": "Average",
+    "maximum": "Maximum",
+    "minimum": "Minimum",
+    "dataPoints": "Data Points",
+    "annotations": {
+      "phase1": "Phase 1: ~30% reduction",
+      "phase2": "Phase 2: ~APY halving"
+    }
+  },
+  "table": {
+    "dateRange": "Date Range",
+    "export": "Export",
+    "exportAsCSV": "Export as CSV",
+    "exportAsJSON": "Export as JSON"
+  },
+  "stats": {
+    "keyMetrics": "Key Metrics",
+    "averageXnos": "Average xNOS",
+    "xnosRange": "xNOS Range",
+    "aprAverage": "APR Average",
+    "dailyVolatility": "Daily Volatility",
+    "coverage": "Coverage",
+    "aprStreak": "APR Streak",
+    "xnosStreak": "xNOS Streak",
+    "maxDrawdown": "Max Drawdown",
+    "tooltips": {
+      "dailyVolatility": "Rolling volatility for the selected range."
+    }
+  },
+  "analysis": {
+    "summaryTitle": "Staking Analysis Summary",
+    "currentConditions": "Current Conditions",
+    "todaysValue": "Today's value is",
+    "relativeToRecent": "relative to recent",
+    "currentValue": "Current Value",
+    "valueAt": "Value at",
+    "of30dayAverage": "of 30-day Average",
+    "volatilityLevel": "Volatility Level",
+    "metricTrends": "Metric Trends",
+    "trend": "Trend",
+    "averageValue": "Average Value",
+    "keyRaydiumMetrics": "Key Metrics",
+    "percentileRank": "Percentile Rank",
+    "volatility": "Volatility",
+    "dataQuality": "Data Quality",
+    "historicalPerformance": "Historical Performance",
+    "avg": "Avg",
+    "allTimeHighMetric": "All-Time High {metric}",
+    "allTimeLowMetric": "All-Time Low {metric}"
+  }
+}

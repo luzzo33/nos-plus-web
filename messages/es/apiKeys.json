@@ -1,0 +1,121 @@
+{
+  "title": "Claves API",
+  "subtitle": "Genera y gestiona claves para la API de Nos.",
+  "testNotice": {
+    "message": "Esta función está actualmente en fase de pruebas. Si encuentras problemas o tienes preguntas, contáctanos en <email>luzzo@nos.plus</email> o a través de <discord>Discord</discord>/<twitter>Twitter</twitter>. Si necesitas límites más altos, escríbenos por esos mismos canales."
+  },
+  "guest": {
+    "subtitle": "Genera una clave de API gratuita sin crear una cuenta.",
+    "limit": "Durante esta fase de pruebas puedes crear hasta {limit} claves.",
+    "freeTierLabel": "Plan gratuito",
+    "freeTierHint": "Incluye un uso limitado ideal para experimentar.",
+    "generate": "Generar clave gratuita",
+    "managePrompt": "¿Necesitas límites más altos o funciones para equipos? Inicia sesión para gestionar claves vinculadas a una cuenta.",
+    "loginCta": "Iniciar sesión o registrarse"
+  },
+  "lookup": {
+    "title": "Verificar clave API",
+    "subtitle": "Pega cualquier clave de la API de NOS para ver un resumen de uso de solo lectura. No almacenamos la clave.",
+    "readOnly": "Vista solo lectura",
+    "apiKeyLabel": "Clave API",
+    "apiKeyPlaceholder": "nos_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "windowLabel": "Ventana de tiempo (minutos)",
+    "windowHint": "Entre 5 y 1440 minutos, por defecto 60.",
+    "loading": "Consultando…",
+    "submit": "Mostrar uso",
+    "detailsTitle": "Detalles de la clave",
+    "label": "Etiqueta",
+    "tier": "Plan",
+    "status": "Estado",
+    "createdAt": "Creada",
+    "lastUsedAt": "Último uso",
+    "never": "Nunca",
+    "rateLimitHour": "Límite por hora",
+    "rateLimitDay": "Límite por día",
+    "issuedBy": "Emitida por",
+    "perHour": "/ hora",
+    "perDay": "/ día",
+    "summaryTitle": "Uso en los últimos {window} minutos",
+    "totalCalls": "Llamadas totales",
+    "successCalls": "Llamadas exitosas",
+    "errorCalls": "Llamadas con error",
+    "avgLatency": "Latencia promedio",
+    "unknown": "Desconocido",
+    "none": "Sin límite",
+    "errors": {
+      "API_KEY_REQUIRED": "Introduce la clave API que deseas consultar.",
+      "NOT_FOUND": "No encontramos un registro para esa clave.",
+      "LIMIT_REACHED": "Ya consultaste una clave recientemente. Inténtalo de nuevo más tarde.",
+      "LOOKUP_FAILED": "No se pudo cargar el uso de esa clave.",
+      "generic": "No podemos verificar esa clave en este momento."
+    }
+  },
+  "authRequired": "Debes iniciar sesión para administrar tus claves API.",
+  "loading": "Cargando…",
+  "newKey": {
+    "title": "Tu nueva clave",
+    "reminder": "Copia la clave ahora. Por seguridad no se volverá a mostrar.",
+    "dismiss": "Ocultar este mensaje",
+    "close": "Cerrar"
+  },
+  "request": {
+    "title": "Solicitar clave",
+    "subtitle": "Selecciona un plan y completa el captcha para crear una nueva clave.",
+    "label": "Etiqueta (opcional)",
+    "labelPlaceholder": "ej. panel-staging",
+    "tier": "Plan",
+    "submit": "Generar clave",
+    "loading": "Solicitando…",
+    "captchaHelp": "Completa el captcha para verificarte. La clave solo se mostrará una vez, así que guárdala con cuidado.",
+    "cancel": "Cancelar",
+    "limitReached": "Has alcanzado el máximo de {limit} claves. Revoca una existente o contáctanos para mayores límites."
+  },
+  "keys": {
+    "title": "Claves existentes",
+    "count": "{count, plural, one {# clave} other {# claves}}",
+    "empty": "Aún no tienes claves. Genera una arriba para comenzar.",
+    "defaultLabel": "Clave sin título",
+    "lastFour": "Termina en {lastFour}",
+    "createdAt": "Creada {date}",
+    "tier": "Plan: {tier}",
+    "status": {
+      "active": "Activa",
+      "paused": "Pausada",
+      "revoked": "Revocada"
+    },
+    "revoke": "Revocar",
+    "viewUsage": "Ver uso",
+    "hideUsage": "Ocultar uso"
+  },
+  "usage": {
+    "title": "Resumen de uso",
+    "totalCalls": "Llamadas totales (última hora)",
+    "errors": "Errores",
+    "avgLatency": "Latencia media",
+    "recentActivity": "Actividad reciente",
+    "table": {
+      "time": "Hora",
+      "route": "Ruta",
+      "method": "Método",
+      "status": "Estado",
+      "latency": "Latencia"
+    },
+    "noActivity": "Sin actividad registrada aún.",
+    "dailyHeadline": "Totales diarios",
+    "calls": "{count, plural, one {# llamada} other {# llamadas}}",
+    "errorsShort": "{count, plural, one {# error} other {# errores}}",
+    "noDaily": "No hay uso diario reciente."
+  },
+  "errors": {
+    "CAPTCHA_REQUIRED": "Completa el captcha antes de solicitar la clave.",
+    "CAPTCHA_INVALID": "La verificación del captcha falló.",
+    "TURNSTILE_NOT_CONFIGURED": "El captcha no está configurado; contacta con soporte.",
+    "TIER_NOT_FOUND": "El plan seleccionado no está disponible.",
+    "DUPLICATE_CLIENT": "Ya existe una clave para esta cuenta/dispositivo.",
+    "SERVER_ERROR": "Error del servidor. Inténtalo de nuevo en unos instantes.",
+    "LIMIT_REACHED": "Has alcanzado el número máximo de claves para esta cuenta.",
+    "MAX_KEYS_REACHED": "Has alcanzado el número máximo de claves para esta cuenta.",
+    "AUTH_REQUIRED": "Inicia sesión para gestionar claves vinculadas a tu cuenta o usa el plan gratuito de arriba sin registrarte.",
+    "generic": "No se pudo procesar la solicitud."
+  }
+}

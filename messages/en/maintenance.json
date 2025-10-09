@@ -1,0 +1,22 @@
+{
+  "title": "Maintenance Mode",
+  "description": "Enter the password to continue to the site.",
+  "passwordPlaceholder": "Password",
+  "unlock": "Unlock",
+  "checking": "Checking…",
+  "loading": "Loading…",
+  "toggle": {
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
+  "errors": {
+    "incorrect": "Incorrect password",
+    "requestFailed": "Request failed",
+    "server": "Server error. Please try again.",
+    "unable": "Unable to verify password"
+  },
+  "unlockPage": {
+    "title": "Maintenance Unlock Endpoint",
+    "description": "This path is used internally for POSTing the maintenance password. You can return to the maintenance page."
+  }
+}

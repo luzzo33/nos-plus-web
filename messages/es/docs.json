@@ -1,0 +1,60 @@
+{
+  "title": "Documentación de la API de Nos",
+  "subtitle": "Endpoints estables y listos para producción para precio, volumen y holders",
+  "limitedNotice": "Por ahora solo exponemos públicamente los endpoints de precio, volumen y holders. Muy pronto llegarán más; anunciaremos las novedades en Twitter/X y aquí aparecerán en cuanto estén disponibles.",
+  "intro": {
+    "title": "Resumen",
+    "text": "Todos los endpoints están versionados bajo /v3 y responden en JSON. Usa tu clave API en cada solicitud.",
+    "baseUrl": "URL base"
+  },
+  "auth": {
+    "title": "Autenticación",
+    "text": "Incluye tu clave en el encabezado X-API-Key o en Authorization: Bearer.",
+    "headerApiKey": "X-API-Key: YOUR_API_KEY",
+    "headerBearer": "Authorization: Bearer YOUR_API_KEY",
+    "note": "Puedes solicitar una clave en Herramientas → Claves API en la parte superior."
+  },
+  "toc": {
+    "title": "Endpoints"
+  },
+  "shared": {
+    "viewUi": "Abrir UI",
+    "params": {
+      "range": "Rango",
+      "quote": "Cotización"
+    }
+  },
+  "prices": {
+    "title": "Precios",
+    "desc": "Precios spot, gráficos y estadísticas de NOS."
+  },
+  "volume": {
+    "title": "Volumen",
+    "desc": "Volumen de negociación agregado en distintos mercados con atribución clara."
+  },
+  "holders": {
+    "title": "Titulares",
+    "desc": "Total de titulares, gráficos y métricas de distribución."
+  },
+  "dynamic": {
+    "volumeSummary": "Volumen 24h {current} ({change24h} vs 24h)"
+  },
+  "more": {
+    "title": "Más",
+    "swaggerUi": "Abrir Swagger UI"
+  },
+  "stoplight": {
+    "request": "Solicitud",
+    "queryParameters": "Parámetros de consulta",
+    "responses": "Respuestas",
+    "responseExample": "Ejemplo de respuesta",
+    "endpoints": "Endpoints",
+    "schemas": "Esquemas",
+    "poweredBy": "powered by Stoplight",
+    "sendRequest": "Enviar solicitud API",
+    "allowedValues": "Valores permitidos:",
+    "body": "Cuerpo",
+    "notSet": "Sin definir",
+    "selectAnOption": "elige una opción"
+  }
+}

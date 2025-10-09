@@ -1,0 +1,111 @@
+{
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry",
+  "noData": "No data available",
+  "na": "N/A",
+  "apply": "Apply",
+  "cancel": "Cancel",
+  "clear": "Clear",
+  "export": "Export",
+  "download": "Download",
+  "exportCSV": "Export as CSV",
+  "exportJSON": "Export as JSON",
+  "downloadCSV": "Download CSV",
+  "downloadJSON": "Download JSON",
+  "live": "Live",
+  "historical": "Historical",
+  "previous": "Previous",
+  "next": "Next",
+  "showing": "Showing",
+  "to": "to",
+  "of": "of",
+  "uptrend": "Uptrend",
+  "downtrend": "Downtrend",
+  "page": "Page",
+  "pages": "pages",
+  "resetToDefault": "Reset to default",
+  "fontSize": "Font size",
+  "fontSizeSettings": "Font settings",
+  "customDate": "Custom",
+  "lastUpdated": "Last updated",
+  "current": "Current",
+  "date": "Date",
+  "stats": "Stats",
+  "action": "Action",
+  "allTimeHigh": "All Time High",
+  "allTimeLow": "All Time Low",
+  "table": {
+    "showing": "Showing",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next",
+    "pageSize": "Page size"
+  },
+  "days": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last90Days": "Last 90 days"
+  },
+  "timeRanges": {
+    "1h": "1H",
+    "4h": "4H",
+    "24h": "24H",
+    "7d": "7D",
+    "30d": "30D",
+    "90d": "90D",
+    "180d": "180D",
+    "1y": "1Y",
+    "all": "All"
+  },
+  "timeRangeDescriptions": {
+    "1h": "Last hour",
+    "4h": "Last 4 hours",
+    "24h": "Last 24 hours",
+    "7d": "Last 7 days",
+    "30d": "Last 30 days",
+    "90d": "Last 90 days",
+    "180d": "Last 180 days",
+    "1y": "Last year",
+    "all": "All time"
+  },
+  "chart": {
+    "compact": "Compact",
+    "normal": "Normal",
+    "large": "Large",
+    "selectDateRange": "Select Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date"
+  },
+  "source": "Source",
+  "sources": {
+    "live": "Live",
+    "historical": "Historical"
+  },
+  "dataPoints": "data points",
+  "moderate": "Moderate",
+  "low": "Low",
+  "high": "High",
+  "from": "from",
+  "trend": {
+    "up": "Uptrend",
+    "down": "Downtrend",
+    "neutral": "Neutral"
+  },
+  "average": "Average",
+  "maximum": "Maximum",
+  "minimum": "Minimum",
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go Home"
+  },
+  "cookieBanner": {
+    "title": "Cookies for EU visitors",
+    "body": "You're seeing this message because you're browsing from the European Union. We use essential cookies only, so please review and accept them.",
+    "review": "Review cookie policy",
+    "accept": "Accept cookies"
+  }
+}
