@@ -101,6 +101,8 @@ export function DistributionWidget({ isMobile = false }: { isMobile?: boolean })
       ? 'h-28'
       : 'h-32';
 
+  const shouldUseCompactDropdown = isMobile && timeframeOptions.length > 4;
+
   const skeleton = (
     <div className="flex flex-col h-full gap-3 md:gap-4 animate-pulse">
       <div className="flex justify-between">
@@ -148,7 +150,10 @@ export function DistributionWidget({ isMobile = false }: { isMobile?: boolean })
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[80px] overflow-hidden"
+                  className={cn(
+                    'absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[80px] overflow-hidden',
+                    shouldUseCompactDropdown && 'grid grid-cols-2 sm:grid-cols-1 min-w-[180px]',
+                  )}
                 >
                   {timeframeOptions.map((option) => (
                     <button

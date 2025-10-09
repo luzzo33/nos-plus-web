@@ -77,6 +77,8 @@ export function ForecastWidget({ isMobile = false }: { isMobile?: boolean }) {
     return '#6b7280';
   };
 
+  const shouldUseCompactDropdown = isMobile && displayOptions.length > 4;
+
   const skeleton = (
     <div className="flex flex-col h-full gap-2 md:gap-3 animate-pulse">
       <div className="flex justify-between">
@@ -124,7 +126,10 @@ export function ForecastWidget({ isMobile = false }: { isMobile?: boolean }) {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[100px] overflow-hidden max-h-[200px] overflow-y-auto"
+                  className={cn(
+                    'absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[100px] overflow-hidden max-h-[200px] overflow-y-auto',
+                    shouldUseCompactDropdown && 'grid grid-cols-2 sm:grid-cols-1 min-w-[200px]',
+                  )}
                 >
                   {displayOptions.map((option) => (
                     <button

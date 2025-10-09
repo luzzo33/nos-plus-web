@@ -59,6 +59,7 @@ export function StakingWidget({ isMobile = false }: { isMobile?: boolean }) {
     value: tf,
     label: tc(`timeRanges.${tf}`),
   }));
+  const shouldUseCompactDropdown = isMobile && timeframeOptions.length > 4;
 
   const trendClass = (trend?: 'up' | 'down' | 'neutral') => {
     if (trend === 'up') return 'text-green-500';
@@ -208,7 +209,10 @@ export function StakingWidget({ isMobile = false }: { isMobile?: boolean }) {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[90px] overflow-hidden"
+                    className={cn(
+                      'absolute right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-20 min-w-[90px] overflow-hidden',
+                      shouldUseCompactDropdown && 'grid grid-cols-2 sm:grid-cols-1 min-w-[180px]',
+                    )}
                   >
                     {timeframeOptions.map((option) => (
                       <button
