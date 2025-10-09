@@ -456,15 +456,23 @@ export function TechnicalLayoutEditor({ range, editMode }: { range: Range; editM
 
     const getColSpan = () => {
       if (isMobile) return 'col-span-1';
+      if (component.size === 'half') {
+        if (component.type === 'dca-section') {
+          return 'col-span-6';
+        }
+        if (component.type === 'order-book') {
+          return 'col-span-4';
+        }
+      }
       switch (component.size) {
         case 'full':
-          return 'col-span-6';
+          return 'col-span-10';
         case 'half':
-          return 'col-span-3';
+          return 'col-span-5';
         case 'third':
-          return 'col-span-2';
-        default:
           return 'col-span-3';
+        default:
+          return 'col-span-5';
       }
     };
 
@@ -592,7 +600,7 @@ export function TechnicalLayoutEditor({ range, editMode }: { range: Range; editM
       <div
         className={cn(
           'grid',
-          isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-6 gap-6',
+          isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-10 gap-6',
           'auto-rows-[minmax(300px,auto)] min-h-0',
         )}
       >

@@ -133,6 +133,8 @@ export interface DcaPlanRow {
   input_decimals?: number | null;
   output_decimals?: number | null;
   plan_total_input?: number | null;
+  initial_input_amount?: number | null;
+  initial_input_symbol?: string | null;
   wallet?: string | null;
   progress_pct?: number | null;
   slices_expected?: number | null;
@@ -203,6 +205,9 @@ export interface LimitPlanRow {
 export interface LimitPlansResponse {
   total: number;
   rows: LimitPlanRow[];
+  statusFilter?: string[];
+  sideFilter?: string[];
+  sort?: string;
   summary?: {
     totalPlans: number;
     activeCount: number;

@@ -10,7 +10,9 @@ import { PlanShareButton } from '@/components/monitor/PlanShareButton';
 import { usePlanModal } from '@/components/monitor/PlanModalProvider';
 import { cn } from '@/lib/utils';
 import { MonitorWidgetFrame } from '@/components/monitor/MonitorWidgetFrame';
-import { WalletActionMenu, truncateAddress } from '@/components/monitor/WalletActionMenu';
+import { PlanIdentifierMenu } from '@/components/monitor/PlanIdentifierMenu';
+import { WalletActionMenu } from '@/components/monitor/WalletActionMenu';
+import { toDate } from '@/lib/time';
 import {
   Activity,
   ArrowUpRight,
@@ -26,9 +28,10 @@ import {
   Clock,
   Play,
   AlertTriangle,
-  ExternalLink,
   Calendar,
   Zap,
+  TrendingUp,
+  TrendingDown,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -37,6 +40,12 @@ const STATUS_FILTER_VALUES = ['all', 'active', 'completed', 'closed', 'scheduled
 type StatusFilter = (typeof STATUS_FILTER_VALUES)[number];
 const LIMIT_SORT_VALUES = ['target', 'recent', 'progress'] as const;
 type LimitSortOption = (typeof LIMIT_SORT_VALUES)[number];
+const LIMIT_SIDE_FILTERS = [
+  { value: 'all', label: 'All Sides' },
+  { value: 'buy', label: 'Buys' },
+  { value: 'sell', label: 'Sells' },
+] as const;
+type LimitSideFilter = (typeof LIMIT_SIDE_FILTERS)[number]['value'];
 
 interface PlanTypeControl {
   value: 'dca' | 'limit';
@@ -78,6 +87,10 @@ function isLimitSortOption(value: string): value is LimitSortOption {
   return (LIMIT_SORT_VALUES as readonly string[]).includes(value);
 }
 
+function isLimitSideFilter(value: string): value is LimitSideFilter {
+  return value === 'all' || value === 'buy' || value === 'sell';
+}
+
 function fmt(n: unknown) {
   if (n == null) return '';
   const v = Number(n);
@@ -106,6 +119,41 @@ function fmt(n: unknown) {
 function formatNumber(value: number | null | undefined) {
   if (value == null || Number.isNaN(value)) return '—';
   return fmt(value);
+}
+
+function formatWithUnit(value: number | null | undefined, unit?: string | null) {
+  const formatted = formatNumber(value);
+  if (formatted === '—') return '—';
+  return unit ? `${formatted} ${unit}` : formatted;
+}
+
+function rel(input?: string | Date | null, withSuffix = false): string {
+  if (!input) return '—';
+  const parsed = typeof input === 'string' ? toDate(input) : input instanceof Date ? input : null;
+  const targetMs = parsed ? parsed.getTime() : NaN;
+  if (!Number.isFinite(targetMs)) return '—';
+  const diffMs = targetMs - Date.now();
+  const future = diffMs > 0;
+  const d = Math.abs(diffMs);
+  const totalSeconds = Math.floor(d / 1000);
+
+  let chunk: string;
+  if (totalSeconds < 60) {
+    chunk = `${totalSeconds}s`;
+  } else if (totalSeconds < 3600) {
+    chunk = `${Math.floor(totalSeconds / 60)}m`;
+  } else if (totalSeconds < 86400) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    chunk = minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  } else {
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    chunk = hours > 0 ? `${days}d ${hours}h` : `${days}d`;
+  }
+
+  if (!withSuffix) return chunk;
+  return future ? `in ${chunk}` : `${chunk} ago`;
 }
 
 function getSideColorClasses(side?: string, status?: string) {
@@ -173,20 +221,6 @@ function formatProgress(plan: LimitPlanRow) {
 
 function normalizeStatus(plan: LimitPlanRow) {
   return (plan.status ?? 'unknown').toLowerCase();
-}
-
-function statusBadgeClass(plan: LimitPlanRow) {
-  const status = normalizeStatus(plan);
-  if (status === 'completed') {
-    return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300 border border-emerald-500/40';
-  }
-  if (status === 'active') {
-    return 'bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300 border border-sky-500/40';
-  }
-  if (status === 'closed') {
-    return 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 border border-amber-500/30';
-  }
-  return 'bg-muted/40 text-muted-foreground border border-border/40';
 }
 
 function getStatusConfig(plan: LimitPlanRow) {
@@ -267,6 +301,7 @@ function computeMobileFrameHeight(preferred?: number): number {
 
 export function LOSection({ variant = 'full', planTypeControl, height }: LOSectionProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('active');
+  const [sideFilter, setSideFilter] = useState<LimitSideFilter>('all');
   const [sortBy, setSortBy] = useState<LimitSortOption>('target');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>(() => {
     if (variant === 'spotlight') return 'table';
@@ -388,6 +423,11 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
       setStatusFilter(value);
     }
   }, []);
+  const handleSideSelect = useCallback((value: string) => {
+    if (isLimitSideFilter(value)) {
+      setSideFilter(value);
+    }
+  }, []);
   const handleSortSelect = useCallback((value: string) => {
     if (isLimitSortOption(value)) {
       setSortBy(value);
@@ -503,6 +543,7 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
       offset: 0,
     };
     if (statusFilter !== 'all') params.status = statusFilter;
+    if (sideFilter !== 'all') params.side = sideFilter;
     if (sortBy === 'progress') params.sort = 'progress';
     else if (sortBy === 'recent') params.sort = 'recent';
     else if (sortBy === 'target') params.sort = 'target';
@@ -529,7 +570,7 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
         subscriptionRef.current = null;
       }
     };
-  }, [hasApiAccess, limit, statusFilter, sortBy, refreshToken, applyPlansPayload]);
+  }, [hasApiAccess, limit, statusFilter, sideFilter, sortBy, refreshToken, applyPlansPayload]);
 
   const loadMorePlans = useCallback(() => {
     if (!hasMore || loadingMore) return;
@@ -542,6 +583,7 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
       offset,
     };
     if (statusFilter !== 'all') params.status = statusFilter;
+    if (sideFilter !== 'all') params.side = sideFilter;
     if (sortBy === 'progress') params.sort = 'progress';
     else if (sortBy === 'recent') params.sort = 'recent';
     else if (sortBy === 'target') params.sort = 'target';
@@ -558,26 +600,32 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
         setError(err?.message || 'limit_plans_error');
         setLoadingMore(false);
       });
-  }, [hasMore, loadingMore, limit, statusFilter, sortBy, applyPlansPayload]);
+  }, [hasMore, loadingMore, limit, statusFilter, sideFilter, sortBy, applyPlansPayload]);
 
   const refresh = useCallback(() => {
     setRefreshToken((value) => value + 1);
   }, []);
 
+  const filteredPlans = useMemo(() => {
+    if (sideFilter === 'all') return plans;
+    return plans.filter((plan) => (plan.side ?? '').toLowerCase() === sideFilter);
+  }, [plans, sideFilter]);
+
   const stats = useMemo(() => {
-    const totalPlans = pagination?.total ?? summary?.totalPlans ?? plans.length;
+    const basePlans = filteredPlans;
+    const totalPlans = summary?.totalPlans ?? pagination?.total ?? basePlans.length;
     const totalValue =
-      summary?.totalValue ?? plans.reduce((acc, plan) => acc + (plan.filled_quote_amount ?? 0), 0);
+      summary?.totalValue ?? basePlans.reduce((acc, plan) => acc + (plan.filled_quote_amount ?? 0), 0);
     const avgProgress =
       summary?.avgProgress ??
-      (plans.length
-        ? plans.reduce((acc, plan) => acc + (plan.progress_pct ?? 0), 0) / plans.length
+      (basePlans.length
+        ? basePlans.reduce((acc, plan) => acc + (plan.progress_pct ?? 0), 0) / basePlans.length
         : 0);
     const activeCount =
-      summary?.activeCount ?? plans.filter((plan) => normalizeStatus(plan) === 'active').length;
+      summary?.activeCount ?? basePlans.filter((plan) => normalizeStatus(plan) === 'active').length;
     const scheduledCount =
       summary?.scheduledCount ??
-      plans.filter((plan) => normalizeStatus(plan) === 'scheduled').length;
+      basePlans.filter((plan) => normalizeStatus(plan) === 'scheduled').length;
 
     return {
       totalPlans,
@@ -586,10 +634,10 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
       activeCount,
       scheduledCount,
     };
-  }, [pagination?.total, summary, plans]);
+  }, [filteredPlans, summary, pagination?.total]);
 
   const sortedPlans = useMemo(() => {
-    const arr = [...plans];
+    const arr = [...filteredPlans];
     if (sortBy === 'progress') {
       return arr.sort((a, b) => {
         const aProg = typeof a.progress_pct === 'number' ? a.progress_pct : -1;
@@ -633,7 +681,7 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
           : 0;
       return bTs - aTs;
     });
-  }, [plans, sortBy]);
+  }, [filteredPlans, sortBy]);
 
   const visiblePlans = useMemo(() => {
     if (variant === 'spotlight') {
@@ -721,6 +769,18 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
           value={statusFilter}
           onSelect={handleStatusSelect}
           placeholder="Status"
+          variant="outline"
+          size="sm"
+          triggerClassName={cn(controlPillBase, 'min-w-[120px] justify-between')}
+        />
+      </div>
+      <div className="flex items-center gap-1.5">
+        <TrendingUp className="w-3 h-3 text-muted-foreground" />
+        <CustomDropdown
+          options={LIMIT_SIDE_FILTERS}
+          value={sideFilter}
+          onSelect={handleSideSelect}
+          placeholder="Side"
           variant="outline"
           size="sm"
           triggerClassName={cn(controlPillBase, 'min-w-[120px] justify-between')}
@@ -957,55 +1017,72 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
                   </div>
                 ) : (
                   <div className={scrollAreaClass}>
-                    <table className="w-full text-sm">
-                      <thead className="bg-muted/30 text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <table className="w-full">
+                      <thead className="bg-muted/30 dark:bg-muted/10 border-b border-border/30">
                         <tr>
-                          {[
-                            'Plan',
-                            'Status',
-                            'Progress',
-                            'Initial',
-                            'Filled',
-                            'Remaining',
-                            'Target Price',
-                            'Wallet',
-                            'Actions',
-                          ].map((header) => (
-                            <th key={header} className="px-4 py-2 text-left">
-                              {header}
-                            </th>
-                          ))}
+                          {['Plan', 'Schedule', 'Progress', 'Initial', 'Remaining', 'Avg Fill', 'Wallet', 'Actions'].map(
+                            (header) => (
+                              <th
+                                key={header}
+                                className={cn(
+                                  'text-left text-[11px] font-medium text-muted-foreground uppercase',
+                                  header === 'Plan' && 'w-[180px] px-4 py-2',
+                                  header === 'Initial' && 'w-[150px] px-4 py-2',
+                                  header === 'Remaining' && 'w-[150px] px-4 py-2',
+                                  header === 'Avg Fill' && 'w-[150px] px-4 py-2',
+                                  header === 'Schedule' && 'w-[120px] px-3 py-2',
+                                  header === 'Progress' && 'w-[120px] px-3 py-2',
+                                  header === 'Wallet' && 'w-[130px] px-3 py-2',
+                                  header === 'Actions' && 'w-[120px] px-3 py-2',
+                                )}
+                              >
+                                {header}
+                              </th>
+                            ),
+                          )}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border/30">
+                      <tbody className="divide-y divide-border/30 dark:divide-border/20">
                         {Array.from({ length: 8 }).map((_, i) => (
                           <tr key={i}>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-10 w-32 rounded" />
+                            <td className="w-[180px] px-4 py-3">
+                              <div className="skeleton h-10 w-36 rounded" />
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-6 w-16 rounded-full" />
+                            <td className="w-[120px] px-3 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-6 w-24 rounded-full" />
+                                <div className="skeleton h-3 w-24 rounded" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-20 rounded" />
+                            <td className="w-[120px] px-3 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-20 rounded" />
+                                <div className="skeleton h-1.5 w-24 rounded-full" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-24 rounded" />
+                            <td className="w-[150px] px-4 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-24 rounded" />
+                                <div className="skeleton h-3 w-20 rounded" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-24 rounded" />
+                            <td className="w-[150px] px-4 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-24 rounded" />
+                                <div className="skeleton h-3 w-20 rounded" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-24 rounded" />
+                            <td className="w-[150px] px-4 py-3">
+                              <div className="skeleton h-3 w-28 rounded" />
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-28 rounded" />
+                            <td className="w-[130px] px-3 py-3">
+                              <div className="skeleton h-7 w-24 rounded" />
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-20 rounded" />
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-7 w-16 rounded" />
+                            <td className="w-[120px] px-3 py-3">
+                              <div className="flex gap-2">
+                                <div className="skeleton h-7 w-20 rounded" />
+                                <div className="skeleton h-7 w-20 rounded" />
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -1040,112 +1117,224 @@ export function LOSection({ variant = 'full', planTypeControl, height }: LOSecti
             ) : (
               <div className="flex flex-1 min-h-0 overflow-hidden flex-col">
                 <div className={innerScrollAreaClass}>
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted/30 text-[11px] uppercase tracking-wide text-muted-foreground">
+                    <table className="w-full">
+                    <thead className="bg-muted/30 dark:bg-muted/10 border-b border-border/30">
                       <tr>
-                        <th className="px-4 py-2 text-left">Plan</th>
-                        <th className="px-4 py-2 text-left">Status</th>
-                        <th className="px-4 py-2 text-left">Progress</th>
-                        <th className="px-4 py-2 text-left">Initial</th>
-                        <th className="px-4 py-2 text-left">Filled</th>
-                        <th className="px-4 py-2 text-left">Remaining</th>
-                        <th className="px-4 py-2 text-left">Target Price</th>
-                        <th className="px-4 py-2 text-left">Wallet</th>
-                        <th className="px-4 py-2 text-left">Actions</th>
+                        <th className="w-[180px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Plan
+                        </th>
+                        <th className="w-[120px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Schedule
+                        </th>
+                        <th className="w-[120px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Progress
+                        </th>
+                        <th className="w-[150px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Initial
+                        </th>
+                        <th className="w-[150px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Remaining
+                        </th>
+                        <th className="w-[150px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Avg Fill
+                        </th>
+                        <th className="w-[130px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Wallet
+                        </th>
+                        <th className="w-[120px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border/30">
-                      {visiblePlans.map((plan) => (
-                        <tr key={plan.plan_id} className="hover:bg-muted/10">
-                          <td className="px-4 py-3">
-                            <div className="flex flex-col gap-1">
-                              <span className="font-semibold text-foreground">
-                                {plan.side?.toUpperCase()} {plan.base_symbol}/
-                                {plan.quote_symbol ?? '—'}
-                              </span>
-                              <a
-                                href={`https://solscan.io/address/${plan.plan_id}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-xs font-mono text-primary underline decoration-dotted"
-                              >
-                                {truncateAddress(plan.plan_id, 4, 4)}
-                              </a>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span
-                              className={cn(
-                                'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold',
-                                statusBadgeClass(plan),
-                              )}
-                            >
-                              {plan.status?.toUpperCase() ?? 'UNKNOWN'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-sm text-foreground">
-                                {formatProgress(plan)}
-                              </span>
-                              <div className="h-1 w-16 rounded-full bg-muted/40">
-                                <div
-                                  className="h-full rounded-full bg-primary transition-all"
-                                  style={{
-                                    width:
-                                      plan.progress_pct != null
-                                        ? `${Math.min(100, plan.progress_pct)}%`
-                                        : '0%',
-                                  }}
+                    <tbody className="divide-y divide-border/30 dark:divide-border/20">
+                      {visiblePlans.map((plan, index) => {
+                        const statusConfig = getStatusConfig(plan);
+                        const StatusIcon = statusConfig.icon;
+                        const shouldAnimateRow = initialAnimationRef.current && variant !== 'spotlight';
+                        const sideNormalized = (plan.side ?? '').toLowerCase();
+                        const planAccentClass =
+                          sideNormalized === 'sell'
+                            ? 'text-red-500'
+                            : sideNormalized === 'buy'
+                              ? 'text-emerald-500'
+                              : 'text-foreground';
+                        const baseUnit = plan.base_symbol ?? '—';
+                        const quoteUnit = plan.quote_symbol ?? plan.input_symbol ?? '—';
+                        const pairLabel = `${baseUnit}/${quoteUnit}`;
+                        const initialLabel = formatWithUnit(
+                          plan.initial_base_amount,
+                          baseUnit === '—' ? '' : baseUnit,
+                        );
+                        const filledLabel = formatWithUnit(
+                          plan.filled_base_amount,
+                          baseUnit === '—' ? '' : baseUnit,
+                        );
+                        const remainingBaseAmount =
+                          plan.remaining_base_amount != null
+                            ? plan.remaining_base_amount
+                            : plan.initial_base_amount != null && plan.filled_base_amount != null
+                              ? Math.max(0, plan.initial_base_amount - plan.filled_base_amount)
+                              : null;
+                        const remainingLabel = formatWithUnit(
+                          remainingBaseAmount,
+                          baseUnit === '—' ? '' : baseUnit,
+                        );
+                        const targetLabel = formatWithUnit(
+                          plan.price_target,
+                          quoteUnit === '—' ? '' : quoteUnit,
+                        );
+                        const avgFillLabel = formatWithUnit(
+                          plan.avg_fill_price,
+                          quoteUnit === '—' ? '' : quoteUnit,
+                        );
+                        const progressValue =
+                          typeof plan.progress_pct === 'number' && Number.isFinite(plan.progress_pct)
+                            ? plan.progress_pct
+                            : null;
+                        const progressPercent =
+                          progressValue != null ? Math.min(100, Math.max(0, progressValue)) : 0;
+                        const priceDistanceLabel =
+                          typeof plan.price_distance_pct === 'number'
+                            ? `${plan.price_distance_pct > 0 ? '+' : ''}${plan.price_distance_pct.toFixed(2)}%`
+                            : null;
+                        const lastUpdatedLabel = plan.last_event_at
+                          ? `Updated ${rel(plan.last_event_at, true)}`
+                          : plan.started_at
+                            ? `Started ${rel(plan.started_at, true)}`
+                            : null;
+                        const metaLabelClass = 'text-[11px] uppercase text-muted-foreground';
+                        const valueTextClass = variant === 'spotlight' ? 'text-[11px]' : 'text-sm';
+                        const filledBaseFormatted = formatNumber(plan.filled_base_amount);
+                        const initialBaseFormatted = formatNumber(plan.initial_base_amount);
+                        const progressSummaryDetail =
+                          filledBaseFormatted !== '—' && initialBaseFormatted !== '—'
+                            ? `${filledBaseFormatted}/${initialBaseFormatted}${
+                                baseUnit !== '—' ? ` ${baseUnit}` : ''
+                              }`
+                            : null;
+
+                        return (
+                          <motion.tr
+                            key={plan.plan_id}
+                            initial={shouldAnimateRow ? { opacity: 0, x: -20 } : false}
+                            animate={variant === 'spotlight' ? undefined : { opacity: 1, x: 0 }}
+                            transition={shouldAnimateRow ? { delay: index * 0.02 } : undefined}
+                            className={cn(
+                              'transition-colors',
+                              variant === 'spotlight'
+                                ? 'hover:bg-transparent'
+                                : 'hover:bg-muted/20 dark:hover:bg-muted/10',
+                            )}
+                          >
+                            <td className="w-[180px] px-4 py-3 align-top">
+                              <div className="space-y-0.5">
+                                <span className={cn('font-semibold', planAccentClass)}>
+                                  {(plan.side ?? '—').toUpperCase()} {pairLabel}
+                                </span>
+                                <PlanIdentifierMenu
+                                  planId={plan.plan_id}
+                                  className="pt-0.5"
+                                  triggerClassName="text-[11px] font-mono"
                                 />
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 font-mono text-sm text-foreground">
-                            {`${formatNumber(plan.initial_base_amount)} ${plan.base_symbol}`}
-                          </td>
-                          <td className="px-4 py-3 font-mono text-sm text-foreground">
-                            {`${formatNumber(plan.filled_base_amount)} ${plan.base_symbol}`}
-                          </td>
-                          <td className="px-4 py-3 font-mono text-sm text-foreground">
-                            {`${formatNumber(plan.remaining_base_amount)} ${plan.base_symbol}`}
-                          </td>
-                          <td className="px-4 py-3 font-mono text-sm text-foreground">
-                            {(() => {
-                              if (plan.price_target == null) return '—';
-                              const price = fmt(plan.price_target);
-                              return price ? `${price} ${plan.quote_symbol ?? ''}` : '—';
-                            })()}
-                          </td>
-                          <td className="px-4 py-3 text-xs">
-                            {plan.wallet ? (
-                              <WalletActionMenu
-                                wallet={plan.wallet}
-                                planId={plan.plan_id}
-                                planType="limit"
-                                size="sm"
-                                align="left"
-                              />
-                            ) : (
-                              '—'
-                            )}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  openPlan({ planType: 'limit', planId: plan.plan_id, plan })
-                                }
-                                className="inline-flex items-center gap-1 rounded-md border border-border/50 px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
-                              >
-                                <Activity className="h-3 w-3" /> Details
-                              </button>
-                              <PlanShareButton planId={plan.plan_id} planType="limit" />
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="w-[120px] px-3 py-3 align-top">
+                              <div className="flex flex-col items-start gap-2">
+                                <span
+                                  className={cn(
+                                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                                    statusConfig.bg,
+                                    statusConfig.color,
+                                    statusConfig.border,
+                                  )}
+                                >
+                                  <StatusIcon className="h-3 w-3" />
+                                  {statusConfig.label}
+                                </span>
+                                <p className="text-[11px] text-muted-foreground">
+                                  {lastUpdatedLabel ?? 'Updated —'}
+                                </p>
+                              </div>
+                            </td>
+                            <td className="w-[120px] px-3 py-3 align-top">
+                              {progressValue != null ? (
+                                <div className="space-y-1">
+                                  <div className={cn('font-mono text-foreground', valueTextClass)}>
+                                    {progressValue.toFixed(1)}%
+                                  </div>
+                                  <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted/30">
+                                    <div
+                                      className="h-full rounded-full bg-primary transition-all duration-300"
+                                      style={{ width: `${progressPercent}%` }}
+                                    />
+                                  </div>
+                                  {progressSummaryDetail && (
+                                    <p className="text-[11px] text-muted-foreground">{progressSummaryDetail}</p>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-muted-foreground">—</span>
+                              )}
+                            </td>
+                            <td className="w-[150px] px-4 py-3 align-top">
+                              <div className="space-y-1">
+                                <p className={metaLabelClass}>Initial</p>
+                                <p className={cn('font-mono text-foreground', valueTextClass)}>{initialLabel}</p>
+                                <p className="text-[11px] text-muted-foreground">Filled {filledLabel}</p>
+                              </div>
+                            </td>
+                            <td className="w-[150px] px-4 py-3 align-top">
+                              <div className="space-y-1">
+                                <p className={metaLabelClass}>Remaining</p>
+                                <p className={cn('font-mono text-foreground', valueTextClass)}>{remainingLabel}</p>
+                                {targetLabel !== '—' && (
+                                  <p className="text-[11px] text-muted-foreground">Target {targetLabel}</p>
+                                )}
+                              </div>
+                            </td>
+                            <td className="w-[150px] px-4 py-3 align-top">
+                              {avgFillLabel !== '—' ? (
+                                <div className="space-y-1">
+                                  <p className={metaLabelClass}>Avg Fill</p>
+                                  <p className={cn('font-mono text-foreground', valueTextClass)}>{avgFillLabel}</p>
+                                  {priceDistanceLabel && (
+                                    <p className="text-[11px] text-muted-foreground">
+                                      Distance {priceDistanceLabel}
+                                    </p>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-muted-foreground">—</span>
+                              )}
+                            </td>
+                            <td className="w-[130px] px-3 py-3 align-top">
+                              {plan.wallet ? (
+                                <WalletActionMenu
+                                  wallet={plan.wallet}
+                                  planId={plan.plan_id}
+                                  planType="limit"
+                                  size="sm"
+                                  align="left"
+                                />
+                              ) : (
+                                '—'
+                              )}
+                            </td>
+                            <td className="w-[120px] px-3 py-3 align-top">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => openPlan({ planType: 'limit', planId: plan.plan_id, plan })}
+                                  className="inline-flex items-center gap-1 rounded-md border border-border/50 px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                                >
+                                  <Activity className="w-3 h-3" /> Details
+                                </button>
+                                <PlanShareButton planId={plan.plan_id} planType="limit" />
+                              </div>
+                            </td>
+                          </motion.tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -1186,33 +1375,64 @@ interface LimitPlanCardProps {
 function LimitPlanCard({ plan, index, shouldAnimate, onOpen }: LimitPlanCardProps) {
   const statusConfig = getStatusConfig(plan);
   const StatusIcon = statusConfig.icon;
-  const progress = plan.progress_pct ?? 0;
-  const totalValue = plan.filled_quote_amount ?? 0;
+  const rawProgress =
+    typeof plan.progress_pct === 'number' && Number.isFinite(plan.progress_pct)
+      ? Math.max(0, Math.min(100, plan.progress_pct))
+      : null;
+  const totalValue = plan.usd_filled ?? plan.filled_quote_amount ?? 0;
   const sideNormalized = (plan.side ?? '').toLowerCase();
+  const isSell = sideNormalized === 'sell';
   const operationLabel = sideNormalized ? sideNormalized.toUpperCase() : '—';
-  const operationClasses =
-    sideNormalized === 'sell'
-      ? 'border-red-500/40 bg-red-500/15 text-red-500'
-      : sideNormalized === 'buy'
-        ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-500'
-        : 'border-border/40 bg-muted/20 text-muted-foreground';
+  const OperationIcon = isSell ? TrendingDown : TrendingUp;
+  const accent = isSell
+    ? { text: 'text-red-500', bar: 'bg-red-500' }
+    : { text: 'text-emerald-500', bar: 'bg-emerald-500' };
+  const accentBorderClass = isSell ? 'border-t-4 border-t-red-500' : 'border-t-4 border-t-emerald-500';
+  const sideClasses = getSideColorClasses(plan.side, plan.status);
 
-  const baseUnit = plan.base_symbol ?? '';
-  const initialAmount = plan.initial_base_amount ?? 0;
-  const filledAmount = plan.filled_base_amount ?? 0;
-  const remainingAmount = plan.remaining_base_amount ?? Math.max(0, initialAmount - filledAmount);
-  const initialDisplay = fmt(initialAmount);
-  const filledDisplay = fmt(filledAmount);
-  const remainingDisplay = fmt(remainingAmount);
+  const baseSymbol = plan.base_symbol ?? '';
+  const quoteSymbol = plan.quote_symbol ?? '';
+  const pairLabel = `${baseSymbol || '—'}/${quoteSymbol || '—'}`;
 
-  const totalActionLabel = 'Total Filled';
-  const remainingLabel = 'Remaining';
-  const filledValueLabel = filledDisplay + (baseUnit ? ` ${baseUnit}` : '');
-  const remainingValueLabel = remainingDisplay + (baseUnit ? ` ${baseUnit}` : '');
-  const progressSummaryLabel = `${filledDisplay}/${initialDisplay}${baseUnit ? ` ${baseUnit}` : ''}`;
+  const initialBase = plan.initial_base_amount ?? null;
+  const filledBase = plan.filled_base_amount ?? null;
+  const remainingBase =
+    plan.remaining_base_amount != null
+      ? plan.remaining_base_amount
+      : initialBase != null && filledBase != null
+        ? Math.max(0, initialBase - filledBase)
+        : null;
 
-  const targetPriceDisplay = plan.price_target != null ? fmt(plan.price_target) : null;
-  const avgFillDisplay = plan.avg_fill_price != null ? fmt(plan.avg_fill_price) : null;
+  const totalActionLabel = isSell ? 'Total Sold' : 'Total Bought';
+  const totalActionValue = formatWithUnit(filledBase, baseSymbol || undefined);
+  const secondaryLabel = isSell ? 'Quote Received' : 'Quote Spent';
+  const secondaryValue = formatWithUnit(plan.filled_quote_amount, quoteSymbol || undefined);
+  const initialDisplay = formatWithUnit(initialBase, baseSymbol || undefined);
+  const remainingDisplay = formatWithUnit(remainingBase, baseSymbol || undefined);
+  const targetDisplay = formatWithUnit(plan.price_target, quoteSymbol || undefined);
+  const avgFillDisplay = formatWithUnit(plan.avg_fill_price, quoteSymbol || undefined);
+  const priceDistanceLabel =
+    typeof plan.price_distance_pct === 'number'
+      ? `${plan.price_distance_pct > 0 ? '+' : ''}${plan.price_distance_pct.toFixed(2)}%`
+      : null;
+
+  const createdLabel = plan.started_at ? rel(plan.started_at, true) : '—';
+  const lastUpdatedLabel = plan.last_event_at ? rel(plan.last_event_at, true) : '—';
+  const expiresLabel = plan.expired_at ? rel(plan.expired_at, true) : '—';
+
+  const filledBaseFormatted = formatNumber(filledBase);
+  const initialBaseFormatted = formatNumber(initialBase);
+  const progressSummaryDetail =
+    filledBaseFormatted !== '—' && initialBaseFormatted !== '—'
+      ? `${filledBaseFormatted}/${initialBaseFormatted}${baseSymbol ? ` ${baseSymbol}` : ''}`
+      : null;
+  const progressSummary =
+    rawProgress != null && progressSummaryDetail
+      ? `${rawProgress.toFixed(1)}% (${progressSummaryDetail})`
+      : rawProgress != null
+        ? `${rawProgress.toFixed(1)}%`
+        : null;
+  const capturedLabel = priceDistanceLabel ? `Distance to target: ${priceDistanceLabel}` : null;
 
   return (
     <motion.div
@@ -1221,184 +1441,161 @@ function LimitPlanCard({ plan, index, shouldAnimate, onOpen }: LimitPlanCardProp
       exit={{ opacity: 0, y: -20 }}
       transition={shouldAnimate ? { delay: index * 0.05 } : undefined}
       className={cn(
-        'relative rounded-xl border overflow-hidden transition-all duration-200',
-        'hover:shadow-lg hover:shadow-primary/5',
-        getSideColorClasses(plan.side, plan.status).cardBg,
-        getSideColorClasses(plan.side, plan.status).border,
+        'relative overflow-visible rounded-xl border border-border/40 bg-background/80 transition-all duration-200',
+        'hover:shadow-lg hover:shadow-primary/10',
+        sideClasses.cardBg,
+        sideClasses.border,
+        accentBorderClass,
         totalValue >= 10000 && 'ring-1 ring-primary/20 dark:ring-primary/30',
       )}
     >
-      {/* High Value Indicator */}
       {totalValue >= 50000 && (
-        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold py-1 px-4 flex items-center gap-1">
-          <DollarSign className="w-3 h-3" />
+        <div className="absolute inset-x-0 top-0 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1 text-xs font-bold text-white">
+          <DollarSign className="h-3 w-3" />
           High Value Limit Plan
         </div>
       )}
 
       <div className={cn('p-3', totalValue >= 50000 && 'pt-6')}>
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex flex-1 items-start gap-3">
             <div className="flex flex-col items-center gap-2">
               <span
                 className={cn(
-                  'px-2 py-0.5 rounded-md border text-xs font-semibold uppercase tracking-wide',
-                  operationClasses,
+                  'inline-flex items-center gap-1 rounded-md border border-border/40 bg-background/70 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
+                  accent.text,
                 )}
               >
+                <OperationIcon className="h-3 w-3" />
                 {operationLabel}
               </span>
               <div className={cn('rounded-lg p-1.5', statusConfig.bg)}>
-                <StatusIcon className={cn('w-4 h-4', statusConfig.color)} />
+                <StatusIcon className={cn('h-4 w-4', statusConfig.color)} />
               </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="font-bold text-foreground">
-                  {plan.base_symbol}/{plan.quote_symbol}
-                </span>
+            <div className="flex-1 min-w-0 space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-semibold text-foreground">{pairLabel}</span>
                 <span
                   className={cn(
-                    'px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide',
+                    'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
                     statusConfig.bg,
-                    statusConfig.color,
                     statusConfig.border,
+                    statusConfig.color,
                   )}
                 >
+                  <StatusIcon className="h-3 w-3" />
                   {statusConfig.label}
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground font-mono">
-                <ExternalLink className="h-3 w-3 text-primary" />
-                <a
-                  href={`https://solscan.io/address/${plan.plan_id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline decoration-dotted hover:text-primary"
-                >
-                  {truncateAddress(plan.plan_id, 4, 4)}
-                </a>
-              </div>
+              <PlanIdentifierMenu planId={plan.plan_id} />
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-end gap-2">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
             <button
               type="button"
               onClick={onOpen}
-              className="inline-flex items-center gap-1 rounded-md border border-border/50 px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/80 px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              <Activity className="h-3 w-3" /> Details
+              <Activity className="h-3 w-3" />
+              Details
             </button>
             <PlanShareButton planId={plan.plan_id} planType="limit" />
             {plan.wallet && (
-              <WalletActionMenu wallet={plan.wallet} planId={plan.plan_id} planType="limit" />
+              <WalletActionMenu wallet={plan.wallet} planId={plan.plan_id} planType="limit" size="sm" />
             )}
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-3 p-2.5 rounded-lg bg-background/50 dark:bg-background/20 border border-border/30">
-          <div>
-            <div className="text-xs text-muted-foreground">Initial Amount</div>
-            <div className="font-semibold text-foreground">
-              <span className="font-mono">{initialDisplay}</span>
-              {baseUnit && <span> {baseUnit}</span>}
-            </div>
+        <div className="mt-2 grid grid-cols-2 gap-3 rounded-xl border border-border/40 bg-background/60 p-3 text-sm md:grid-cols-3">
+          <div className="space-y-1.5">
+            <p className="text-xs leading-5 text-muted-foreground">{totalActionLabel}</p>
+            <p className={cn('font-medium leading-5', accent.text)}>{totalActionValue}</p>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground">Filled Amount</div>
-            <div className="font-semibold text-foreground">
-              <span className="font-mono">{filledDisplay}</span>
-              {baseUnit && <span> {baseUnit}</span>}
-            </div>
+          <div className="space-y-1.5">
+            <p className="text-xs leading-5 text-muted-foreground">{secondaryLabel}</p>
+            <p className="font-medium leading-5 text-foreground">{secondaryValue}</p>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground">Target Price</div>
-            <div className="font-semibold text-foreground">
-              {targetPriceDisplay ? (
-                <>
-                  <span className="font-mono">{targetPriceDisplay}</span>
-                  {plan.quote_symbol && <span> {plan.quote_symbol}</span>}
-                </>
-              ) : (
-                '—'
-              )}
-            </div>
+          <div className="space-y-1.5">
+            <p className="text-xs leading-5 text-muted-foreground">Initial Plan</p>
+            <p className="font-medium leading-5 text-foreground">{initialDisplay}</p>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground">Remaining</div>
-            <div className="font-semibold text-foreground">
-              <span className="font-mono">{remainingDisplay}</span>
-              {baseUnit && <span> {baseUnit}</span>}
-            </div>
+          <div className="space-y-1.5">
+            <p className="text-xs leading-5 text-muted-foreground">Remaining</p>
+            <p className="font-medium leading-5 text-foreground">{remainingDisplay}</p>
           </div>
-          {avgFillDisplay && (
-            <div className="col-span-2">
-              <div className="text-xs text-muted-foreground">Average Fill Price</div>
-              <div className="font-semibold text-foreground">
-                <span className="font-mono">{avgFillDisplay}</span>
-                {plan.quote_symbol && <span> {plan.quote_symbol}</span>}
-              </div>
+          <div className="space-y-1.5">
+            <p className="text-xs leading-5 text-muted-foreground">Target Price</p>
+            <p className="font-medium leading-5 text-foreground">{targetDisplay}</p>
+          </div>
+          {avgFillDisplay !== '—' && (
+            <div className="space-y-1.5">
+              <p className="text-xs leading-5 text-muted-foreground">Average Fill</p>
+              <p className="font-medium leading-5 text-foreground">{avgFillDisplay}</p>
+            </div>
+          )}
+          {priceDistanceLabel && (
+            <div className="space-y-1.5 md:col-span-3">
+              <p className="text-xs leading-5 text-muted-foreground">Distance to Target</p>
+              <p className="font-medium leading-5 text-foreground">{priceDistanceLabel}</p>
             </div>
           )}
         </div>
 
-        {/* Progress Summary */}
-        {progress !== null && progress !== undefined && (
-          <div className="mt-4 space-y-1.5">
-            <div className="flex items-center gap-3">
-              <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted/30 dark:bg-muted/20">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, progress)}%` }}
-                  transition={{ duration: 1, ease: 'easeOut' }}
-                  className={cn(
-                    'absolute inset-y-0 left-0 rounded-full',
-                    progress >= 100
-                      ? 'bg-emerald-500'
-                      : progress >= 75
-                        ? 'bg-amber-500'
-                        : 'bg-primary',
-                  )}
-                />
-              </div>
-              <span className="text-sm font-semibold text-foreground">{progress.toFixed(1)}%</span>
-              <span className="text-xs text-muted-foreground">{progressSummaryLabel}</span>
+        {rawProgress != null && (
+          <div className="mt-4">
+            <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted/30">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${rawProgress}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className={cn('absolute inset-y-0 left-0 rounded-full', accent.bar)}
+              />
             </div>
-            <div className="flex items-center justify-between text-xs font-semibold text-foreground">
-              <span>{filledValueLabel}</span>
-              <span className="text-muted-foreground">→</span>
-              <span>{remainingValueLabel}</span>
+            <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2 text-xs text-muted-foreground">
+              <span className={cn('font-medium leading-5', accent.text)}>
+                {progressSummary ?? `${rawProgress.toFixed(1)}%`}
+              </span>
+              <span className="font-medium leading-5 text-foreground text-right">
+                <span className={accent.text}>{totalActionValue}</span>
+                <span className="mx-1 opacity-70">→</span>
+                <span>{remainingDisplay}</span>
+              </span>
             </div>
-            <div className="flex items-center justify-between text-[10px] uppercase tracking-wide text-muted-foreground">
+            <div className="mt-1 flex items-baseline justify-between text-[11px] uppercase tracking-wide text-muted-foreground opacity-70">
               <span>{totalActionLabel}</span>
-              <span>{remainingLabel}</span>
+              <span>Remaining Amount</span>
             </div>
           </div>
         )}
 
-        {/* Timeline */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs border-t border-border/30 pt-3">
+        <div className="mt-4 grid grid-cols-1 gap-2 border-t border-border/30 pt-3 text-xs sm:grid-cols-3">
           <div className="flex items-center justify-between sm:block">
-            <div className="text-muted-foreground mb-1">Created</div>
+            <p className="mb-1 text-muted-foreground">Created</p>
             <div className="flex items-center gap-1">
-              <Calendar className="w-3 h-3 text-muted-foreground" />
-              <span className="font-mono text-foreground">
-                {plan.started_at ? new Date(plan.started_at).toLocaleDateString() : '—'}
-              </span>
+              <Calendar className="h-3 w-3 text-muted-foreground" />
+              <span className="font-mono text-foreground">{createdLabel}</span>
             </div>
           </div>
           <div className="flex items-center justify-between sm:block">
-            <div className="text-muted-foreground mb-1">Last Update</div>
+            <p className="mb-1 text-muted-foreground">Last Update</p>
             <div className="flex items-center gap-1">
-              <Zap className="w-3 h-3 text-muted-foreground" />
-              <span className="font-mono text-foreground">
-                {plan.last_event_at ? new Date(plan.last_event_at).toLocaleDateString() : '—'}
-              </span>
+              <Zap className="h-3 w-3 text-muted-foreground" />
+              <span className="font-mono text-foreground">{lastUpdatedLabel}</span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between sm:block">
+            <p className="mb-1 text-muted-foreground">Expires</p>
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-muted-foreground" />
+              <span className="font-mono text-foreground">{expiresLabel}</span>
             </div>
           </div>
         </div>
+
+        {capturedLabel && (
+          <p className="mt-3 text-[11px] text-right text-muted-foreground">{capturedLabel}</p>
+        )}
       </div>
     </motion.div>
   );

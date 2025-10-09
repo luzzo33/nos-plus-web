@@ -42,7 +42,8 @@ import { useSearchParams } from 'next/navigation';
 import { PlanShareButton } from '@/components/monitor/PlanShareButton';
 import { usePlanModal } from '@/components/monitor/PlanModalProvider';
 import { MonitorWidgetFrame } from '@/components/monitor/MonitorWidgetFrame';
-import { WalletActionMenu, truncateAddress } from '@/components/monitor/WalletActionMenu';
+import { PlanIdentifierMenu } from '@/components/monitor/PlanIdentifierMenu';
+import { WalletActionMenu } from '@/components/monitor/WalletActionMenu';
 
 type DCAPlan = DcaPlanRow;
 type NormalizedPlanStatus = 'active' | 'scheduled' | 'paused' | 'closed' | 'completed';
@@ -95,6 +96,17 @@ function isDcaSortOption(value: string): value is DcaSortOption {
   return (DCA_SORT_VALUES as readonly string[]).includes(value);
 }
 
+const DCA_SIDE_FILTERS = [
+  { value: 'all', label: 'All Sides' },
+  { value: 'buy', label: 'Buys' },
+  { value: 'sell', label: 'Sells' },
+] as const;
+type DcaSideFilter = (typeof DCA_SIDE_FILTERS)[number]['value'];
+
+function isDcaSideFilter(value: string): value is DcaSideFilter {
+  return value === 'all' || value === 'buy' || value === 'sell';
+}
+
 interface DcaSummarySnapshot {
   totalValue?: number;
   activeCount?: number;
@@ -124,6 +136,8 @@ function plansEqual(a: DCAPlan, b: DCAPlan) {
     (a.slices_remaining ?? null) === (b.slices_remaining ?? null) &&
     (a.remaining_quote ?? null) === (b.remaining_quote ?? null) &&
     (a.plan_total_input ?? null) === (b.plan_total_input ?? null) &&
+    (a.initial_input_amount ?? null) === (b.initial_input_amount ?? null) &&
+    (a.initial_input_symbol ?? null) === (b.initial_input_symbol ?? null) &&
     (a.started_at ?? null) === (b.started_at ?? null) &&
     (a.last_event_at ?? null) === (b.last_event_at ?? null) &&
     (a.last_execution_at ?? null) === (b.last_execution_at ?? null) &&
@@ -168,7 +182,7 @@ function toNumber(value: unknown): number | null {
 }
 
 function enhancePlan(plan: DCAPlan, createdMap: Record<string, string | null>): EnhancedPlan {
-  const planTotalInput = toNumber(plan.plan_total_input);
+  const planTotalInput = toNumber(plan.initial_input_amount ?? plan.plan_total_input);
   const totalInputSpent =
     toNumber(plan.total_input_spent) ??
     (plan.side === 'sell' ? toNumber(plan.total_base_executed) : toNumber(plan.total_quote_spent));
@@ -310,116 +324,6 @@ function enhancePlan(plan: DCAPlan, createdMap: Record<string, string | null>): 
   };
 }
 
-interface PlanIdentifierMenuProps {
-  planId: string;
-  className?: string;
-}
-
-function PlanIdentifierMenu({ planId, className }: PlanIdentifierMenuProps) {
-  const [open, setOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  const label = useMemo(() => truncateAddress(planId, 4, 4), [planId]);
-
-  const closeMenu = useCallback(() => setOpen(false), []);
-
-  const openInNewTab = useCallback((url: string) => {
-    try {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch {
-      window.location.href = url;
-    }
-  }, []);
-
-  const handleSelect = useCallback(
-    (action: 'solscan' | 'plan') => {
-      if (!planId) return;
-      if (action === 'solscan') {
-        openInNewTab(`https://solscan.io/address/${encodeURIComponent(planId)}`);
-      } else {
-        openInNewTab(`https://jup.ag/dca/${encodeURIComponent(planId)}`);
-      }
-      closeMenu();
-    },
-    [planId, openInNewTab, closeMenu],
-  );
-
-  useEffect(() => {
-    if (!open) return;
-
-    const handlePointer = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        triggerRef.current &&
-        menuRef.current &&
-        !triggerRef.current.contains(target) &&
-        !menuRef.current.contains(target)
-      ) {
-        closeMenu();
-      }
-    };
-
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        closeMenu();
-        triggerRef.current?.focus();
-      }
-    };
-
-    document.addEventListener('mousedown', handlePointer, { passive: true });
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handlePointer);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [open, closeMenu]);
-
-  if (!planId) return null;
-
-  return (
-    <div className={cn('relative inline-flex', className)}>
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-        aria-haspopup="menu"
-        aria-expanded={open}
-      >
-        <span className="font-mono">{label}</span>
-        <ExternalLink className="h-3 w-3 shrink-0" />
-      </button>
-      {open && (
-        <div
-          ref={menuRef}
-          role="menu"
-          className="absolute right-0 z-40 mt-1 min-w-[11rem] rounded-lg border border-border/50 bg-background/95 p-1 shadow-lg backdrop-blur-sm"
-        >
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => handleSelect('solscan')}
-            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-foreground transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none"
-          >
-            <ExternalLink className="h-3.5 w-3.5 text-primary" />
-            <span>View on Solscan</span>
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => handleSelect('plan')}
-            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs text-foreground transition-colors hover:bg-muted/60 focus:bg-muted/60 focus:outline-none"
-          >
-            <ExternalLink className="h-3.5 w-3.5 text-primary" />
-            <span>View DCA Account</span>
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
 const PLAN_TYPE_OPTIONS = [
   { value: 'dca', label: 'DCA Plans' },
   { value: 'limit', label: 'Limit Plans' },
@@ -439,6 +343,7 @@ interface DCASectionProps {
 
 function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }: DCASectionProps) {
   const [status, setStatus] = useState('all');
+  const [sideFilter, setSideFilter] = useState<DcaSideFilter>('all');
   const [plans, setPlans] = useState<DCAPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -539,6 +444,11 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
   const summaryRef = useRef<DcaSummarySnapshot | null>(null);
   const subscriptionRef = useRef<ReturnType<typeof monitorWsClient.subscribe> | null>(null);
   const [refreshToken, setRefreshToken] = useState(0);
+  const handleSideSelect = useCallback((value: string) => {
+    if (isDcaSideFilter(value)) {
+      setSideFilter(value);
+    }
+  }, []);
   const handleSortSelect = useCallback((value: string) => {
     if (isDcaSortOption(value)) {
       setSortBy(value);
@@ -597,6 +507,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
     const params: Record<string, unknown> = {};
     const statusParam = status === 'all' || status === 'closed' ? undefined : status;
     if (statusParam) params.status = statusParam;
+    if (sideFilter !== 'all') params.side = sideFilter;
 
     const subscription = monitorWsClient.subscribe('monitor.dcaPlans', params, {
       onSnapshot: (payload) => applyPlansPayload(payload),
@@ -620,7 +531,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
         subscriptionRef.current = null;
       }
     };
-  }, [status, hasApiAccess, applyPlansPayload, refreshToken]);
+  }, [status, sideFilter, hasApiAccess, applyPlansPayload, refreshToken]);
 
   useEffect(() => {
     if (variant !== 'full') return;
@@ -889,14 +800,18 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
   const enhancedPlans = useMemo(() => plans.map((plan) => enhancePlan(plan, {})), [plans]);
 
   const filteredPlans = useMemo(() => {
-    if (status === 'all') return enhancedPlans;
+    let base = enhancedPlans;
+    if (sideFilter !== 'all') {
+      base = base.filter((plan) => (plan.side ?? '').toLowerCase() === sideFilter);
+    }
+    if (status === 'all') return base;
     if (status === 'closed') {
-      return enhancedPlans.filter(
+      return base.filter(
         (plan) => plan._statusNorm === 'closed' || plan._statusNorm === 'completed',
       );
     }
-    return enhancedPlans.filter((plan) => plan._statusNorm === status);
-  }, [enhancedPlans, status]);
+    return base.filter((plan) => plan._statusNorm === status);
+  }, [enhancedPlans, status, sideFilter]);
 
   const sortedPlans = useMemo(() => {
     const priority: Record<NormalizedPlanStatus, number> = {
@@ -1161,6 +1076,17 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
         />
       </div>
       <div className="flex items-center gap-1.5">
+        <TrendingUp className="w-3 h-3 text-muted-foreground" />
+        <CustomDropdown
+          options={DCA_SIDE_FILTERS}
+          value={sideFilter}
+          onSelect={handleSideSelect}
+          size="sm"
+          variant="ghost"
+          triggerClassName={cn(controlPillBase, 'min-w-[130px] justify-between')}
+        />
+      </div>
+      <div className="flex items-center gap-1.5">
         <ArrowUpDown className="w-3 h-3 text-muted-foreground" />
         <CustomDropdown
           options={[
@@ -1352,50 +1278,65 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                     <table className="w-full">
                       <thead className="bg-muted/30 dark:bg-muted/10 border-b border-border/30">
                         <tr>
-                          {[
-                            'Plan',
-                            'Status',
-                            'Progress',
-                            'Total Spent',
-                            'Frequency',
-                            'Next',
-                            'Wallet',
-                            'Actions',
-                          ].map((header) => (
-                            <th
-                              key={header}
-                              className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase"
-                            >
-                              {header}
-                            </th>
-                          ))}
+                          {['Plan', 'Schedule', 'Progress', 'Initial', 'Remaining', 'Next', 'Wallet', 'Actions'].map(
+                            (header) => (
+                              <th
+                                key={header}
+                                className={cn(
+                                  'text-left text-[11px] font-medium text-muted-foreground uppercase',
+                                  header === 'Plan' && 'w-[180px] px-4 py-2',
+                                  header === 'Initial' && 'w-[150px] px-4 py-2',
+                                  header === 'Remaining' && 'w-[150px] px-4 py-2',
+                                  header === 'Schedule' && 'w-[120px] px-3 py-2',
+                                  header === 'Progress' && 'w-[120px] px-3 py-2',
+                                  header === 'Next' && 'w-[130px] px-3 py-2',
+                                  header === 'Wallet' && 'w-[130px] px-3 py-2',
+                                  header === 'Actions' && 'w-[120px] px-3 py-2',
+                                )}
+                              >
+                                {header}
+                              </th>
+                            ),
+                          )}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/30">
                         {Array.from({ length: 8 }).map((_, i) => (
                           <tr key={i}>
-                            <td className="px-4 py-3">
+                            <td className="w-[180px] px-4 py-3">
                               <div className="skeleton h-10 w-32 rounded" />
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-6 w-16 rounded-full" />
+                            <td className="w-[120px] px-3 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-20 rounded" />
+                                <div className="skeleton h-5 w-24 rounded-full" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-20 rounded" />
+                            <td className="w-[120px] px-3 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-16 rounded" />
+                                <div className="skeleton h-1.5 w-20 rounded-full" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-24 rounded" />
+                            <td className="w-[150px] px-4 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-24 rounded" />
+                                <div className="skeleton h-3 w-20 rounded" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-12 rounded" />
+                            <td className="w-[150px] px-4 py-3">
+                              <div className="space-y-2">
+                                <div className="skeleton h-3 w-24 rounded" />
+                                <div className="skeleton h-3 w-20 rounded" />
+                              </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-16 rounded" />
+                            <td className="w-[130px] px-3 py-3">
+                              <div className="skeleton h-3 w-20 rounded" />
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="skeleton h-4 w-20 rounded" />
+                            <td className="w-[130px] px-3 py-3">
+                              <div className="skeleton h-7 w-20 rounded" />
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="w-[120px] px-3 py-3">
                               <div className="skeleton h-7 w-16 rounded" />
                             </td>
                           </tr>
@@ -1483,10 +1424,12 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                             perSliceUnit,
                           );
 
-                      const planInputAmount = plan.plan_total_input ?? null;
-                      const planInputSymbol = isSell
-                        ? (plan.base_symbol ?? '')
-                        : quoteSymbol || plan.base_symbol || '';
+                      const planInputAmount = plan.initial_input_amount ?? plan.plan_total_input ?? null;
+                      const planInputSymbol = plan.initial_input_symbol
+                        ? plan.initial_input_symbol
+                        : isSell
+                          ? plan.base_symbol ?? ''
+                          : quoteSymbol || plan.base_symbol || '';
                       const planInputSymbolStable = planInputSymbol
                         ? isStable(planInputSymbol)
                         : false;
@@ -1500,9 +1443,10 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                             )
                           : '—';
 
+                      const totalPlanInput = plan.initial_input_amount ?? plan.plan_total_input ?? 0;
                       const fallbackRemaining = isSell
-                        ? Math.max(0, (plan.plan_total_input ?? 0) - totalBaseExecuted)
-                        : Math.max(0, (plan.plan_total_input ?? 0) - (plan.total_quote_spent ?? 0));
+                        ? Math.max(0, totalPlanInput - totalBaseExecuted)
+                        : Math.max(0, totalPlanInput - (plan.total_quote_spent ?? 0));
                       const resolvedRemainingRaw =
                         remainingInput != null && Number.isFinite(Number(remainingInput))
                           ? Number(remainingInput)
@@ -1550,7 +1494,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                           exit={{ opacity: 0, y: -20 }}
                           transition={shouldAnimate ? { delay: index * 0.05 } : undefined}
                           className={cn(
-                            'relative overflow-hidden rounded-xl border border-border/40 bg-background/80 transition-all duration-200',
+                            'relative overflow-visible rounded-xl border border-border/40 bg-background/80 transition-all duration-200',
                             'hover:shadow-lg hover:shadow-primary/10',
                             sideClasses.cardBg,
                             sideClasses.border,
@@ -1758,28 +1702,28 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                   <table className="w-full">
                     <thead className="bg-muted/30 dark:bg-muted/10 border-b border-border/30">
                       <tr>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                        <th className="w-[180px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
                           Plan
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
-                          Status
+                        <th className="w-[120px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Schedule
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                        <th className="w-[120px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
                           Progress
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
-                          Total Spent
+                        <th className="w-[150px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Initial
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
-                          Frequency
+                        <th className="w-[150px] px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                          Remaining
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                        <th className="w-[130px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
                           Next
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                        <th className="w-[130px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
                           Wallet
                         </th>
-                        <th className="px-4 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
+                        <th className="w-[120px] px-3 py-2 text-left text-[11px] font-medium text-muted-foreground uppercase">
                           Actions
                         </th>
                       </tr>
@@ -1794,6 +1738,86 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                         const nextExecutionLabel = nextExecutionDate
                           ? rel(nextExecutionDate, true)
                           : '—';
+                        const sideNormalized = (plan.side ?? '').toLowerCase();
+                        const isSell = sideNormalized === 'sell';
+                        const isBuy = sideNormalized === 'buy';
+                        const planAccentClass = isSell
+                          ? 'text-red-500'
+                          : isBuy
+                            ? 'text-emerald-500'
+                            : 'text-foreground';
+                        const baseSymbol = plan.base_symbol ?? '—';
+                        const quoteSymbol = plan.quote_symbol ?? plan.input_symbol ?? '—';
+                        const pairLabel = `${baseSymbol}/${quoteSymbol}`;
+                        const totalInputSpent =
+                          plan.total_input_spent ??
+                          (isSell ? plan.total_base_executed ?? null : plan.total_quote_spent ?? null);
+                        const initialAmount =
+                          plan.initial_input_amount ??
+                          plan.plan_total_input ??
+                          (totalInputSpent != null && plan._remainingInput != null
+                            ? totalInputSpent + plan._remainingInput
+                            : totalInputSpent ?? plan._remainingInput ?? null);
+                        const initialUnitSymbol =
+                          plan.initial_input_symbol ??
+                          (isSell
+                            ? baseSymbol === '—'
+                              ? ''
+                              : baseSymbol
+                            : quoteSymbol !== '—'
+                              ? quoteSymbol
+                              : baseSymbol === '—'
+                                ? ''
+                                : baseSymbol);
+                        const initialFormatted =
+                          initialAmount != null ? formatNumber(initialAmount) : '—';
+                        const initialAmountLabel =
+                          initialFormatted === '—'
+                            ? '—'
+                            : `${initialFormatted}${initialUnitSymbol ? ` ${initialUnitSymbol}` : ''}`;
+                        const isQuoteStable = isStable(plan.quote_symbol);
+                        const rawProgress = plan._progress;
+                        const progressValue =
+                          typeof rawProgress === 'number' && Number.isFinite(rawProgress)
+                            ? rawProgress
+                            : null;
+                        const progressPercent =
+                          progressValue != null ? Math.min(100, Math.max(0, progressValue)) : 0;
+                        const valueTextClass = variant === 'spotlight' ? 'text-[11px]' : 'text-sm';
+                        const metaLabelClass = 'text-[11px] uppercase text-muted-foreground';
+                        const frequencyLabel = formatFrequency(plan.frequency_seconds || undefined);
+                        const spentDisplay =
+                          plan.side === 'sell'
+                            ? `${formatNumber(plan.total_base_executed)} ${baseSymbol}`
+                            : isQuoteStable
+                              ? `${usd(plan.total_quote_spent)} ${quoteSymbol}`
+                              : `${formatNumber(plan.total_quote_spent)} ${quoteSymbol}`;
+                        const spentLabelText = isSell ? 'Sold' : 'Spent';
+                        const totalPlanInput = plan.initial_input_amount ?? plan.plan_total_input ?? 0;
+                        const fallbackRemaining = isSell
+                          ? Math.max(0, totalPlanInput - (plan.total_base_executed ?? 0))
+                          : Math.max(0, totalPlanInput - (plan.total_quote_spent ?? 0));
+                        const resolvedRemainingRaw =
+                          plan._remainingInput != null && Number.isFinite(Number(plan._remainingInput))
+                            ? Number(plan._remainingInput)
+                            : fallbackRemaining;
+                        const resolvedRemaining = Math.max(0, resolvedRemainingRaw);
+                        const remainingUnitSymbol = isSell
+                          ? baseSymbol === '—'
+                            ? ''
+                            : baseSymbol
+                          : plan.initial_input_symbol ?? (quoteSymbol !== '—' ? quoteSymbol : baseSymbol);
+                        const remainingIsStable = remainingUnitSymbol ? isStable(remainingUnitSymbol) : false;
+                        const remainingDisplay = remainingUnitSymbol
+                          ? isSell
+                            ? `${formatNumber(resolvedRemaining)} ${remainingUnitSymbol}`
+                            : remainingIsStable
+                              ? `${usd(resolvedRemaining)} ${remainingUnitSymbol}`
+                              : `${formatNumber(resolvedRemaining)} ${remainingUnitSymbol}`
+                          : isSell || !remainingIsStable
+                            ? formatNumber(resolvedRemaining)
+                            : usd(resolvedRemaining);
+
                         return (
                           <motion.tr
                             key={plan.plan_id}
@@ -1807,108 +1831,77 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                                 : 'hover:bg-muted/20 dark:hover:bg-muted/10',
                             )}
                           >
-                            <td className="px-4 py-2">
+                            <td className="w-[180px] px-4 py-2">
                               <div className="space-y-0.5">
                                 <div
                                   className={cn(
-                                    'font-semibold text-foreground',
+                                    'font-semibold',
+                                    planAccentClass,
                                     variant === 'spotlight' && 'text-sm',
                                   )}
                                 >
-                                  {plan.side?.toUpperCase()} {plan.base_symbol}/{plan.quote_symbol}
+                                  {(plan.side ?? '—').toUpperCase()} {pairLabel}
                                 </div>
-                                <div className="text-[11px] text-muted-foreground font-mono">
-                                  <a
-                                    href={`https://solscan.io/address/${plan.plan_id}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="underline decoration-dotted hover:text-primary"
-                                  >
-                                    {truncateAddress(plan.plan_id, 4, 4)}
-                                  </a>
-                                </div>
+                                <PlanIdentifierMenu
+                                  planId={plan.plan_id}
+                                  className="pt-0.5"
+                                  triggerClassName="text-[11px]"
+                                />
                               </div>
                             </td>
-                            <td className="px-4 py-2">
-                              <div
-                                className={cn(
-                                  'flex items-center gap-2 px-2 py-0.5 rounded-lg w-fit',
-                                  statusConfig.bg,
-                                )}
-                              >
-                                <StatusIcon className={cn('w-3 h-3', statusConfig.color)} />
-                                <span className={cn('text-[11px] font-medium', statusConfig.color)}>
+                            <td className="w-[120px] px-3 py-2">
+                              <div className="flex flex-col items-start gap-2">
+                                <div className={cn('font-mono text-foreground', valueTextClass)}>
+                                  {frequencyLabel || '—'}
+                                </div>
+                                <span
+                                  className={cn(
+                                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                                    statusConfig.bg,
+                                    statusConfig.color,
+                                  )}
+                                >
+                                  <StatusIcon className="h-3 w-3" />
                                   {statusConfig.label}
                                 </span>
                               </div>
                             </td>
-                            <td className="px-4 py-2">
-                              {plan._progress !== null && plan._progress !== undefined ? (
+                            <td className="w-[120px] px-3 py-2">
+                              {progressValue != null ? (
                                 <div className="space-y-1">
-                                  <div
-                                    className={cn(
-                                      'font-mono text-foreground',
-                                      variant === 'spotlight' ? 'text-[11px]' : 'text-sm',
-                                    )}
-                                  >
-                                    {plan._progress.toFixed(1)}%
+                                  <div className={cn('font-mono text-foreground', valueTextClass)}>
+                                    {progressValue.toFixed(1)}%
                                   </div>
-                                  <div className="w-16 h-1 bg-muted/30 dark:bg-muted/20 rounded-full overflow-hidden">
+                                  <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted/30 dark:bg-muted/20">
                                     <div
-                                      className="h-full bg-primary rounded-full transition-all duration-300"
-                                      style={{ width: `${Math.min(100, plan._progress)}%` }}
+                                      className="h-full rounded-full bg-primary transition-all duration-300"
+                                      style={{ width: `${progressPercent}%` }}
                                     />
                                   </div>
                                 </div>
                               ) : (
-                                '—'
+                                <span className="text-[11px] text-muted-foreground">—</span>
                               )}
                             </td>
-                            <td className="px-4 py-2">
-                              <div
-                                className={cn(
-                                  'font-mono font-semibold text-foreground',
-                                  variant === 'spotlight' ? 'text-[11px]' : 'text-sm',
-                                )}
-                              >
-                                {plan.side === 'sell' ? (
-                                  <>
-                                    <span className="font-mono">
-                                      {formatNumber(plan.total_base_executed)}
-                                    </span>{' '}
-                                    {plan.base_symbol}
-                                  </>
-                                ) : isStable(plan.quote_symbol) ? (
-                                  <>
-                                    {usd(plan.total_quote_spent)} {plan.quote_symbol}
-                                  </>
-                                ) : (
-                                  <>
-                                    <span className="font-mono">
-                                      {formatNumber(plan.total_quote_spent)}
-                                    </span>{' '}
-                                    {plan.quote_symbol}
-                                  </>
-                                )}
+                            <td className="w-[150px] px-4 py-2">
+                              <div className="space-y-1">
+                                <p className={metaLabelClass}>Initial</p>
+                                <p className={cn('font-mono text-foreground', valueTextClass)}>
+                                  {initialAmountLabel}
+                                </p>
+                                <p className="text-[11px] text-muted-foreground">
+                                  {spentLabelText} {spentDisplay}
+                                </p>
                               </div>
                             </td>
-                            <td className="px-4 py-2">
-                              <div
-                                className={cn(
-                                  'font-mono text-foreground',
-                                  variant === 'spotlight' ? 'text-[11px]' : 'text-sm',
-                                )}
-                              >
-                                {formatFrequency(plan.frequency_seconds || undefined)}
+                            <td className="w-[150px] px-4 py-2">
+                              <div className="space-y-1">
+                                <p className={metaLabelClass}>Remaining</p>
+                                <p className={cn('font-mono text-foreground', valueTextClass)}>{remainingDisplay}</p>
                               </div>
                             </td>
-                            <td className="px-4 py-2">
-                              <div
-                                className={cn(
-                                  'font-mono text-muted-foreground',
-                                  variant === 'spotlight' ? 'text-[11px]' : 'text-sm',
-                                )}
-                              >
+                            <td className="w-[130px] px-3 py-2">
+                              <div className={cn('font-mono text-muted-foreground', valueTextClass)}>
                                 {plan._statusNorm === 'closed' ||
                                 plan._statusNorm === 'completed' ||
                                 plan._statusNorm === 'scheduled'
@@ -1916,7 +1909,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                                   : nextExecutionLabel}
                               </div>
                             </td>
-                            <td className="px-4 py-2">
+                            <td className="w-[130px] px-3 py-2">
                               {plan.wallet ? (
                                 <WalletActionMenu
                                   wallet={plan.wallet}
@@ -1929,7 +1922,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
                                 '—'
                               )}
                             </td>
-                            <td className="px-4 py-2">
+                            <td className="w-[120px] px-3 py-2">
                               <div className="flex flex-wrap items-center gap-2">
                                 <button
                                   type="button"
