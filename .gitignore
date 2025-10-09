@@ -47,3 +47,4 @@ test-sentiment-system.md
 *.log
 *.tmp
 *.old
+CHANGELOG.tmp

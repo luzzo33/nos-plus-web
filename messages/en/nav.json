@@ -4,6 +4,7 @@
   "volume": "Volume",
   "holders": "Holders",
   "docs": "API Docs",
+  "changelog": "Changelog",
   "blog": "Blog",
   "stakersUnstakers": "Stakers & Unstakers",
   "stakingDetails": "Staking Details",
@@ -28,6 +29,7 @@
     "analysis": "Token flow analysis",
     "apiKeys": "Request monitor API access",
     "docs": "Explore the NOS+ API documentation",
+    "changelog": "Review recent NOS.plus releases and updates",
     "blog": "Product updates & stories"
   },
   "toggleTheme": "Toggle theme",

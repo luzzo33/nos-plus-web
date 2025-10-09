@@ -56,6 +56,10 @@
       "title": "NOS.plus Dokumentation",
       "description": "Entdecke Integrations-Guides, API-Spezifikationen und Best Practices für den Einsatz von NOS.plus Analytics."
     },
+    "changelog": {
+      "title": "NOS.plus Changelog & Release Notes",
+      "description": "Lies die neuesten NOS.plus Updates, Bugfixes und Verbesserungen für die Nosana-Community."
+    },
     "holders": {
       "title": "Nosana Holder Intelligence",
       "description": "Analysiere Wallet-Verteilung, Bewegungen großer Adressen sowie Zuflüsse und Abflüsse in Echtzeit."

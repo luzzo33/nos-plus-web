@@ -1,8 +1,6 @@
-# Changelog
+# NOS.plus Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) whenever possible.
+All notable changes will be documented here.
 
 ## [Unreleased]
 
@@ -17,3 +15,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - _Nothing yet._
+
+## 1.0.0-alpha (2025-10-09)
