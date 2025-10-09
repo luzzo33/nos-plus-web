@@ -9,6 +9,7 @@ interface SectionTabsProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
   isMobile: boolean;
+  showForecast: boolean;
 }
 
 const baseSections = [
@@ -21,10 +22,17 @@ const baseSections = [
   { id: 'forecast', icon: Target },
 ];
 
-export function SectionTabs({ activeSection, onSectionChange, isMobile }: SectionTabsProps) {
+export function SectionTabs({
+  activeSection,
+  onSectionChange,
+  isMobile,
+  showForecast,
+}: SectionTabsProps) {
   const { text } = useFontScale();
   const t = useTranslations('price.sections');
-  const sections = baseSections.map((s) => ({ ...s, label: t(s.id as any) }));
+  const sections = baseSections
+    .filter((section) => showForecast || section.id !== 'forecast')
+    .map((s) => ({ ...s, label: t(s.id as any) }));
 
   if (isMobile) {
     return (

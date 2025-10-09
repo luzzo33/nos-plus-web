@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { spawn } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 
 const nextBin = require.resolve('next/dist/bin/next');
@@ -66,6 +67,29 @@ function resolveMaintenanceOverride(rawValue) {
 
 const resolvedMaintenance = resolveMaintenanceOverride(maintenanceOption);
 
+function persistMaintenanceOverride(mode) {
+  const target = path.resolve(__dirname, '..', '.next-live', 'maintenance-override.json');
+  try {
+    const dir = path.dirname(target);
+    fs.mkdirSync(dir, { recursive: true });
+    if (mode == null) {
+      if (fs.existsSync(target)) {
+        fs.rmSync(target);
+      }
+      return;
+    }
+    const payload = JSON.stringify({ mode }, null, 2);
+    fs.writeFileSync(target, payload);
+    process.stdout.write(
+      `[build-live] Maintenance override persisted for runtime reload: ${mode}\n`,
+    );
+  } catch (error) {
+    process.stderr.write(
+      `[build-live] Failed to persist maintenance override (${error.message}).\n`,
+    );
+  }
+}
+
 const overrides = {
   NEXT_PUBLIC_ENV: 'live',
   DIST_DIR: '.next-live',
@@ -98,6 +122,11 @@ const overrides = {
       : {}),
 };
 
+if (resolvedMaintenance == null) {
+  // Ensure we do not leave a stale override when inheriting defaults.
+  persistMaintenanceOverride(null);
+}
+
 const child = spawn(process.execPath, [nextBin, ...nextArgs], {
   stdio: 'inherit',
   env: {
@@ -108,7 +137,17 @@ const child = spawn(process.execPath, [nextBin, ...nextArgs], {
 });
 
 child.on('exit', (code) => {
-  process.exit(code ?? 1);
+  const safeCode = code ?? 1;
+  if (safeCode === 0) {
+    persistMaintenanceOverride(resolvedMaintenance);
+    if (resolvedMaintenance != null) {
+      process.stdout.write(
+        '[build-live] Maintenance override persisted. Run "pm2 reload final-nos-plus --update-env" to apply it.\n',
+      );
+    }
+  }
+
+  process.exit(safeCode);
 });
 
 child.on('error', (error) => {
