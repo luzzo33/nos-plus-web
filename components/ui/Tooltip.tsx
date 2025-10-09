@@ -1,6 +1,12 @@
 'use client';
 
-import React from 'react';
+import {
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   useFloating,
   flip,
@@ -19,8 +25,8 @@ import {
 } from '@floating-ui/react';
 
 export type TooltipProps = {
-  children: React.ReactNode;
-  content: React.ReactNode;
+  children: ReactNode;
+  content: ReactNode;
   placement?: 'top' | 'bottom' | 'left' | 'right';
   offsetPx?: number;
   asChild?: boolean;
@@ -39,13 +45,13 @@ export function Tooltip({
   className = '',
   closeOnScroll = true,
 }: TooltipProps) {
-  const [open, setOpen] = React.useState(false);
-  const [isHoverCapable, setIsHoverCapable] = React.useState<boolean>(() => {
+  const [open, setOpen] = useState(false);
+  const [isHoverCapable, setIsHoverCapable] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
     const onChange = () => setIsHoverCapable(mq.matches);
@@ -57,7 +63,7 @@ export function Tooltip({
     };
   }, []);
 
-  const arrowRef = React.useRef<HTMLDivElement | null>(null);
+  const arrowRef = useRef<HTMLDivElement | null>(null);
 
   const {
     refs,
@@ -101,7 +107,7 @@ export function Tooltip({
     role,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!closeOnScroll || !open || typeof window === 'undefined') return;
     const onScroll = () => setOpen(false);
     const onResize = () => setOpen(false);
@@ -145,7 +151,7 @@ export function Tooltip({
                   [({ top: 'bottom', right: 'left', bottom: 'top', left: 'right' } as const)[
                     finalPlacement.split('-')[0] as 'top' | 'right' | 'bottom' | 'left'
                   ]]: '-5px',
-                } as React.CSSProperties
+                } as CSSProperties
               }
             />
             <div className="text-[11px] sm:text-xs text-muted-foreground">{content}</div>
