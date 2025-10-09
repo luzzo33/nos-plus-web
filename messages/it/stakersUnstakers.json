@@ -231,7 +231,8 @@
       "change7d": "Variazione percentuale rispetto a sette giorni fa.",
       "change30d": "Variazione percentuale rispetto a trenta giorni fa.",
       "momentum": "Confronta variazioni di breve e lungo periodo per misurare l'accelerazione.",
-      "currentStakingRatio": "Quota degli account attualmente in staking."
+      "currentStakingRatio": "Quota degli account attualmente in staking.",
+      "dailyVolatility": "La volatilità giornaliera mostra quanto varia la partecipazione da un giorno all'altro in questo intervallo."
     }
   },
   "analysis": {

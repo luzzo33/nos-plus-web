@@ -231,7 +231,8 @@
       "change7d": "Percentage change compared with seven days ago.",
       "change30d": "Percentage change compared with thirty days ago.",
       "momentum": "Compares short-term and long-term change to gauge acceleration.",
-      "currentStakingRatio": "Share of total accounts currently staking."
+      "currentStakingRatio": "Share of total accounts currently staking.",
+      "dailyVolatility": "Daily volatility highlights how participation swings between individual days within this range."
     }
   },
   "analysis": {

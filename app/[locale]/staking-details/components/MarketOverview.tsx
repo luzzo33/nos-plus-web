@@ -119,10 +119,6 @@ export function MarketOverview({
   const ttStats = useTranslations('stakingDetails.stats.tooltips');
   const tc = useTranslations('common');
   const [showTimeframePicker, setShowTimeframePicker] = useState(false);
-
-  const hydrated = mounted || loading;
-  if (!hydrated) return null;
-
   const timeRanges = useMemo(
     () => [
       { value: '24h', label: tc('timeRanges.24h'), description: tc('timeRangeDescriptions.24h') },
@@ -138,6 +134,9 @@ export function MarketOverview({
     ],
     [tc],
   );
+
+  const hydrated = mounted || loading;
+  if (!hydrated) return null;
 
   if (loading || !widget) {
     return (

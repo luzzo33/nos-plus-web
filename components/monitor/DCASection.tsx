@@ -1,5 +1,13 @@
 'use client';
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import {
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+  memo,
+  type CSSProperties,
+} from 'react';
 import { toDate } from '@/lib/time';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -505,7 +513,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
   const shouldLockHeight = variant === 'full' && !isMobile;
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [lockedHeight, setLockedHeight] = useState<number | null>(null);
-  const frameStyle = useMemo<React.CSSProperties | undefined>(() => {
+  const frameStyle = useMemo<CSSProperties | undefined>(() => {
     if (variant !== 'full') return undefined;
     if (isMobile) {
       const resolved = mobileFrameHeight ?? MOBILE_PLAN_HEIGHT_DEFAULT;
@@ -524,7 +532,7 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
     }
     return undefined;
   }, [variant, isMobile, mobileFrameHeight, shouldLockHeight, height, lockedHeight]);
-  const prevPlansRef = React.useRef<DCAPlan[]>([]);
+  const prevPlansRef = useRef<DCAPlan[]>([]);
   const hydrationMarkedRef = useRef(false);
   const { openPlan, registerPlans } = usePlanModal();
   const hasApiAccess = useMemo(() => Boolean(getMonitorApiKey()), []);
@@ -1951,4 +1959,4 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
   );
 }
 
-export const DCASection = React.memo(DCASectionInner);
+export const DCASection = memo(DCASectionInner);

@@ -99,15 +99,15 @@ export function StatisticsSection({
   mounted,
   metric: rawMetric,
 }: StatisticsSectionProps) {
-  const stats = normalizeContractStats(rawStats);
+  const normalizedStats = normalizeContractStats(rawStats);
+  const stats = normalizedStats ?? ({} as BalancesStatsResponse['stats']);
   const metric: MetricMode =
     rawMetric === 'staking' ? 'stakers' : rawMetric === 'unstaking' ? 'unstakers' : 'total';
   const { text } = useFontScale();
   const t = useTranslations('stakingDetails.stats');
   const tt = useTranslations('stakingDetails.stats.tooltips');
   const tc = useTranslations('common');
-
-  if (!mounted || !stats) return null;
+  const isReady = mounted && Boolean(normalizedStats);
 
   const metricKey: MetricMode = metric || 'total';
   const metricMeta = METRIC_META[metricKey];
@@ -202,6 +202,10 @@ export function StatisticsSection({
     stable: t('momentumStates.stable'),
     neutral: t('momentumStates.neutral'),
   };
+
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">

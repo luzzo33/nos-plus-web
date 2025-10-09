@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 function uuid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -9,7 +9,7 @@ export function MultiTabNotice() {
   const [othersActive, setOthersActive] = useState(0);
   const [dismissed, setDismissed] = useState(false);
   const id = useMemo(() => uuid(), []);
-  const channelRef = React.useRef<BroadcastChannel | null>(null);
+  const channelRef = useRef<BroadcastChannel | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
