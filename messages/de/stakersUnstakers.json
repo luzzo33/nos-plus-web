@@ -226,7 +226,8 @@
       "change7d": "Prozentuale Veränderung im Vergleich zu vor sieben Tagen.",
       "change30d": "Prozentuale Veränderung im Vergleich zu vor dreißig Tagen.",
       "momentum": "Vergleicht kurz- und langfristige Veränderungen, um die Beschleunigung zu bewerten.",
-      "currentStakingRatio": "Anteil der Konten, die aktuell staken."
+      "currentStakingRatio": "Anteil der Konten, die aktuell staken.",
+      "dailyVolatility": "Die tägliche Volatilität zeigt, wie stark die Teilnahme in diesem Zeitraum von Tag zu Tag schwankt."
     }
   },
   "stats": {

@@ -59,17 +59,31 @@ function toLoggable(value: unknown, depth = 0): LoggableValue {
   return String(value);
 }
 
-function log(_level: LogLevel, _message: string, context?: LogContext | Error | unknown) {
-  if (typeof context === 'undefined') return;
-  if (context instanceof Error) {
-    toLoggable(context);
+function selectConsoleMethod(level: LogLevel) {
+  switch (level) {
+    case 'error':
+      return console.error;
+    case 'warn':
+      return console.warn;
+    case 'debug':
+      return console.debug ?? console.log;
+    default:
+      return console.info;
+  }
+}
+
+function log(level: LogLevel, message: string, context?: LogContext | Error | unknown) {
+  const timestamp = new Date().toISOString();
+  const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
+  const writer = selectConsoleMethod(level).bind(console);
+
+  if (typeof context === 'undefined') {
+    writer(`${prefix} ${message}`);
     return;
   }
-  if (typeof context === 'object' && context !== null) {
-    toLoggable(context);
-    return;
-  }
-  void context;
+
+  const payload = toLoggable(context);
+  writer(`${prefix} ${message}`, payload);
 }
 
 export function logDebug(message: string, context?: LogContext | Error | unknown) {
