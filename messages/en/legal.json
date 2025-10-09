@@ -7,13 +7,14 @@
   "terms": {
     "hero": {
       "title": "Terms of Use",
-      "subtitle": "These terms govern your use of NOS.plus, an independent community platform curated for the Nosana ecosystem. The service provides dashboards, monitors, and APIs on a best-effort basis and is not a commercial product."
+      "subtitle": "These terms govern your use of NOS.plus, an independent community-built platform curated for the Nosana ecosystem. NOS.plus is not affiliated with or endorsed by Nosana and offers dashboards, monitors, and APIs on a best-effort basis without any commercial backing."
     },
     "sections": {
       "overview": {
         "title": "1. Acceptance",
         "body": [
           "By using NOS.plus you agree to these terms. The platform is provided at no cost as a goodwill service for the Nosana community.",
+          "NOS.plus is a volunteer-led initiative and should not be treated as an official Nosana product.",
           "If you share NOS.plus with others (for example within your community or team), please ensure they understand and accept the same terms."
         ]
       },
@@ -89,6 +90,7 @@
         "title": "9. Disclaimers",
         "body": [
           "NOS.plus is for informational and educational purposes only.",
+          "NOS.plus is not affiliated with, endorsed by, or operated on behalf of Nosana.",
           "Nothing here is financial or investment advice.",
           "Data is aggregated from public sources and may be incomplete or inaccurate."
         ]

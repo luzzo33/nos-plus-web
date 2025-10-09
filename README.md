@@ -2,7 +2,11 @@
 
 ![Build status](https://github.com/luzzo33/nos-plus-web/actions/workflows/build.yml/badge.svg?branch=main)
 
-NOS.plus Alpha is the community frontend for the Nosana network. It gathers token analytics, staking tools, and exchange monitoring into one Next.js app that anyone can explore and improve.
+NOS.plus Alpha is an independent community project for the Nosana network and the $NOS token. It mixes token analytics, staking tools, and exchange monitoring into one open Next.js app that anyone can explore and improve.
+
+### Disclaimer
+
+NOS.plus Alpha is maintained by volunteers and is neither affiliated with nor endorsed by Nosana. All dashboards and data are provided for informational purposes only and do not constitute financial advice.
 
 ## 🌟 Features
 

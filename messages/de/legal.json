@@ -7,13 +7,14 @@
   "terms": {
     "hero": {
       "title": "Nutzungsbedingungen",
-      "subtitle": "Diese Bedingungen regeln Ihre Nutzung von NOS.plus, einer unabhängigen Community-Plattform für das Nosana-Ökosystem. Der Dienst stellt Dashboards, Monitore und APIs nach dem Best-Effort-Prinzip bereit und ist kein kommerzielles Produkt."
+      "subtitle": "Diese Bedingungen regeln Ihre Nutzung von NOS.plus, einer unabhängigen Community-Plattform für das Nosana-Ökosystem. NOS.plus steht in keiner Verbindung zu Nosana, stellt Dashboards, Monitore und APIs nach dem Best-Effort-Prinzip bereit und ist kein kommerzielles Produkt."
     },
     "sections": {
       "overview": {
         "title": "1. Zustimmung",
         "body": [
           "Mit der Nutzung von NOS.plus akzeptieren Sie diese Bedingungen. Die Plattform wird kostenfrei als Goodwill-Angebot für die Nosana-Community bereitgestellt.",
+          "NOS.plus wird ehrenamtlich betreut und ist kein offizielles Produkt von Nosana.",
           "Wenn Sie NOS.plus mit anderen (z. B. innerhalb Ihrer Community oder Ihres Teams) teilen, stellen Sie bitte sicher, dass auch sie diese Bedingungen verstehen und akzeptieren."
         ]
       },
@@ -91,6 +92,7 @@
         "title": "9. Haftungsausschlüsse",
         "body": [
           "NOS.plus dient ausschließlich Informations- und Bildungszwecken.",
+          "NOS.plus ist weder mit Nosana verbunden noch von Nosana autorisiert.",
           "Nichts hier stellt Finanz- oder Anlageberatung dar.",
           "Daten werden aus öffentlichen Quellen aggregiert und können unvollständig oder fehlerhaft sein."
         ]
