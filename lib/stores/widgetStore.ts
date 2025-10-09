@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { PersistStorage, StorageValue } from 'zustand/middleware';
+import { features } from '@/lib/features';
 
 export interface Widget {
   id: string;
@@ -46,7 +47,15 @@ const STORAGE_VERSION = 3;
 
 const cloneWidgets = (widgets: Widget[]): Widget[] => widgets.map((widget) => ({ ...widget }));
 
-const defaultWidgets: Widget[] = [
+const disabledWidgetTypes: Widget['type'][] = [];
+
+if (!features.priceForecast) {
+  disabledWidgetTypes.push('forecast');
+}
+
+const isWidgetEnabled = (widget: Widget): boolean => !disabledWidgetTypes.includes(widget.type);
+
+const baseDefaultWidgets: Widget[] = [
   { id: 'price-info-1', type: 'price-info', visible: true, order: 0, size: 'full' },
   { id: 'price-chart-1', type: 'price-chart', visible: true, order: 1, size: 'half' },
   { id: 'volume-info-1', type: 'volume-info', visible: true, order: 2, size: 'full' },
@@ -69,7 +78,7 @@ const defaultWidgets: Widget[] = [
   { id: BLOG_WIDGET_ID, type: 'blog-latest', visible: true, order: 13, size: 'half' },
 ];
 
-const simpleModeWidgets: Widget[] = [
+const baseSimpleModeWidgets: Widget[] = [
   { id: 'price-info-1', type: 'price-info', visible: true, order: 0, size: 'full' },
   { id: 'price-chart-1', type: 'price-chart', visible: true, order: 1, size: 'full' },
   { id: 'volume-info-1', type: 'volume-info', visible: true, order: 2, size: 'full' },
@@ -78,6 +87,9 @@ const simpleModeWidgets: Widget[] = [
   { id: 'staking-info-1', type: 'staking-info', visible: true, order: 5, size: 'full' },
   { id: 'distribution-info-1', type: 'distribution-info', visible: true, order: 6, size: 'full' },
 ];
+
+const defaultWidgets = baseDefaultWidgets.filter(isWidgetEnabled);
+const simpleModeWidgets = baseSimpleModeWidgets.filter(isWidgetEnabled);
 
 const safeLocalStorage: PersistStorage<WidgetStore> = {
   getItem: (name) => {
@@ -111,7 +123,8 @@ const safeLocalStorage: PersistStorage<WidgetStore> = {
 };
 
 const mergeWithDefaultWidgets = (widgets: Widget[]): Widget[] => {
-  const existingById = new Map(widgets.map((widget) => [widget.id, { ...widget }]));
+  const enabledWidgets = widgets.filter(isWidgetEnabled);
+  const existingById = new Map(enabledWidgets.map((widget) => [widget.id, { ...widget }]));
   const merged: Widget[] = defaultWidgets.map((defaultWidget) => {
     const existing = existingById.get(defaultWidget.id);
     if (existing) {
@@ -125,7 +138,7 @@ const mergeWithDefaultWidgets = (widgets: Widget[]): Widget[] => {
   });
 
   const defaultIds = new Set(defaultWidgets.map((widget) => widget.id));
-  widgets.forEach((widget) => {
+  enabledWidgets.forEach((widget) => {
     if (!defaultIds.has(widget.id)) {
       merged.push({ ...widget });
     }

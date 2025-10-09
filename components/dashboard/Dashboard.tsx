@@ -36,9 +36,11 @@ import { useWidgetStore } from '@/lib/stores/widgetStore';
 import { useDashboardSettingsStore } from '@/lib/stores/dashboardSettingsStore';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import { features } from '@/lib/features';
 
 export function Dashboard() {
   const t = useTranslations('dashboard');
+  const forecastEnabled = features.priceForecast;
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [reorderModalOpen, setReorderModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -73,7 +75,10 @@ export function Dashboard() {
     saveAndLoadAdvancedMode();
   }, [saveAndLoadAdvancedMode]);
 
-  const visibleWidgets = widgets.filter((w) => w.visible).sort((a, b) => a.order - b.order);
+  const visibleWidgets = widgets
+    .filter((w) => (forecastEnabled ? true : w.type !== 'forecast'))
+    .filter((w) => w.visible)
+    .sort((a, b) => a.order - b.order);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -194,6 +199,7 @@ export function Dashboard() {
         content = <SentimentWidget isMobile={isMobile} />;
         break;
       case 'forecast':
+        if (!forecastEnabled) return null;
         content = <ForecastWidget isMobile={isMobile} />;
         break;
       case 'holders-info':

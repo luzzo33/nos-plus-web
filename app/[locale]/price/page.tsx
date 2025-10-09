@@ -20,6 +20,7 @@ import { StatisticsSection } from './components/StatisticsSection';
 import { AnalysisSection } from './components/AnalysisSection';
 import { SentimentSection } from './components/SentimentSection';
 import { ForecastSection } from './components/ForecastSection';
+import { features } from '@/lib/features';
 
 export default function PricePage() {
   const searchParams = useSearchParams();
@@ -27,9 +28,12 @@ export default function PricePage() {
   const { addToast } = useToast();
   const t = useTranslations('price.toast');
   const [mounted, setMounted] = useState(false);
+  const showForecast = features.priceForecast;
 
   const initialRange = (searchParams.get('range') as TimeRange) || '30d';
-  const initialSection = searchParams.get('section') || 'overview';
+  const initialSectionParam = searchParams.get('section') || 'overview';
+  const initialSection =
+    !showForecast && initialSectionParam === 'forecast' ? 'overview' : initialSectionParam;
 
   const [selectedRange, setSelectedRange] = useState<TimeRange>(initialRange);
   const [statsRange, setStatsRange] = useState<TimeRange>(initialRange);
@@ -69,11 +73,13 @@ export default function PricePage() {
   useEffect(() => {
     const params = new URLSearchParams();
     params.set('range', selectedRange);
-    params.set('section', activeSection);
+    const safeSection =
+      showForecast || activeSection !== 'forecast' ? activeSection : 'overview';
+    params.set('section', safeSection);
 
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, '', newUrl);
-  }, [selectedRange, activeSection]);
+  }, [selectedRange, activeSection, showForecast]);
 
   const {
     data: widgetData,
@@ -288,6 +294,7 @@ export default function PricePage() {
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           isMobile={isMobile}
+          showForecast={showForecast}
         />
 
         {/* Content Sections */}
@@ -353,7 +360,7 @@ export default function PricePage() {
 
         {activeSection === 'sentiment' && <SentimentSection mounted={mounted} />}
 
-        {activeSection === 'forecast' && <ForecastSection mounted={mounted} />}
+        {showForecast && activeSection === 'forecast' && <ForecastSection mounted={mounted} />}
       </div>
 
       {/* Font Scale Controls */}
