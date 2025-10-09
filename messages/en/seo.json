@@ -52,6 +52,10 @@
         "description": "Deep dives into the Nosana ecosystem, DePIN trends, and network strategy direct from official sources."
       }
     },
+    "changelog": {
+      "title": "NOS.plus changelog & release notes",
+      "description": "Read the latest NOS.plus product updates, fixes, and enhancements delivered to the community."
+    },
     "docs": {
       "title": "NOS.plus documentation",
       "description": "Explore integration guides, API specs, and best practices for building with NOS.plus analytics."
