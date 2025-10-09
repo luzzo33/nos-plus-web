@@ -4,9 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
 import { useTranslations } from 'next-intl';
-import { AlertTriangle, Clock3, Loader2, RefreshCcw, Sparkles } from 'lucide-react';
+import { AlertTriangle, Clock3, RefreshCcw, Sparkles } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 type FetchStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -20,7 +21,6 @@ export function ChangelogContent() {
 
   const heading = tNav('changelog');
   const intro = tCommon('changelogIntro');
-  const loadingLabel = tCommon('loading');
   const errorLabel = tCommon('error');
   const retryLabel = tCommon('retry');
   const lastUpdatedLabel = tCommon('lastUpdated');
@@ -143,9 +143,15 @@ export function ChangelogContent() {
   const renderContent = () => {
     if (status === 'loading') {
       return (
-        <div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <span className="text-sm font-medium">{loadingLabel}</span>
+        <div className="space-y-6">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="space-y-3">
+              <SkeletonBlock className="h-5 w-40 rounded-lg" />
+              <SkeletonBlock className="h-4 w-full rounded-lg" />
+              <SkeletonBlock className="h-4 w-5/6 rounded-lg" />
+              <SkeletonBlock className="h-4 w-3/4 rounded-lg" />
+            </div>
+          ))}
         </div>
       );
     }

@@ -74,7 +74,11 @@ export default function RaydiumPage() {
     window.history.replaceState({}, '', newUrl);
   }, [selectedRange, activeSection]);
 
-  const { data: widgetData } = useQuery({
+  const {
+    data: widgetData,
+    isLoading: widgetLoading,
+    isFetching: widgetFetching,
+  } = useQuery({
     queryKey: ['staking-widget'],
     queryFn: () => apiClient.getStakingWidget(),
     refetchInterval: 60000,
@@ -96,13 +100,21 @@ export default function RaydiumPage() {
     };
   }, [selectedRange, dateRange]);
 
-  const { data: chartData } = useQuery({
+  const {
+    data: chartData,
+    isLoading: chartLoading,
+    isFetching: chartFetching,
+  } = useQuery({
     queryKey: ['staking-chart-data', chartParams],
     queryFn: () => apiClient.getStakingChart(chartParams as any),
     refetchInterval: 300000,
   });
 
-  const { data: statsData } = useQuery({
+  const {
+    data: statsData,
+    isLoading: statsLoading,
+    isFetching: statsFetching,
+  } = useQuery({
     queryKey: ['staking-stats', statsRange],
     queryFn: () => apiClient.getStakingStats(statsRange),
   });
@@ -125,7 +137,11 @@ export default function RaydiumPage() {
     return params;
   }, [tablePage, tableSort, tableTimeframe, tableDateRange]);
 
-  const { data: tableData } = useQuery({
+  const {
+    data: tableData,
+    isLoading: tableLoading,
+    isFetching: tableFetching,
+  } = useQuery({
     queryKey: ['staking-table', tableParams],
     queryFn: () => apiClient.getStakingTable(tableParams as any),
   });
@@ -207,6 +223,21 @@ export default function RaydiumPage() {
     } as any;
     return result;
   }, [widgetData]);
+  const rawChart = (chartData as any)?.chart;
+  const chartDataset = Array.isArray(rawChart?.data?.data)
+    ? rawChart.data.data
+    : Array.isArray(rawChart?.data)
+      ? rawChart.data
+      : [];
+  const tableRows = Array.isArray((tableData as any)?.table?.rows)
+    ? (tableData as any).table.rows
+    : Array.isArray((tableData as any)?.table?.data)
+      ? (tableData as any).table.data
+      : [];
+  const widgetIsLoading = (!widget && (widgetLoading || widgetFetching)) || false;
+  const chartIsLoading = (!chartDataset.length && (chartLoading || chartFetching)) || false;
+  const statsIsLoading = (!stats && (statsLoading || statsFetching)) || false;
+  const tableIsLoading = (!tableRows.length && (tableLoading || tableFetching)) || false;
 
   const handleStatsRangeChange = (range: TimeRange) => {
     viewportRef.current.scrollY = window.scrollY;
@@ -317,15 +348,16 @@ export default function RaydiumPage() {
     <FontScaleProvider>
       <div className="space-y-6 pb-12">
         {/* Header */}
-        <StakingHeader widget={widget} mounted={mounted} />
+        <StakingHeader widget={widget} mounted={mounted} loading={widgetIsLoading} />
 
         {/* Market Overview */}
-        {mounted && widget && (
+        {(mounted || widgetIsLoading || statsIsLoading) && (
           <MarketOverview
             widget={widget}
             stats={stats}
             statsRange={statsRange}
             mounted={mounted}
+            loading={widgetIsLoading || statsIsLoading}
             onStatsRangeChange={handleStatsRangeChange}
             onRefresh={handleRefresh}
             refreshing={refreshing}
@@ -342,17 +374,18 @@ export default function RaydiumPage() {
         />
 
         {/* Content Sections */}
-        {activeSection === 'overview' && (
+        {activeSection === 'overview' && (widget || widgetIsLoading || statsIsLoading) && (
           <OverviewSection
             widget={widget}
             stats={stats}
             statsRange={statsRange}
             mounted={mounted}
             metric={metric}
+            loading={widgetIsLoading || statsIsLoading}
           />
         )}
 
-        {activeSection === 'chart' && (
+        {activeSection === 'chart' && (chartData || chartIsLoading) && (
           <ChartSection
             chartData={chartData}
             selectedRange={selectedRange}
@@ -361,10 +394,11 @@ export default function RaydiumPage() {
             onDownload={downloadData}
             isMobile={isMobile}
             mounted={mounted}
+            loading={chartIsLoading}
           />
         )}
 
-        {activeSection === 'table' && (
+        {activeSection === 'table' && (tableData || tableIsLoading) && (
           <TableSection
             tableData={tableData}
             tableTimeframe={tableTimeframe}
@@ -378,21 +412,31 @@ export default function RaydiumPage() {
             onDownload={downloadData}
             isMobile={isMobile}
             mounted={mounted}
+            loading={tableIsLoading}
           />
         )}
 
-        {activeSection === 'stats' && stats && (
+        {activeSection === 'stats' && (stats || statsIsLoading) && (
           <StatisticsSection
             stats={stats}
             meta={statsMeta}
             statsRange={statsRange}
             mounted={mounted}
             metric={metric}
+            loading={statsIsLoading}
           />
         )}
 
-        {activeSection === 'analysis' && stats && widget && (
-          <AnalysisSection stats={stats} widget={widget} mounted={mounted} metric={metric} />
+        {activeSection === 'analysis' &&
+          (stats || statsIsLoading || widgetIsLoading) &&
+          (widget || widgetIsLoading) && (
+            <AnalysisSection
+              stats={stats}
+              widget={widget}
+              mounted={mounted}
+              metric={metric}
+              loading={statsIsLoading || widgetIsLoading}
+            />
         )}
       </div>
 

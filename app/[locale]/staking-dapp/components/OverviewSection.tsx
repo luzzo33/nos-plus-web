@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useFontScale } from '../hooks/useFontScale';
 import { useTranslations } from 'next-intl';
 import type { TimeRange } from '@/lib/api/client';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 interface OverviewSectionProps {
   widget: any;
@@ -14,6 +15,7 @@ interface OverviewSectionProps {
   statsRange: TimeRange;
   mounted: boolean;
   metric: 'xnos' | 'apr';
+  loading?: boolean;
 }
 
 export function OverviewSection({
@@ -22,13 +24,58 @@ export function OverviewSection({
   statsRange,
   mounted,
   metric,
+  loading = false,
 }: OverviewSectionProps) {
   const { text } = useFontScale();
   const t = useTranslations('stakingDapp.overview');
   const tc = useTranslations('common');
   const [expandedRanges, setExpandedRanges] = useState<string[]>(['24h', '7d', '30d']);
 
-  if (!mounted || !widget) return null;
+  const isHydrated = mounted || loading;
+  if (!isHydrated) return null;
+
+  if (loading || !widget) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <div className="card-base p-4 md:p-6">
+          <SkeletonBlock className="h-5 w-52 rounded-lg mb-4" />
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="p-2 md:p-3 bg-secondary/50 rounded-lg space-y-2">
+                <SkeletonBlock className="h-3 w-20 rounded-lg" />
+                <SkeletonBlock className="h-4 w-16 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="card-base p-4 md:p-6 space-y-3">
+            <SkeletonBlock className="h-5 w-44 rounded-lg" />
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="space-y-2">
+                <SkeletonBlock className="h-3 w-24 rounded-lg" />
+                <SkeletonBlock className="h-4 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+
+          <div className="card-base p-4 md:p-6 space-y-3">
+            <SkeletonBlock className="h-5 w-40 rounded-lg" />
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="space-y-2">
+                <SkeletonBlock className="h-3 w-28 rounded-lg" />
+                <SkeletonBlock className="h-4 w-24 rounded-lg" />
+                <SkeletonBlock className="h-3 w-32 rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (!widget) return null;
 
   const toggleRangeExpansion = (showAll: boolean) => {
     if (showAll) setExpandedRanges(['24h', '7d', '30d', '90d', '180d', '1y']);

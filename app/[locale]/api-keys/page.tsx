@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { nosApiFetch } from '@/lib/api/nosApi';
 import { TurnstileWidget } from '@/components/ui/TurnstileWidget';
 import { cn } from '@/lib/utils';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 interface ApiKeyRecord {
   id: number;
@@ -285,6 +286,12 @@ export default function ApiKeysPage() {
     enabled: isAuthenticated && Boolean(activeKeyId),
   });
 
+  const keysLoading = isAuthenticated && (keysQuery.isLoading || keysQuery.isFetching);
+  const tiersLoading = isAuthenticated && (tiersQuery.isLoading || tiersQuery.isFetching);
+  const summaryLoading = (summaryQuery.isLoading || summaryQuery.isFetching) && Boolean(activeKeyId);
+  const eventsLoading = (eventsQuery.isLoading || eventsQuery.isFetching) && Boolean(activeKeyId);
+  const dailyLoading = (dailyQuery.isLoading || dailyQuery.isFetching) && Boolean(activeKeyId);
+
   const requestKeyMutation = useMutation({
     mutationFn: async ({ captchaToken, labelSnapshot, tierSlug }: RequestKeyVariables) => {
       const payload = {
@@ -393,7 +400,7 @@ export default function ApiKeysPage() {
   const canStartCaptcha =
     !showCaptcha &&
     requestKeyMutation.status !== 'pending' &&
-    (!isAuthenticated || !keysQuery.isLoading) &&
+    (!isAuthenticated || !keysLoading) &&
     !limitReached;
 
   const handleStartRequest = () => {
@@ -729,25 +736,33 @@ export default function ApiKeysPage() {
             </div>
 
             {isAuthenticated ? (
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">{t('request.tier')}</label>
-                <select
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-sm text-foreground transition-colors focus:ring-2 focus:ring-ring focus:border-ring"
-                  value={selectedTier}
-                  onChange={(e) => setSelectedTier(e.target.value)}
-                >
-                  {tiers.map((tier) => (
-                    <option key={tier.id} value={tier.slug}>
-                      {tier.name}
-                    </option>
-                  ))}
-                </select>
-                {selectedTierDetails?.description && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {selectedTierDetails.description}
-                  </p>
-                )}
-              </div>
+              tiersLoading ? (
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-foreground">{t('request.tier')}</label>
+                  <SkeletonBlock className="h-12 w-full rounded-xl" />
+                  <SkeletonBlock className="h-3 w-2/3 rounded-lg" />
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-foreground">{t('request.tier')}</label>
+                  <select
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-sm text-foreground transition-colors focus:ring-2 focus:ring-ring focus:border-ring"
+                    value={selectedTier}
+                    onChange={(e) => setSelectedTier(e.target.value)}
+                  >
+                    {tiers.map((tier) => (
+                      <option key={tier.id} value={tier.slug}>
+                        {tier.name}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedTierDetails?.description && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {selectedTierDetails.description}
+                    </p>
+                  )}
+                </div>
+              )
             ) : (
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground">{t('request.tier')}</label>
@@ -841,7 +856,11 @@ export default function ApiKeysPage() {
                 <h2 className="text-xl font-bold text-foreground">{t('keys.title')}</h2>
               </div>
               <div className="px-3 py-1 rounded-full bg-secondary text-sm font-medium text-secondary-foreground">
-                {t('keys.count', { count: keys.length })}
+                {keysLoading ? (
+                  <SkeletonBlock className="h-4 w-16 rounded-full" />
+                ) : (
+                  t('keys.count', { count: keys.length })
+                )}
               </div>
             </div>
 
@@ -851,7 +870,19 @@ export default function ApiKeysPage() {
               </div>
             )}
 
-            {keys.length === 0 ? (
+            {keysLoading ? (
+              <div className="grid gap-6 lg:grid-cols-2">
+                {Array.from({ length: 2 }).map((_, idx) => (
+                  <div key={idx} className="card-base p-6 space-y-4">
+                    <SkeletonBlock className="h-5 w-48 rounded-lg" />
+                    <SkeletonBlock className="h-3 w-32 rounded-lg" />
+                    <SkeletonBlock className="h-3 w-40 rounded-lg" />
+                    <SkeletonBlock className="h-3 w-28 rounded-lg" />
+                    <SkeletonBlock className="h-8 w-full rounded-lg" />
+                  </div>
+                ))}
+              </div>
+            ) : keys.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-muted flex items-center justify-center">
                   <KeyIcon className="w-10 h-10 text-muted-foreground" />
@@ -937,39 +968,60 @@ export default function ApiKeysPage() {
 
             <div className="grid gap-6 lg:grid-cols-3">
               <div className="lg:col-span-1 space-y-4">
-                <div className="p-5 rounded-xl bg-card border border-border">
-                  <div className="text-xs font-medium text-muted-foreground mb-2">
-                    {t('usage.totalCalls')}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {summaryQuery.data?.summary?.total_calls ?? 0}
-                  </div>
-                </div>
-                <div className="p-5 rounded-xl bg-card border border-border">
-                  <div className="text-xs font-medium text-muted-foreground mb-2">
-                    {t('usage.errors')}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {summaryQuery.data?.summary?.error_calls ?? 0}
-                  </div>
-                </div>
-                <div className="p-5 rounded-xl bg-card border border-border">
-                  <div className="text-xs font-medium text-muted-foreground mb-2">
-                    {t('usage.avgLatency')}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {summaryQuery.data?.summary?.avg_latency_ms
-                      ? `${Math.round(summaryQuery.data.summary.avg_latency_ms)} ms`
-                      : '—'}
-                  </div>
-                </div>
+                {summaryLoading ? (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <div key={idx} className="p-5 rounded-xl bg-card border border-border">
+                      <SkeletonBlock className="h-3 w-24 rounded-lg mb-2" />
+                      <SkeletonBlock className="h-6 w-20 rounded-lg" />
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="p-5 rounded-xl bg-card border border-border">
+                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                        {t('usage.totalCalls')}
+                      </div>
+                      <div className="text-2xl font-bold">
+                        {summaryQuery.data?.summary?.total_calls ?? 0}
+                      </div>
+                    </div>
+                    <div className="p-5 rounded-xl bg-card border border-border">
+                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                        {t('usage.errors')}
+                      </div>
+                      <div className="text-2xl font-bold">
+                        {summaryQuery.data?.summary?.error_calls ?? 0}
+                      </div>
+                    </div>
+                    <div className="p-5 rounded-xl bg-card border border-border">
+                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                        {t('usage.avgLatency')}
+                      </div>
+                      <div className="text-2xl font-bold">
+                        {summaryQuery.data?.summary?.avg_latency_ms
+                          ? `${Math.round(summaryQuery.data.summary.avg_latency_ms)} ms`
+                          : '—'}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="lg:col-span-2 space-y-6">
                 <div>
                   <h4 className="text-lg font-semibold text-foreground mb-4">
                     {t('usage.recentActivity')}
                   </h4>
-                  {eventsQuery.data?.events && eventsQuery.data.events.length > 0 ? (
+                  {eventsLoading ? (
+                    <div className="space-y-3">
+                      {Array.from({ length: 4 }).map((_, idx) => (
+                        <div key={idx} className="p-4 rounded-lg bg-muted/50 border border-border">
+                          <SkeletonBlock className="h-4 w-40 rounded-lg mb-2" />
+                          <SkeletonBlock className="h-3 w-full rounded-lg mb-2" />
+                          <SkeletonBlock className="h-3 w-3/4 rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : eventsQuery.data?.events && eventsQuery.data.events.length > 0 ? (
                     <div className="space-y-3">
                       {eventsQuery.data.events.slice(0, 10).map((event: any) => (
                         <div
@@ -1018,7 +1070,17 @@ export default function ApiKeysPage() {
                   <h4 className="text-lg font-semibold text-foreground mb-4">
                     {t('usage.dailyHeadline')}
                   </h4>
-                  {dailyQuery.data?.days && dailyQuery.data.days.length > 0 ? (
+                  {dailyLoading ? (
+                    <div className="space-y-3">
+                      {Array.from({ length: 4 }).map((_, idx) => (
+                        <div key={idx} className="p-4 rounded-lg bg-muted/50 border border-border">
+                          <SkeletonBlock className="h-4 w-32 rounded-lg mb-2" />
+                          <SkeletonBlock className="h-3 w-full rounded-lg mb-2" />
+                          <SkeletonBlock className="h-3 w-2/3 rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : dailyQuery.data?.days && dailyQuery.data.days.length > 0 ? (
                     <div className="space-y-3">
                       {dailyQuery.data.days.map((day: any) => (
                         <div

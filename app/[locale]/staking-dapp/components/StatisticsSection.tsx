@@ -7,6 +7,7 @@ import { useFontScale, FONT_SCALE } from '../hooks/useFontScale';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { TimeRange } from '@/lib/api/client';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 interface StatisticsSectionProps {
   stats: any;
@@ -14,6 +15,7 @@ interface StatisticsSectionProps {
   statsRange: TimeRange;
   mounted: boolean;
   metric?: 'xnos' | 'apr';
+  loading?: boolean;
 }
 
 export function StatisticsSection({
@@ -22,12 +24,46 @@ export function StatisticsSection({
   statsRange,
   mounted,
   metric = 'xnos',
+  loading = false,
 }: StatisticsSectionProps) {
   const { text } = useFontScale();
   const tCommon = useTranslations('common');
   const tStats = useTranslations('stakingDapp.stats');
   const tTooltips = useTranslations('stakingDapp.stats.tooltips');
-  if (!mounted || !stats) return null;
+  const isHydrated = mounted || loading;
+  if (!isHydrated) return null;
+
+  if (loading || !stats) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="card-base p-3 md:p-4 space-y-3 text-center">
+              <SkeletonBlock className="h-6 w-6 mx-auto rounded-full" />
+              <SkeletonBlock className="h-3 w-28 mx-auto rounded-lg" />
+              <SkeletonBlock className="h-5 w-20 mx-auto rounded-lg" />
+              <SkeletonBlock className="h-3 w-16 mx-auto rounded-lg" />
+            </div>
+          ))}
+        </div>
+
+        <div className="card-base p-4 md:p-6 space-y-4">
+          <SkeletonBlock className="h-5 w-48 rounded-lg" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="space-y-2 text-center">
+                <SkeletonBlock className="h-3 w-24 mx-auto rounded-lg" />
+                <SkeletonBlock className="h-4 w-20 mx-auto rounded-lg" />
+              </div>
+            ))}
+          </div>
+          <SkeletonBlock className="h-40 w-full rounded-xl" />
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (!stats) return null;
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const chartFontSize = isMobile ? 10 * FONT_SCALE.mobile : 12 * FONT_SCALE.desktop;

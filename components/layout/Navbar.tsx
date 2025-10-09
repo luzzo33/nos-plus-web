@@ -48,6 +48,11 @@ export function Navbar() {
 
   const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
 
+  const withLocale = (path: string) => {
+    if (!path.startsWith('/')) return path;
+    return path === '/' ? `/${locale}` : `/${locale}${path}`;
+  };
+
   const navigationCategories = [
     {
       id: 'dashboard',
@@ -201,7 +206,7 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 relative">
+          <Link href={withLocale('/')} className="flex items-center gap-2 relative">
             <motion.div
               className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center"
               whileHover={{ scale: 1.05 }}
@@ -233,7 +238,7 @@ export function Navbar() {
 
               if (category.type === 'single') {
                 return (
-                  <Link key={category.id} href={category.href!} className="relative">
+                  <Link key={category.id} href={withLocale(category.href!)} className="relative">
                     <motion.div
                       className={cn(
                         'flex items-center gap-2 px-4 py-2 mx-1 rounded-lg text-sm font-medium transition-all',
@@ -298,7 +303,7 @@ export function Navbar() {
                                 transition={{ delay: index * 0.05 }}
                               >
                                 <Link
-                                  href={item.href}
+                                  href={withLocale(item.href)}
                                   onClick={closeAllDropdowns}
                                   className={cn(
                                     'flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-secondary group',
@@ -457,7 +462,7 @@ export function Navbar() {
                           transition={{ delay: categoryIndex * 0.1 }}
                         >
                           <Link
-                            href={category.href!}
+                            href={withLocale(category.href!)}
                             onClick={() => setMobileMenuOpen(false)}
                             className={cn(
                               'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all',
@@ -526,7 +531,7 @@ export function Navbar() {
                                       transition={{ delay: index * 0.05 }}
                                     >
                                       <Link
-                                        href={item.href}
+                                        href={withLocale(item.href)}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className={cn(
                                           'flex items-center gap-3 p-3 rounded-lg transition-all',

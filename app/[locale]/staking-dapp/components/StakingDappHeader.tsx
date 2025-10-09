@@ -5,18 +5,22 @@ import { TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useFontScale } from '../hooks/useFontScale';
 import { useTranslations } from 'next-intl';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 
 interface StakingDappHeaderProps {
   widget: any;
   mounted: boolean;
+  loading?: boolean;
 }
 
-export function StakingDappHeader({ widget, mounted }: StakingDappHeaderProps) {
+export function StakingDappHeader({ widget, mounted, loading = false }: StakingDappHeaderProps) {
   const { text } = useFontScale();
   const t = useTranslations('stakingDapp');
   const change24h = widget?.changes?.['24h'];
   const xnosChange = change24h?.xnos;
   const aprChange = change24h?.apr;
+  const showData = mounted && widget && !loading;
+  const showSkeleton = loading || !widget;
 
   const resolvePositive = (change?: {
     percentage?: number | null;
@@ -77,7 +81,24 @@ export function StakingDappHeader({ widget, mounted }: StakingDappHeaderProps) {
               } as any)}
             </p>
           </div>
-          {mounted && widget && (
+          {showSkeleton && (
+            <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border border-border/50 min-w-[280px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.from({ length: 2 }).map((_, idx) => (
+                  <div key={idx} className="space-y-3">
+                    <SkeletonBlock className="h-3 w-24 rounded-lg" />
+                    <SkeletonBlock className="h-8 w-28 rounded-lg" />
+                    <div className="flex items-center gap-3">
+                      <SkeletonBlock className="h-4 w-4 rounded-full" />
+                      <SkeletonBlock className="h-3 w-16 rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <SkeletonBlock className="mt-4 h-3 w-32 rounded-lg" />
+            </div>
+          )}
+          {showData && (
             <div className="bg-background/50 backdrop-blur-sm rounded-xl p-4 border border-border/50">
               {/* Stack values vertically on mobile; two columns on md+ */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

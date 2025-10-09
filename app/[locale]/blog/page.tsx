@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
-import { nosApiFetch } from '@/lib/api/nosApi';
-import { logError } from '@/lib/logging/logger';
-import type { BlogListPayload } from '@/lib/api/types';
 import BlogExplorer from '@/components/blog/BlogExplorer';
 import { createPageMetadata } from '@/lib/seo/metadata';
 import { resolveLocale } from '@/lib/seo/config';
+import { nosApiFetch } from '@/lib/api/nosApi';
+import type { BlogListPayload } from '@/lib/api/types';
 
 interface BlogPageParams {
   locale: string;
 }
+
+export const dynamic = 'force-dynamic';
 
 async function fetchBlogPosts(language: string): Promise<BlogListPayload> {
   const fallback: BlogListPayload = {
@@ -22,14 +23,11 @@ async function fetchBlogPosts(language: string): Promise<BlogListPayload> {
     if (payload?.data?.posts) {
       return payload.data as BlogListPayload;
     }
-    return fallback;
   } catch (error) {
-    logError('[BlogPage] Failed to fetch blog posts', {
-      language,
-      error,
-    });
-    return fallback;
+    // Intentionally swallow; we fall back to empty content below.
   }
+
+  return fallback;
 }
 
 export async function generateMetadata({
@@ -49,6 +47,5 @@ export default async function BlogPage({ params }: { params: Promise<BlogPagePar
   const { locale } = await params;
   const normalizedLang = (locale || 'en').split('-')[0] || 'en';
   const initialData = await fetchBlogPosts(normalizedLang);
-
   return <BlogExplorer initialData={initialData} fallbackLanguage={normalizedLang} />;
 }
