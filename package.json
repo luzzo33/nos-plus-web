@@ -9,10 +9,10 @@
   "scripts": {
     "dev": "next dev -p 3016",
     "build": "next build",
-    "start": "next start -p 3016",
+    "start": "PORT=${PORT:-3016} next start -p \"$PORT\" -H 0.0.0.0",
     "build:alpha": "DIST_DIR=.next-alpha next build",
     "start:alpha": "DIST_DIR=.next-alpha next start -p 3020 -H 0.0.0.0",
-    "build:live": "NEXT_PUBLIC_ENV=live DIST_DIR=.next-live next build",
+    "build:live": "node scripts/build-live.cjs",
     "start:live": "DIST_DIR=.next-live next start -p 3040 -H 0.0.0.0",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

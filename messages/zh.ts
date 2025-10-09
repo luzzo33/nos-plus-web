@@ -25,20 +25,46 @@ import status from './zh/status.json';
 import volume from './zh/volume.json';
 import widgets from './zh/widgets.json';
 
+const navWithChangelog = {
+  ...nav,
+  changelog: nav.changelog ?? '更新日志',
+  descriptions: {
+    ...nav.descriptions,
+    changelog:
+      nav.descriptions?.changelog ??
+      '查看最新的 NOS.plus 版本与更新',
+  },
+};
+
+const footerWithChangelogLink = {
+  ...footer,
+  links: {
+    ...footer.links,
+    changelog: footer.links?.changelog ?? '更新日志',
+  },
+};
+
+const commonWithChangelogIntro = {
+  ...common,
+  changelogIntro:
+    common.changelogIntro ??
+    '及时了解 NOS.plus 最新的发布、修复和功能更新。',
+};
+
 const zh = {
   alphaModal,
   analysis,
   apiKeys,
   auth,
-  common,
+  common: commonWithChangelogIntro,
   dashboard,
   docs,
-  footer,
+  footer: footerWithChangelogLink,
   holders,
   legal,
   monitor,
   maintenance,
-  nav,
+  nav: navWithChangelog,
   blog,
   openapi,
   price,

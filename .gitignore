@@ -29,6 +29,10 @@ deploy/*
 # Legacy reference snapshots (kept locally only)
 archive/unused/
 
+# Local build overrides
+scripts/build-live.js
+scripts/build-live.local.*
+
 # Editor & OS
 .DS_Store
 *.tsbuildinfo
