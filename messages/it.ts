@@ -25,20 +25,46 @@ import status from './it/status.json';
 import volume from './it/volume.json';
 import widgets from './it/widgets.json';
 
+const navWithChangelog = {
+  ...nav,
+  changelog: nav.changelog ?? 'Registro delle modifiche',
+  descriptions: {
+    ...nav.descriptions,
+    changelog:
+      nav.descriptions?.changelog ??
+      'Consulta le ultime versioni e aggiornamenti di NOS.plus',
+  },
+};
+
+const footerWithChangelogLink = {
+  ...footer,
+  links: {
+    ...footer.links,
+    changelog: footer.links?.changelog ?? 'Registro delle modifiche',
+  },
+};
+
+const commonWithChangelogIntro = {
+  ...common,
+  changelogIntro:
+    common.changelogIntro ??
+    'Rimani aggiornato sugli ultimi rilasci, correzioni e novità di NOS.plus.',
+};
+
 const it = {
   alphaModal,
   analysis,
   apiKeys,
   auth,
-  common,
+  common: commonWithChangelogIntro,
   dashboard,
   docs,
-  footer,
+  footer: footerWithChangelogLink,
   holders,
   legal,
   monitor,
   maintenance,
-  nav,
+  nav: navWithChangelog,
   blog,
   openapi,
   price,
