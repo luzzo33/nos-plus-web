@@ -113,10 +113,7 @@ export function OverviewSection({
   const tm = useTranslations('stakingDetails.marketOverview');
   const tc = useTranslations('common');
   const [expandedRanges, setExpandedRanges] = useState<TimeRange[]>(DEFAULT_EXPANDED);
-
   const hydrated = mounted || loading;
-  if (!hydrated) return null;
-
   const showSkeleton = loading || !widget;
 
   const metricLabels: Record<MetricKey, string> = {
@@ -212,6 +209,10 @@ export function OverviewSection({
       })
       .filter((entry): entry is RangeRenderEntry => Boolean(entry));
   }, [ranges, metric, changes, currentValue]);
+
+  if (!hydrated) {
+    return null;
+  }
 
   if (showSkeleton) {
     return (

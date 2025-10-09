@@ -1,6 +1,13 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -9,7 +16,7 @@ export interface DropdownOption {
   value: string;
   label: string;
   description?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }
 
 interface CustomDropdownProps {
@@ -21,7 +28,7 @@ interface CustomDropdownProps {
   triggerClassName?: string;
   menuClassName?: string;
   disabled?: boolean;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'outline' | 'ghost';
   align?: 'left' | 'right';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type GlobalErrorProps = {
   error: Error & { digest?: string };
@@ -28,22 +28,45 @@ function buildContext(error: GlobalErrorProps['error']) {
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   const sentRef = useRef(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    const isDark =
+      root.classList.contains('dark') ||
+      root.dataset.theme === 'dark' ||
+      root.getAttribute('data-theme') === 'dark' ||
+      prefersDark;
+    setTheme(isDark ? 'dark' : 'light');
+  }, []);
 
   useEffect(() => {
     if (sentRef.current) return;
     sentRef.current = true;
 
-    const payload = {
+    const payload = JSON.stringify({
       level: 'error',
       message: '[app] Global error boundary triggered',
       context: buildContext(error),
-    };
+    });
+
+    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+      try {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon('/api/client-logs', blob);
+        return;
+      } catch {
+        // fall through to fetch
+      }
+    }
 
     try {
       fetch('/api/client-logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: payload,
         keepalive: true,
       }).catch(() => {
         // ignore network issues when logging the failure
@@ -53,9 +76,25 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     }
   }, [error]);
 
+  const isDark = theme === 'dark';
+  const themeClass = useMemo(() => (isDark ? 'dark' : ''), [isDark]);
+  const bodyClasses = useMemo(
+    () =>
+      [
+        'min-h-screen',
+        'flex',
+        'items-center',
+        'justify-center',
+        'p-6',
+        'transition-colors',
+        isDark ? 'bg-[#0b0f1a] text-slate-100' : 'bg-slate-50 text-slate-900',
+      ].join(' '),
+    [isDark],
+  );
+
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
+    <html lang="en" className={themeClass} data-theme={theme}>
+      <body className={bodyClasses}>
         <div className="max-w-md space-y-4 text-center rounded-2xl border border-border/60 bg-card/90 p-6 shadow-lg">
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">Something went wrong</h2>

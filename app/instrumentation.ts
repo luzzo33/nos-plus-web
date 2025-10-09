@@ -1,6 +1,6 @@
 'use server';
 
-import { logError } from '@/lib/logging/logger';
+import { logError, logInfo } from '@/lib/logging/logger';
 
 const REGISTRY_FLAG = Symbol.for('nos.plus.logging.registered');
 
@@ -12,6 +12,7 @@ export async function register() {
   }
 
   (globalThis as any)[REGISTRY_FLAG] = true;
+  logInfo('[runtime] instrumentation registered');
 
   process.on('uncaughtException', (error) => {
     logError('[runtime] Uncaught exception', error);

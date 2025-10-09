@@ -37,9 +37,46 @@ function buildContext(payload: unknown, request: NextRequest): Record<string, un
   return context;
 }
 
+function logIncoming(level: ServerLogLevel, message: string, context: Record<string, unknown>) {
+  const entry = {
+    ...context,
+    message,
+  };
+
+  switch (level) {
+    case 'error':
+      logError('[client] event', entry);
+      break;
+    case 'warn':
+      logWarn('[client] event', entry);
+      break;
+    case 'debug':
+      logDebug('[client] event', entry);
+      break;
+    default:
+      logInfo('[client] event', entry);
+      break;
+  }
+}
+
 export async function POST(request: NextRequest) {
+  let rawBody: string | null = null;
+
   try {
-    const body = await request.json();
+    rawBody = await request.text();
+  } catch (error) {
+    logError('[client-logs] Failed to read request body', {
+      error: formatLogPayload(error),
+    });
+  }
+
+  if (!rawBody || !rawBody.trim().length) {
+    logWarn('[client-logs] Received empty payload', buildContext(null, request));
+    return NextResponse.json({ success: true }, { status: 202 });
+  }
+
+  try {
+    const body = JSON.parse(rawBody);
     const level = normalizeLevel(body?.level);
     const message =
       typeof body?.message === 'string' && body.message.trim().length > 0
@@ -47,26 +84,15 @@ export async function POST(request: NextRequest) {
         : 'Client-side error reported';
 
     const context = buildContext(body?.context, request);
+    logIncoming(level, message, context);
 
-    switch (level) {
-      case 'error':
-        logError(`[client] ${message}`, context);
-        break;
-      case 'warn':
-        logWarn(`[client] ${message}`, context);
-        break;
-      case 'debug':
-        logDebug(`[client] ${message}`, context);
-        break;
-      default:
-        logInfo(`[client] ${message}`, context);
-        break;
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { status: 202 });
   } catch (error) {
-    logError('[client-logs] Failed to process client log payload', { error });
-    return NextResponse.json({ success: false }, { status: 400 });
+    logError('[client-logs] Failed to process client log payload', {
+      error: formatLogPayload(error),
+      body: rawBody,
+    });
+    return NextResponse.json({ success: false }, { status: 200 });
   }
 }
 
