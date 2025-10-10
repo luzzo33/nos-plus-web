@@ -356,6 +356,8 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
       return;
     }
     const hasCachedRows = lastNonEmptyRowsRef.current.length > 0;
+    const expectedView = (requestedView ?? defaultView) ?? 'default';
+    const expectComparison = expectedView === 'comparison';
     setLoading(hasCachedRows ? false : !initial?.rows?.length);
     setConnected(false);
     setError(null);
@@ -401,7 +403,12 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
         const objectPayload = (payload as Record<string, unknown>) ?? {};
         let rowsPayload =
           objectPayload.rows ?? (objectPayload.data as Record<string, unknown> | undefined)?.rows;
-        if (!rowsPayload && objectPayload && typeof objectPayload === 'object') {
+        if (
+          !rowsPayload &&
+          !expectComparison &&
+          objectPayload &&
+          typeof objectPayload === 'object'
+        ) {
           const hasAggregateShape = [
             'priceNow',
             'changePct',
@@ -419,9 +426,15 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
           if (deep) rowsPayload = deep;
         }
         const normalizedRows = normalizeRows(rowsPayload);
-        if (normalizedRows.length > 0) {
-          lastNonEmptyRowsRef.current = normalizedRows;
-          setRows(normalizedRows);
+        const resolvedRows =
+          expectComparison && normalizedRows.length > 0
+            ? normalizedRows.every((row) => !row.venue && !row.slug)
+              ? []
+              : normalizedRows
+            : normalizedRows;
+        if (resolvedRows.length > 0) {
+          lastNonEmptyRowsRef.current = resolvedRows;
+          setRows(resolvedRows);
         }
 
         const dataPayload =
@@ -439,8 +452,9 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
             : typeof dataPayload?.view === 'string'
               ? (dataPayload.view as string)
               : null;
+        const resolvedViewValue = (viewRawValue ?? expectedView ?? 'default').toLowerCase();
         const nextView: StatsView =
-          viewRawValue && viewRawValue.toLowerCase() === 'comparison' ? 'comparison' : 'default';
+          resolvedViewValue === 'comparison' ? 'comparison' : 'default';
         setView(nextView);
 
         const rangeRawValue =
@@ -465,7 +479,7 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
           const spreadRaw = objectPayload.spreadSummary ?? dataPayload?.spreadSummary;
           const comparisonPayload = normalizeComparisonPayload(
             comparisonRaw,
-            normalizedRows.length ? normalizedRows : lastNonEmptyRowsRef.current,
+            resolvedRows.length ? resolvedRows : lastNonEmptyRowsRef.current,
             normalizedRange,
             normalizedAggregate,
             updated,
@@ -473,7 +487,7 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
             spreadRaw,
           );
           setComparison(comparisonPayload);
-        } else {
+        } else if (!expectComparison) {
           setComparison(null);
         }
         setConnected(true);
@@ -483,7 +497,12 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
         const objectPayload = (payload as Record<string, unknown>) ?? {};
         let rowsPayload =
           objectPayload.rows ?? (objectPayload.data as Record<string, unknown> | undefined)?.rows;
-        if (!rowsPayload && objectPayload && typeof objectPayload === 'object') {
+        if (
+          !rowsPayload &&
+          !expectComparison &&
+          objectPayload &&
+          typeof objectPayload === 'object'
+        ) {
           const hasAggregateShape = [
             'priceNow',
             'changePct',
@@ -501,9 +520,15 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
           if (deep) rowsPayload = deep;
         }
         const normalizedRows = normalizeRows(rowsPayload);
-        if (normalizedRows.length > 0) {
-          lastNonEmptyRowsRef.current = normalizedRows;
-          setRows(normalizedRows);
+        const resolvedRows =
+          expectComparison && normalizedRows.length > 0
+            ? normalizedRows.every((row) => !row.venue && !row.slug)
+              ? []
+              : normalizedRows
+            : normalizedRows;
+        if (resolvedRows.length > 0) {
+          lastNonEmptyRowsRef.current = resolvedRows;
+          setRows(resolvedRows);
         }
 
         const dataPayload =
@@ -521,8 +546,9 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
             : typeof dataPayload?.view === 'string'
               ? (dataPayload.view as string)
               : null;
+        const resolvedViewValue = (viewRawValue ?? expectedView ?? 'default').toLowerCase();
         const nextView: StatsView =
-          viewRawValue && viewRawValue.toLowerCase() === 'comparison' ? 'comparison' : 'default';
+          resolvedViewValue === 'comparison' ? 'comparison' : 'default';
         setView(nextView);
 
         const rangeRawValue =
@@ -547,7 +573,7 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
           const spreadRaw = objectPayload.spreadSummary ?? dataPayload?.spreadSummary;
           const comparisonPayload = normalizeComparisonPayload(
             comparisonRaw,
-            normalizedRows.length ? normalizedRows : lastNonEmptyRowsRef.current,
+            resolvedRows.length ? resolvedRows : lastNonEmptyRowsRef.current,
             normalizedRange,
             normalizedAggregate,
             updated,
@@ -555,7 +581,7 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
             spreadRaw,
           );
           setComparison(comparisonPayload);
-        } else {
+        } else if (!expectComparison) {
           setComparison(null);
         }
         setConnected(true);
