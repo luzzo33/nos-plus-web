@@ -706,7 +706,8 @@ function DCASectionInner({ variant = 'full', maxRows, planTypeControl, height }:
     if (
       plan._statusNorm === 'closed' ||
       plan._statusNorm === 'completed' ||
-      plan._statusNorm === 'scheduled'
+      plan._statusNorm === 'scheduled' ||
+      plan._statusNorm === 'paused'
     ) {
       return null;
     }

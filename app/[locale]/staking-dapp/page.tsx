@@ -18,6 +18,7 @@ import { ChartSection } from './components/ChartSection';
 import { TableSection } from './components/TableSection';
 import { StatisticsSection } from './components/StatisticsSection';
 import { AnalysisSection } from './components/AnalysisSection';
+import { normalizeStakingDappStats } from './utils/normalizeStakingData';
 
 export default function RaydiumPage() {
   const searchParams = useSearchParams();
@@ -118,8 +119,10 @@ export default function RaydiumPage() {
     queryKey: ['staking-stats', statsRange],
     queryFn: () => apiClient.getStakingStats(statsRange),
   });
-  const stats = (statsData as any)?.stats;
+  const rawStats = (statsData as any)?.stats;
   const statsMeta = (statsData as any)?.meta;
+  const normalizedStats = useMemo(() => normalizeStakingDappStats(rawStats), [rawStats]);
+  const stats = normalizedStats ?? rawStats;
 
   const tableParams = useMemo(() => {
     const params: any = {

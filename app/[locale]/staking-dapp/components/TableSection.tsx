@@ -53,25 +53,12 @@ export function TableSection({
   }>({ start: null, end: null });
 
   const tableColumns = tableData?.table?.columns ?? [];
-  const rawRows: any[] = Array.isArray(tableData?.table?.rows)
-    ? (tableData!.table!.rows as any[])
-    : [];
+  const rawRows: any[] = Array.isArray(tableData?.table?.rows) ? (tableData.table.rows as any[]) : [];
   const columnCount = tableColumns.length || 6;
 
-  const tableRows = rawRows.map((r, idx) => ({
-    id: r.id ?? idx,
-    timestamp: r.timestamp || r.date,
-    xnos: r.xnos,
-    xnosDisplay: r.display?.xnos,
-    change: r.change,
-    changeDisplay: r.display?.change,
-    high: r.high,
-    highDisplay: r.display?.high,
-    low: r.low,
-    lowDisplay: r.display?.low,
-    dataPoints: r.dataPoints,
-    apr: r.apr,
-    aprDisplay: r.display?.apr,
+  const tableRows = rawRows.map((row, idx) => ({
+    key: String(row?.id ?? row?.timestamp ?? idx),
+    row,
   }));
   const pagination = tableData?.pagination ?? null;
 
@@ -109,7 +96,10 @@ isMobile: ${isMobile}
   }, [tableData]);
 
   useEffect(() => {
-    console.log('<pre>[STAKING-DAPP][TableSection] derived rows snapshot</pre>', tableRows);
+    console.log(
+      '<pre>[STAKING-DAPP][TableSection] derived rows snapshot</pre>',
+      tableRows.map((entry) => entry.row),
+    );
   }, [tableRows]);
 
   useEffect(() => {
@@ -208,6 +198,83 @@ end: ${tempTableDateRange.end ? tempTableDateRange.end.toISOString() : 'null'}
     format(date, isMobile ? 'MM/dd HH:mm' : 'MMM dd, yyyy HH:mm', {
       locale: getDateLocale(locale),
     });
+
+  const formatAmount = (value: number) => {
+    if (!Number.isFinite(value)) return '—';
+    const abs = Math.abs(value);
+    if (abs >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+    if (abs >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+    if (abs >= 1e3) return `${(value / 1e3).toFixed(2)}K`;
+    return value.toLocaleString(locale);
+  };
+
+  const mapColorClass = (color?: unknown) => {
+    if (typeof color !== 'string') return undefined;
+    const normalized = color.toLowerCase();
+    if (normalized === 'green') return 'text-green-500';
+    if (normalized === 'red') return 'text-red-500';
+    if (normalized === 'yellow') return 'text-yellow-500';
+    return undefined;
+  };
+
+  const resolveCell = (row: any, columnKey: string) => {
+    if (columnKey === 'timestamp') {
+      const ts = row?.timestamp ?? row?.date;
+      if (!mounted || !ts) return { value: '—' };
+      try {
+        return { value: formatLocal(new Date(ts)) };
+      } catch {
+        return { value: String(ts) };
+      }
+    }
+
+    const displayValue = row?.display?.[columnKey];
+    if (displayValue !== undefined) {
+      if (
+        displayValue &&
+        typeof displayValue === 'object' &&
+        'value' in (displayValue as Record<string, unknown>)
+      ) {
+        const record = displayValue as Record<string, unknown>;
+        return {
+          value: record.value ?? '-',
+          className: mapColorClass(record.color),
+        };
+      }
+      return { value: displayValue };
+    }
+
+    const raw = row?.[columnKey];
+    if (raw === undefined || raw === null || raw === '') {
+      return { value: '-' };
+    }
+
+    if (typeof raw === 'number') {
+      if (columnKey === 'change') {
+        return {
+          value: `${raw >= 0 ? '+' : ''}${(raw * 100).toFixed(2)}%`,
+          className: raw === 0 ? undefined : raw > 0 ? 'text-green-500' : 'text-red-500',
+        };
+      }
+      if (
+        columnKey === 'apr' ||
+        columnKey.toLowerCase().includes('ratio') ||
+        columnKey.toLowerCase().includes('percent')
+      ) {
+        return { value: `${raw.toFixed(2)}%` };
+      }
+      if (columnKey === 'dataPoints') {
+        return { value: Math.round(raw).toLocaleString(locale) };
+      }
+      return { value: formatAmount(raw) };
+    }
+
+    if (typeof raw === 'string') {
+      return { value: raw };
+    }
+
+    return { value: '-' };
+  };
 
   return (
     <motion.div
@@ -457,69 +524,26 @@ end: ${tempTableDateRange.end ? tempTableDateRange.end.toISOString() : 'null'}
                 </td>
               </tr>
             ) : (
-              tableRows.map((row: any, index: number) => (
+              tableRows.map(({ key, row }, index) => (
                 <tr
-                  key={`${row.id}-${row.timestamp}-${index}`}
+                  key={`${key}-${index}`}
                   className="border-b border-border hover:bg-secondary/30 transition-colors"
                 >
-                  {/* Timestamp */}
-                  <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
-                    {mounted && row.timestamp ? formatLocal(new Date(row.timestamp)) : '—'}
-                  </td>
-                  {/* xNOS */}
-                  <td className={cn('px-3 md:px-4 py-2 md:py-3 font-medium', text('xs', 'sm'))}>
-                    {row.xnosDisplay ??
-                      (typeof row.xnos === 'number'
-                        ? Math.round(row.xnos).toLocaleString()
-                        : (row.xnos ?? '-'))}
-                  </td>
-                  {/* Change % */}
-                  <td
-                    className={cn(
-                      'px-3 md:px-4 py-2 md:py-3 font-medium',
-                      text('xs', 'sm'),
-                      typeof row.changeDisplay === 'object' && row.changeDisplay?.color === 'green'
-                        ? 'text-green-500'
-                        : typeof row.changeDisplay === 'object' && row.changeDisplay?.color === 'red'
-                          ? 'text-red-500'
-                          : 'text-foreground',
-                    )}
-                  >
-                    {typeof row.changeDisplay === 'object'
-                      ? row.changeDisplay.value
-                      : (row.changeDisplay ??
-                        (typeof row.change === 'number'
-                          ? `${(row.change * 100).toFixed(2)}%`
-                          : '-'))}
-                  </td>
-                  {/* High */}
-                  <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
-                    {row.highDisplay ??
-                      (typeof row.high === 'number'
-                        ? Math.round(row.high).toLocaleString()
-                        : (row.high ?? '-'))}
-                  </td>
-                  {/* Low */}
-                  <td className={cn('px-3 md:px-4 py-2 md:py-3', text('xs', 'sm'))}>
-                    {row.lowDisplay ??
-                      (typeof row.low === 'number'
-                        ? Math.round(row.low).toLocaleString()
-                        : (row.low ?? '-'))}
-                  </td>
-                  {/* Data Points */}
-                  <td
-                    className={cn(
-                      'px-3 md:px-4 py-2 md:py-3 text-muted-foreground',
-                      text('xs', 'sm'),
-                    )}
-                  >
-                    {row.dataPoints ?? '-'}
-                  </td>
-                  {/* APR */}
-                  <td className={cn('px-3 md:px-4 py-2 md:py-3 font-medium', text('xs', 'sm'))}>
-                    {row.aprDisplay ??
-                      (typeof row.apr === 'number' ? `${row.apr.toFixed(2)}%` : (row.apr ?? '-'))}
-                  </td>
+                  {tableColumns.map((column: any) => {
+                    const cell = resolveCell(row, column.key);
+                    return (
+                      <td
+                        key={`${column.key}-${key}`}
+                        className={cn(
+                          'px-3 md:px-4 py-2 md:py-3',
+                          text('xs', 'sm'),
+                          cell.className,
+                        )}
+                      >
+                        {cell.value ?? '-'}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))
             )}
