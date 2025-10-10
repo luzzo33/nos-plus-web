@@ -84,7 +84,60 @@ export function ChartSection({
     setTempSelectedRange(selectedRange);
   }, [selectedRange]);
 
+  const points = useMemo(() => {
+    const raw = (chartData as any)?.chart?.data;
+    if (!Array.isArray(raw)) return [];
+    return raw.map((p: any) => ({
+      timestamp: p.timestamp,
+      total: p.total,
+      stakers: p.stakers,
+      unstakers: p.unstakers,
+    }));
+  }, [chartData]);
+
+  const summary = (chartData as any)?.chart?.summary;
+  const metadata = (chartData as any)?.chart;
+  const calcDomain = (key: 'stakers' | 'unstakers' | 'total') => {
+    const vals = points.map((p) => Number(p[key]) || 0).filter((v) => Number.isFinite(v));
+    if (!vals.length) return [0, 0];
+    const min = Math.min(...vals);
+    const max = Math.max(...vals);
+    if (min === max) return [min * 0.95, max * 1.05 || 1];
+    return [min, max];
+  };
+  const domainStakers = useMemo(() => calcDomain('stakers'), [points]);
+  const domainUnstakers = useMemo(() => calcDomain('unstakers'), [points]);
+  const domainTotal = useMemo(() => calcDomain('total'), [points]);
+
   const showSkeleton = loading || !mounted || !chartData;
+
+  const dateRangePresets = [
+    {
+      label: tc('days.today'),
+      value: () => ({ start: startOfDay(new Date()), end: endOfDay(new Date()) }),
+    },
+    {
+      label: tc('days.last7Days'),
+      value: () => ({ start: subDays(new Date(), 7), end: new Date() }),
+    },
+    {
+      label: tc('days.last30Days'),
+      value: () => ({ start: subDays(new Date(), 30), end: new Date() }),
+    },
+    {
+      label: tc('days.last90Days'),
+      value: () => ({ start: subDays(new Date(), 90), end: new Date() }),
+    },
+  ];
+
+  const getChartHeight = () => {
+    if (chartSize === 'compact') return isMobile ? 250 : 300;
+    if (chartSize === 'normal') return isMobile ? 350 : 450;
+    if (chartSize === 'large') return isMobile ? 500 : 700;
+    return 450;
+  };
+
+  const chartFontSize = isMobile ? 10 : 12;
 
   if (showSkeleton) {
     return (
@@ -119,59 +172,6 @@ export function ChartSection({
       </div>
     );
   }
-
-  const points = useMemo(() => {
-    const raw = (chartData as any)?.chart?.data;
-    if (!Array.isArray(raw)) return [];
-    return raw.map((p: any) => ({
-      timestamp: p.timestamp,
-      total: p.total,
-      stakers: p.stakers,
-      unstakers: p.unstakers,
-    }));
-  }, [chartData]);
-
-  const summary = (chartData as any)?.chart?.summary;
-  const metadata = (chartData as any)?.chart;
-  const calcDomain = (key: 'stakers' | 'unstakers' | 'total') => {
-    const vals = points.map((p) => Number(p[key]) || 0).filter((v) => Number.isFinite(v));
-    if (!vals.length) return [0, 0];
-    const min = Math.min(...vals);
-    const max = Math.max(...vals);
-    if (min === max) return [min * 0.95, max * 1.05 || 1];
-    return [min, max];
-  };
-  const domainStakers = useMemo(() => calcDomain('stakers'), [points]);
-  const domainUnstakers = useMemo(() => calcDomain('unstakers'), [points]);
-  const domainTotal = useMemo(() => calcDomain('total'), [points]);
-
-  const dateRangePresets = [
-    {
-      label: tc('days.today'),
-      value: () => ({ start: startOfDay(new Date()), end: endOfDay(new Date()) }),
-    },
-    {
-      label: tc('days.last7Days'),
-      value: () => ({ start: subDays(new Date(), 7), end: new Date() }),
-    },
-    {
-      label: tc('days.last30Days'),
-      value: () => ({ start: subDays(new Date(), 30), end: new Date() }),
-    },
-    {
-      label: tc('days.last90Days'),
-      value: () => ({ start: subDays(new Date(), 90), end: new Date() }),
-    },
-  ];
-
-  const getChartHeight = () => {
-    if (chartSize === 'compact') return isMobile ? 250 : 300;
-    if (chartSize === 'normal') return isMobile ? 350 : 450;
-    if (chartSize === 'large') return isMobile ? 500 : 700;
-    return 450;
-  };
-
-  const chartFontSize = isMobile ? 10 : 12;
 
   const formatXAxis = (value: string) => {
     if (!mounted) return '';
