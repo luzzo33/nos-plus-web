@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, TrendingUpDown, AlertCircle, BarChart3, Gauge, Info } from 'lucide-react';
 import { Tooltip as UiTooltip } from '@/components/ui/Tooltip';
@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import type { TimeRange } from '@/lib/api/client';
 import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
+import { normalizeStakingDappStats } from '../utils/normalizeStakingData';
 
 interface StatisticsSectionProps {
   stats: any;
@@ -32,6 +33,8 @@ export function StatisticsSection({
   const tStats = useTranslations('stakingDapp.stats');
   const tTooltips = useTranslations('stakingDapp.stats.tooltips');
   const isHydrated = mounted || loading;
+  const normalizedStats = useMemo(() => normalizeStakingDappStats(stats), [stats]);
+  const data = normalizedStats ?? stats;
 
   useEffect(() => {
     console.log(
@@ -61,7 +64,7 @@ metaPresent: ${Boolean(meta)}
 
   if (!isHydrated) return null;
 
-  if (loading || !stats) {
+  if (loading || !data) {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -91,7 +94,7 @@ metaPresent: ${Boolean(meta)}
     );
   }
 
-  if (!stats) return null;
+  if (!data) return null;
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const chartFontSize = isMobile ? 10 * FONT_SCALE.mobile : 12 * FONT_SCALE.desktop;
@@ -124,15 +127,15 @@ metaPresent: ${Boolean(meta)}
     '90d': 90,
     '180d': 180,
     '1y': 365,
-    all: coerceNumber(stats?.historical?.dataPoints) ?? 1,
+    all: coerceNumber(data?.historical?.dataPoints) ?? 1,
   };
 
-  const hist = stats?.historical || {};
+  const hist = data?.historical || {};
   const x = hist?.xnos || {};
-  const apr = stats?.metrics?.apr || hist?.apr || {};
-  const xMetrics = stats?.metrics?.xnos || {};
-  const extended = stats?.metrics?.extended || {};
-  const distribution = stats?.distribution;
+  const apr = data?.metrics?.apr || hist?.apr || {};
+  const xMetrics = data?.metrics?.xnos || {};
+  const extended = data?.metrics?.extended || {};
+  const distribution = data?.distribution;
 
   const minX = coerceNumber(x?.min) ?? 0;
   const maxX = coerceNumber(x?.max) ?? 0;
@@ -398,7 +401,7 @@ distributionKeys: ${Array.isArray(distribution?.breakdown) ? distribution.breakd
                 </p>
                 {distribution?.concentration && (
                   <p className={text('xs', 'base', 'font-bold')}>
-                    {distribution?.concentration?.distribution === 'Not Applicable'
+                  {distribution?.concentration?.distribution === 'Not Applicable'
                       ? tCommon('na')
                       : distribution?.concentration?.distribution || '-'}
                   </p>

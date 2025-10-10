@@ -7,7 +7,7 @@ type MetricKey = 'total' | 'stakers' | 'unstakers';
 type AnyRecord = Record<string, unknown>;
 
 const METRIC_ALIASES: Record<MetricKey, string[]> = {
-  total: ['total', 'totalAmount', 'totalAccounts'],
+  total: ['total', 'totalAmount', 'totalAccounts', 'xnos'],
   stakers: ['stakers', 'staking', 'staked'],
   unstakers: ['unstakers', 'unstaking'],
 };
@@ -127,6 +127,9 @@ function aliasMetricContainer(container: unknown): unknown {
   if (record.total === undefined && record.totalAmount !== undefined) {
     record.total = record.totalAmount;
   }
+  if (record.total === undefined && record.xnos !== undefined) {
+    record.total = record.xnos;
+  }
 
   for (const key of Object.keys(record)) {
     const value = record[key];
@@ -175,6 +178,12 @@ function aliasMetricRecord(record: unknown): AnyRecord {
   }
   if (result.avgUnstakersDisplay === undefined && result.avgUnstakingDisplay !== undefined) {
     result.avgUnstakersDisplay = result.avgUnstakingDisplay;
+  }
+  if (result.total === undefined && result.xnos !== undefined) {
+    result.total = result.xnos;
+  }
+  if (result.totalDisplay === undefined && result.xnosDisplay !== undefined) {
+    result.totalDisplay = result.xnosDisplay;
   }
 
   return result;
