@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, FileDown, ArrowUpDown, X } from 'lucide-react';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
@@ -75,6 +75,47 @@ export function TableSection({
   }));
   const pagination = tableData?.pagination ?? null;
 
+  const resolvedStart = tableDateRange.start ? tableDateRange.start.toISOString() : 'null';
+  const resolvedEnd = tableDateRange.end ? tableDateRange.end.toISOString() : 'null';
+
+  useEffect(() => {
+    console.log(
+      `<pre>[STAKING-DAPP][TableSection] props snapshot
+timeframe: ${tableTimeframe}
+sort: ${tableSort.field}:${tableSort.order}
+page: ${tablePage}
+rows(received): ${rawRows.length}
+mounted: ${mounted}
+loading: ${loading}
+dateRange: ${resolvedStart} -> ${resolvedEnd}
+isMobile: ${isMobile}
+</pre>`,
+    );
+  }, [
+    tableTimeframe,
+    tableSort.field,
+    tableSort.order,
+    tablePage,
+    rawRows.length,
+    mounted,
+    loading,
+    resolvedStart,
+    resolvedEnd,
+    isMobile,
+  ]);
+
+  useEffect(() => {
+    console.log('<pre>[STAKING-DAPP][TableSection] tableData payload</pre>', tableData);
+  }, [tableData]);
+
+  useEffect(() => {
+    console.log('<pre>[STAKING-DAPP][TableSection] derived rows snapshot</pre>', tableRows);
+  }, [tableRows]);
+
+  useEffect(() => {
+    console.log('<pre>[STAKING-DAPP][TableSection] pagination metadata</pre>', pagination);
+  }, [pagination]);
+
   const timeRanges: { value: TimeRange; label: string; description: string }[] = [
     { value: '24h', label: '24H', description: 'Last 24 hours' },
     { value: '7d', label: '7D', description: 'Last 7 days' },
@@ -143,6 +184,12 @@ export function TableSection({
   };
 
   const handleApplyDateRange = () => {
+    console.log(
+      `<pre>[STAKING-DAPP][TableSection] applying date range
+start: ${tempTableDateRange.start ? tempTableDateRange.start.toISOString() : 'null'}
+end: ${tempTableDateRange.end ? tempTableDateRange.end.toISOString() : 'null'}
+</pre>`,
+    );
     onDateRangeChange(tempTableDateRange);
     setShowTableDatePicker(false);
   };

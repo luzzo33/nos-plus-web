@@ -167,10 +167,16 @@ export function StatisticsSection({
   const changes = stats.metrics?.changes?.[metricKey] ?? null;
   const growth = stats.growth?.[metricKey] ?? null;
   const distribution = stats.distribution?.[metricKey] ?? null;
-  const completeness = stats.historical?.completeness ?? 0;
-  const dataPoints = stats.historical?.dataPoints ?? 0;
-
-  const coverageLabel = `${Math.round(completeness)}%`;
+  const volatilityValue = coerceNumber(stability?.volatility);
+  const completenessRatio = coerceNumber(stats.historical?.completeness);
+  const dataPoints = toNumber(stats.historical?.dataPoints);
+  const coveragePercent =
+    completenessRatio == null
+      ? null
+      : completenessRatio > 1
+        ? completenessRatio
+        : completenessRatio * 100;
+  const coverageLabel = coveragePercent == null ? '—' : `${Math.round(coveragePercent)}%`;
 
   const dayOfWeekData = useMemo(() => {
     const key =
@@ -211,7 +217,10 @@ export function StatisticsSection({
     if (!distribution) return [] as Array<{ key: string; value: number }>;
     return percentileOrder
       .filter((key) => distribution[key] !== undefined && distribution[key] !== null)
-      .map((key) => ({ key, value: distribution[key] as number }));
+      .map((key) => ({
+        key,
+        value: toNumber((distribution as Record<string, unknown>)[key]),
+      }));
   }, [distribution]);
 
   const events = {
@@ -229,8 +238,8 @@ export function StatisticsSection({
       ? 8 * FONT_SCALE.mobile
       : 10 * FONT_SCALE.desktop;
 
-  const change7d = changes?.change7d;
-  const change30d = changes?.change30d;
+  const change7d = coerceNumber(changes?.change7d);
+  const change30d = coerceNumber(changes?.change30d);
   const momentumScore = change7d != null && change30d != null ? change7d - change30d / 4 : null;
   const momentumState =
     momentumScore != null
@@ -274,8 +283,8 @@ export function StatisticsSection({
           icon={<AlertCircle className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-yellow-500" />}
           title={t('volatilityLabel')}
           subtitle={t('volatilityHint')}
-          value={formatPct(stability?.volatility)}
-          state={volatilityState(stability?.volatility)}
+          value={formatPct(volatilityValue)}
+          state={volatilityState(volatilityValue)}
           text={text}
         />
         <MetricCard
@@ -688,43 +697,36 @@ function getSeriesStats(stats: BalancesStatsResponse['stats'], key: MetricMode):
   };
 }
 
-function formatInt(value?: number | null) {
-  if (value === null || value === undefined || !Number.isFinite(value)) return '—';
-  return Math.round(value).toLocaleString();
+function formatInt(value: unknown) {
+  const numeric = coerceNumber(value);
+  if (numeric === null) return '—';
+  return Math.round(numeric).toLocaleString();
 }
 
-function formatPct(value?: number | null, digits = 2) {
-  if (value === null || value === undefined || !Number.isFinite(value)) return '—';
-  const fixed = value.toFixed(digits);
-  return `${value >= 0 ? '+' : ''}${fixed}%`;
+function formatPct(value: unknown, digits = 2) {
+  const numeric = coerceNumber(value);
+  if (numeric === null) return '—';
+  const fixed = numeric.toFixed(digits);
+  return `${numeric >= 0 ? '+' : ''}${fixed}%`;
 }
 
 function getOptionalNumber(value: unknown): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
-  }
-  return null;
+  return coerceNumber(value);
 }
 
 function toNumber(value: unknown): number {
-  if (typeof value === 'number' && Number.isFinite(value)) return value;
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
-  }
-  return 0;
+  return coerceNumber(value) ?? 0;
 }
 
 function toDisplayString(value: unknown, fallback: string): string {
   return typeof value === 'string' && value.length > 0 ? value : fallback;
 }
 
-function volatilityState(value?: number | null): MetricCardProps['state'] {
-  if (value === null || value === undefined || !Number.isFinite(value)) return 'neutral';
-  if (value < 15) return 'low';
-  if (value < 35) return 'moderate';
+function volatilityState(value: unknown): MetricCardProps['state'] {
+  const numeric = coerceNumber(value);
+  if (numeric === null) return 'neutral';
+  if (numeric < 15) return 'low';
+  if (numeric < 35) return 'moderate';
   return 'high';
 }
 
@@ -732,4 +734,23 @@ function formatAxis(value: number) {
   if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `${(value / 1_000).toFixed(0)}K`;
   return value.toFixed(0);
+}
+
+function coerceNumber(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const parenMatch = trimmed.match(/^\((-?\d[\d,]*(?:\.\d+)?)\)$/);
+    const target = parenMatch ? `-${parenMatch[1]}` : trimmed;
+    const match = target.match(/-?\d[\d,]*(?:\.\d+)?/);
+    if (!match) return null;
+    const normalized = match[0].replace(/,/g, '');
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  if (value && typeof value === 'object' && 'value' in (value as Record<string, unknown>)) {
+    return coerceNumber((value as Record<string, unknown>).value);
+  }
+  return null;
 }

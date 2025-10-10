@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { apiClient, TimeRange } from '@/lib/api/client';
@@ -216,6 +216,31 @@ export default function StakingDetailsPage() {
     }
   };
 
+  const handleTableTimeframeChange = useCallback((timeframe: TimeRange) => {
+    setTableTimeframe(timeframe);
+    setTablePage(1);
+  }, []);
+
+  const handleTableSortChange = useCallback(
+    (sort: { field: string; order: 'asc' | 'desc' }) => {
+      setTableSort(sort);
+      setTablePage(1);
+    },
+    [],
+  );
+
+  const handleTableDateRangeChange = useCallback(
+    (range: { start: Date | null; end: Date | null }) => {
+      setTableDateRange(range);
+      setTablePage(1);
+    },
+    [],
+  );
+
+  const handleTablePageChange = useCallback((page: number) => {
+    setTablePage(page);
+  }, []);
+
   const downloadData = async (type: 'chart' | 'table', formatType: 'csv' | 'json') => {
     let data: any[] = [];
     let filename = '';
@@ -327,13 +352,13 @@ export default function StakingDetailsPage() {
           <TableSection
             tableData={tableData}
             tableTimeframe={tableTimeframe}
-            onTimeframeChange={setTableTimeframe}
+            onTimeframeChange={handleTableTimeframeChange}
             tableSort={tableSort}
-            onSortChange={setTableSort}
+            onSortChange={handleTableSortChange}
             tablePage={tablePage}
-            onPageChange={setTablePage}
+            onPageChange={handleTablePageChange}
             tableDateRange={tableDateRange}
-            onDateRangeChange={setTableDateRange}
+            onDateRangeChange={handleTableDateRangeChange}
             onDownload={downloadData}
             isMobile={isMobile}
             mounted={mounted}
