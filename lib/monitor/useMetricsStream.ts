@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { monitorWsClient, type SubscriptionListener } from '@/lib/monitor/ws-client';
 import { getMonitorApiKey } from '@/lib/api/monitorConfig';
+import { intervalToMs } from '@/lib/monitor/chartConfig';
 
 export type MetricsKind = 'price' | 'volume' | 'activity';
 export interface MetricsPoint {
@@ -53,6 +54,59 @@ function mapPoints(rows: unknown[]): MetricsPoint[] {
       aux: (row.aux as MetricsPoint['aux']) ?? undefined,
     } satisfies MetricsPoint;
   });
+}
+
+const MAX_STREAM_POINTS = 600;
+
+function getRangeLimitMs(range: UseMetricsOptions['range']): number | null {
+  if (!range) return null;
+  const ms = intervalToMs(range);
+  return Number.isFinite(ms) && ms > 0 ? ms : null;
+}
+
+function normalisePoint(point: MetricsPoint): MetricsPoint {
+  const ts = Number(point.t);
+  const safeTs = Number.isFinite(ts) ? ts : Date.now();
+  return { ...point, t: safeTs };
+}
+
+function dedupeAndSort(points: MetricsPoint[]): MetricsPoint[] {
+  if (!points.length) return [];
+  const map = new Map<number, MetricsPoint>();
+  for (const point of points) {
+    const normalised = normalisePoint(point);
+    map.set(normalised.t, normalised);
+  }
+  return Array.from(map.values()).sort((a, b) => a.t - b.t);
+}
+
+function clampByRange(points: MetricsPoint[], limitMs: number | null): MetricsPoint[] {
+  if (!points.length || !limitMs || !Number.isFinite(limitMs) || limitMs <= 0) {
+    return points;
+  }
+  const last = points[points.length - 1];
+  if (!last) return points;
+  const minTs = last.t - limitMs;
+  if (!Number.isFinite(minTs)) return points;
+  let startIndex = 0;
+  while (startIndex < points.length && points[startIndex].t < minTs) {
+    startIndex += 1;
+  }
+  return startIndex > 0 ? points.slice(startIndex) : points;
+}
+
+function mergeAndClampPoints(
+  existing: MetricsPoint[],
+  incoming: MetricsPoint[],
+  limitMs: number | null,
+): MetricsPoint[] {
+  if (!existing.length && !incoming.length) return [];
+  const merged = dedupeAndSort([...existing, ...incoming]);
+  const ranged = clampByRange(merged, limitMs);
+  if (ranged.length > MAX_STREAM_POINTS) {
+    return ranged.slice(ranged.length - MAX_STREAM_POINTS);
+  }
+  return ranged;
 }
 
 const PRICE_VALUE_MIN = 1e-9;
@@ -188,16 +242,23 @@ export function useMetricsStream(
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const subscriptionRef = useRef<ReturnType<typeof monitorWsClient.subscribe> | null>(null);
+  const pointsRef = useRef<MetricsPoint[]>(initialPointState);
   const params = useMemo(() => {
     const payload: Record<string, unknown> = { metric, range, interval, chart };
     if (venuesParam) payload.venues = venuesParam;
     return payload;
   }, [metric, range, interval, chart, venuesParam]);
+  const rangeLimitMs = useMemo(() => getRangeLimitMs(range), [range]);
+
+  useEffect(() => {
+    pointsRef.current = points;
+  }, [points]);
 
   useEffect(() => {
     if (metric === 'price') {
       if (opts.initialSeries?.length) {
         const sanitized = sanitizePriceSeries(opts.initialSeries);
+        pointsRef.current = sanitized;
         setPoints(sanitized);
         const last = sanitized[sanitized.length - 1];
         if (last) {
@@ -205,13 +266,16 @@ export function useMetricsStream(
           if (typeof latest === 'number') setLatestPrice(latest);
         }
       } else {
+        pointsRef.current = [];
         setPoints([]);
       }
     } else if (opts.initialSeries) {
+      pointsRef.current = opts.initialSeries;
       setPoints(opts.initialSeries);
       const value = opts.initialMeta?.latestPrice;
       if (typeof value === 'number') setLatestPrice(value);
     } else {
+      pointsRef.current = [];
       setPoints([]);
     }
   }, [metric, opts.initialSeries, opts.initialMeta?.latestPrice, venuesParam]);
@@ -220,6 +284,7 @@ export function useMetricsStream(
     if (!getMonitorApiKey()) {
       setError('monitor_api_key_missing');
       setConnected(false);
+      pointsRef.current = [];
       setPoints([]);
       return;
     }
@@ -231,17 +296,17 @@ export function useMetricsStream(
         const list = Array.isArray(objectPayload.points) ? objectPayload.points : [];
         const mapped = mapPoints(list);
         const sanitizedPoints = metric === 'price' ? sanitizePriceSeries(mapped) : mapped;
-        setPoints(sanitizedPoints);
+        const merged = mergeAndClampPoints(pointsRef.current, sanitizedPoints, rangeLimitMs);
+        pointsRef.current = merged;
+        setPoints(merged);
         const meta = objectPayload.meta as { total?: number; latestPrice?: number } | undefined;
         setTotal(meta?.total ?? undefined);
-        if (metric === 'price') {
-          const lastPoint = sanitizedPoints[sanitizedPoints.length - 1];
-          const latest = lastPoint?.c ?? lastPoint?.v ?? meta?.latestPrice;
-          if (typeof latest === 'number') setLatestPrice(latest);
-        } else {
-          const latest = meta?.latestPrice;
-          if (typeof latest === 'number') setLatestPrice(latest);
-        }
+        const lastPoint = merged[merged.length - 1];
+        const latestCandidate =
+          metric === 'price'
+            ? lastPoint?.c ?? lastPoint?.v ?? meta?.latestPrice
+            : meta?.latestPrice ?? lastPoint?.v;
+        if (typeof latestCandidate === 'number') setLatestPrice(latestCandidate);
         setConnected(true);
       },
       onUpdate: (payload: unknown) => {
@@ -251,42 +316,39 @@ export function useMetricsStream(
         if (!bucketTs) return;
         const t = coerceTime(bucketTs);
         let sanitizedForUpdate: MetricsPoint | null = null;
-        setPoints((prev) => {
-          const base = prev.slice();
-          const rawPoint: MetricsPoint = {
-            t,
-            v: toNumber(data.v ?? data.close ?? data.c ?? data.price),
-            o: toNumber(data.open ?? data.o),
-            h: toNumber(data.high ?? data.h),
-            l: toNumber(data.low ?? data.l),
-            c: toNumber(data.close ?? data.c ?? data.v),
-            aux: data.aux as MetricsPoint['aux'] | undefined,
-          };
-          if (!Number.isFinite(rawPoint.v ?? NaN) && base.length) {
-            const last = base[base.length - 1];
-            rawPoint.v = last.c ?? last.v ?? null;
-            rawPoint.o = rawPoint.o ?? last.c ?? last.v ?? null;
-            rawPoint.h = rawPoint.h ?? rawPoint.v;
-            rawPoint.l = rawPoint.l ?? rawPoint.v;
-            rawPoint.c = rawPoint.c ?? rawPoint.v;
-          }
-          let pointToInsert = rawPoint;
-          if (metric === 'price') {
-            const anchor = deriveAnchorFromPoint(base.length ? base[base.length - 1] : null);
-            const result = sanitizePricePoint(rawPoint, anchor);
-            pointToInsert = result.sanitized;
-            sanitizedForUpdate = pointToInsert;
-          }
-          const idx = base.findIndex((entry) => entry.t === t);
-          if (idx >= 0) base[idx] = pointToInsert;
-          else base.push(pointToInsert);
-          base.sort((a, b) => a.t - b.t);
-          return base.slice(-600);
-        });
+        const basePoints = pointsRef.current.slice();
+        const rawPoint: MetricsPoint = {
+          t,
+          v: toNumber(data.v ?? data.close ?? data.c ?? data.price),
+          o: toNumber(data.open ?? data.o),
+          h: toNumber(data.high ?? data.h),
+          l: toNumber(data.low ?? data.l),
+          c: toNumber(data.close ?? data.c ?? data.v),
+          aux: data.aux as MetricsPoint['aux'] | undefined,
+        };
+        if (!Number.isFinite(rawPoint.v ?? NaN) && basePoints.length) {
+          const last = basePoints[basePoints.length - 1];
+          rawPoint.v = last.c ?? last.v ?? null;
+          rawPoint.o = rawPoint.o ?? last.c ?? last.v ?? null;
+          rawPoint.h = rawPoint.h ?? rawPoint.v;
+          rawPoint.l = rawPoint.l ?? rawPoint.v;
+          rawPoint.c = rawPoint.c ?? rawPoint.v;
+        }
+        let pointToInsert = rawPoint;
+        if (metric === 'price') {
+          const anchor = deriveAnchorFromPoint(basePoints.length ? basePoints[basePoints.length - 1] : null);
+          const result = sanitizePricePoint(rawPoint, anchor);
+          pointToInsert = result.sanitized;
+          sanitizedForUpdate = pointToInsert;
+        }
+        const merged = mergeAndClampPoints(basePoints, [pointToInsert], rangeLimitMs);
+        pointsRef.current = merged;
+        setPoints(merged);
         const metricPayload =
           (data.metric as { metric?: MetricsKind } | undefined)?.metric ?? metric;
         if (metricPayload === 'price') {
-          const latest = sanitizedForUpdate?.c ?? sanitizedForUpdate?.v;
+          const lastPoint = sanitizedForUpdate ?? merged[merged.length - 1];
+          const latest = lastPoint?.c ?? lastPoint?.v;
           if (typeof latest === 'number') {
             setLatestPrice(latest);
           }
@@ -309,7 +371,7 @@ export function useMetricsStream(
       subscription.unsubscribe();
       subscriptionRef.current = null;
     };
-  }, [params, metric]);
+  }, [params, metric, rangeLimitMs]);
 
   return {
     points,
