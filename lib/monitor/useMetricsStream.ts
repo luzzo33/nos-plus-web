@@ -57,6 +57,8 @@ function mapPoints(rows: unknown[]): MetricsPoint[] {
 }
 
 const MAX_STREAM_POINTS = 600;
+const RANGE_POINTS_CAP = 120_000;
+const FALLBACK_INTERVAL_MS = 10_000;
 
 function getRangeLimitMs(range: UseMetricsOptions['range']): number | null {
   if (!range) return null;
@@ -95,6 +97,39 @@ function clampByRange(points: MetricsPoint[], limitMs: number | null): MetricsPo
   return startIndex > 0 ? points.slice(startIndex) : points;
 }
 
+function computeRangeAwareLimit(points: MetricsPoint[], limitMs: number | null): number {
+  if (!limitMs || !Number.isFinite(limitMs) || limitMs <= 0) {
+    return MAX_STREAM_POINTS;
+  }
+  if (points.length <= 1) {
+    return Math.max(points.length || 0, MAX_STREAM_POINTS);
+  }
+
+  let minInterval = Number.POSITIVE_INFINITY;
+  for (let i = 1; i < points.length; i += 1) {
+    const prev = Number(points[i - 1].t ?? 0);
+    const next = Number(points[i].t ?? 0);
+    const diff = next - prev;
+    if (Number.isFinite(diff) && diff > 0) {
+      minInterval = Math.min(minInterval, diff);
+    }
+  }
+
+  if (!Number.isFinite(minInterval) || minInterval <= 0) {
+    const totalSpan = Number(points[points.length - 1].t ?? 0) - Number(points[0].t ?? 0);
+    if (Number.isFinite(totalSpan) && totalSpan > 0 && points.length > 1) {
+      minInterval = totalSpan / (points.length - 1);
+    } else {
+      minInterval = FALLBACK_INTERVAL_MS;
+    }
+  }
+
+  const expectedPoints = Math.ceil(limitMs / Math.max(minInterval, 1));
+  const bufferedPoints = expectedPoints + Math.max(10, Math.round(expectedPoints * 0.05));
+  const rangeAwareLimit = Math.max(MAX_STREAM_POINTS, bufferedPoints);
+  return Math.min(rangeAwareLimit, RANGE_POINTS_CAP);
+}
+
 function mergeAndClampPoints(
   existing: MetricsPoint[],
   incoming: MetricsPoint[],
@@ -103,8 +138,9 @@ function mergeAndClampPoints(
   if (!existing.length && !incoming.length) return [];
   const merged = dedupeAndSort([...existing, ...incoming]);
   const ranged = clampByRange(merged, limitMs);
-  if (ranged.length > MAX_STREAM_POINTS) {
-    return ranged.slice(ranged.length - MAX_STREAM_POINTS);
+  const effectiveLimit = computeRangeAwareLimit(ranged, limitMs);
+  if (ranged.length > effectiveLimit) {
+    return ranged.slice(Math.max(0, ranged.length - effectiveLimit));
   }
   return ranged;
 }

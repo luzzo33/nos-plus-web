@@ -336,6 +336,7 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
     () => initial?.comparison ?? null,
   );
   const lastNonEmptyRowsRef = useRef<StatsSnapshot[]>(initial?.rows?.length ? initial.rows : []);
+  const prevInitialRef = useRef(initial);
   const params = useMemo(() => {
     const payload: Record<string, unknown> = { range, aggregate };
     if (venues) payload.venues = venues;
@@ -604,6 +605,25 @@ export function useStatsStream(opts: UseStatsStreamOptions = {}) {
       subscription.unsubscribe();
     };
   }, [params, refreshToken, initial, defaultView, requestedView, range, aggregate]);
+
+  useEffect(() => {
+    if (initial === prevInitialRef.current) return;
+    prevInitialRef.current = initial;
+    const nextRows = Array.isArray(initial?.rows) ? (initial.rows as StatsSnapshot[]) : [];
+    setRows(nextRows);
+    if (nextRows.length) {
+      lastNonEmptyRowsRef.current = nextRows;
+    } else {
+      lastNonEmptyRowsRef.current = [];
+    }
+    setUpdatedAt(initial?.updatedAt ?? null);
+    const derivedView = (typeof initial?.view === 'string'
+      ? (initial.view as StatsView)
+      : requestedView ?? defaultView) ?? 'default';
+    setView(derivedView);
+    setComparison(initial?.comparison ?? null);
+    setLoading(!nextRows.length);
+  }, [initial, requestedView, defaultView]);
 
   return {
     rows,
