@@ -18,6 +18,8 @@
   "timeAbsoluteHint": "Shows exact clock times (e.g. 15:03:44)",
   "timeRelative": "Relative time",
   "timeRelativeHint": "Shows elapsed time (e.g. 55 min ago)",
+  "advancedTooltips": "Advanced tooltips",
+  "advancedTooltipsDescription": "Show open, high, low, close values on charts (24h shows only high/low)",
   "notifications": "Notifications",
   "enableNotifications": "Enable desktop notifications",
   "priceAlerts": "Price Alerts",

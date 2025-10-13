@@ -18,6 +18,8 @@
   "timeAbsoluteHint": "Mostra l’ora esatta (es. 15:03:44)",
   "timeRelative": "Ora relativa",
   "timeRelativeHint": "Mostra il tempo trascorso (es. 55 min fa)",
+  "advancedTooltips": "Tooltip avanzati",
+  "advancedTooltipsDescription": "Mostra i valori di apertura, massimo, minimo e chiusura nei grafici (24h mostra solo massimo e minimo)",
   "notifications": "Notifiche",
   "enableNotifications": "Abilita notifiche desktop",
   "priceAlerts": "Avvisi prezzo",

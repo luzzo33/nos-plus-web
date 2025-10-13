@@ -18,6 +18,8 @@
   "timeAbsoluteHint": "显示精确时间（如 15:03:44）",
   "timeRelative": "相对时间",
   "timeRelativeHint": "显示经过时间（如 55 分钟前）",
+  "advancedTooltips": "高级提示信息",
+  "advancedTooltipsDescription": "在图表悬停时显示开盘、最高、最低和收盘价（24 小时范围仅显示最高/最低）",
   "notifications": "通知",
   "enableNotifications": "启用桌面通知",
   "priceAlerts": "价格提醒",

@@ -18,6 +18,8 @@
   "timeAbsoluteHint": "Zeigt exakte Uhrzeiten an (z. B. 15:03:44)",
   "timeRelative": "Relative Zeit",
   "timeRelativeHint": "Zeigt die verstrichene Zeit an (z. B. vor 55 Min.)",
+  "advancedTooltips": "Erweiterte Tooltips",
+  "advancedTooltipsDescription": "Open-, High-, Low- und Close-Werte in Charts anzeigen (24h zeigt nur Hoch/Tief)",
   "notifications": "Benachrichtigungen",
   "enableNotifications": "Desktop-Benachrichtigungen aktivieren",
   "priceAlerts": "Preisalarme",
