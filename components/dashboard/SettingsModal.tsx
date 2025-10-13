@@ -20,7 +20,13 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const t = useTranslations('settings');
   const tw = useTranslations('widgets');
   const { widgets, toggleWidget } = useWidgetStore();
-  const { timeDisplayMode, setTimeDisplayMode, dashboardMode } = useDashboardSettingsStore();
+  const {
+    timeDisplayMode,
+    setTimeDisplayMode,
+    dashboardMode,
+    advancedTooltips,
+    setAdvancedTooltips,
+  } = useDashboardSettingsStore();
 
   const [settings, setSettings] = useState({
     autoRefresh: true,
@@ -270,6 +276,36 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                             : t('timeAbsoluteHint')}
                         </p>
                       </div>
+
+                      <label className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 cursor-pointer">
+                        <div>
+                          <p className="font-medium text-sm">{t('advancedTooltips')}</p>
+                          <p className="text-xs md:text-sm text-muted-foreground">
+                            {t('advancedTooltipsDescription')}
+                          </p>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="checkbox"
+                            checked={advancedTooltips}
+                            onChange={(e) => setAdvancedTooltips(e.target.checked)}
+                            className="sr-only"
+                          />
+                          <motion.div
+                            className={cn(
+                              'w-10 h-6 rounded-full transition-colors',
+                              advancedTooltips ? 'bg-primary' : 'bg-input',
+                            )}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <motion.div
+                              className="absolute top-1 left-1 w-4 h-4 rounded-full bg-background"
+                              animate={{ x: advancedTooltips ? 16 : 0 }}
+                              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                            />
+                          </motion.div>
+                        </div>
+                      </label>
 
                       <label className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 cursor-pointer">
                         <div>

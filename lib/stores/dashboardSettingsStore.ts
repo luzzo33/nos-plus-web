@@ -13,10 +13,12 @@ interface DashboardSettingsState {
   dashboardMode: DashboardMode;
   simplePreset: SimplePreset;
   hideAdvancedModeWarning: boolean;
+  advancedTooltips: boolean;
   setTimeDisplayMode: (mode: TimeDisplayMode) => void;
   setDashboardMode: (mode: DashboardMode) => void;
   setSimplePreset: (preset?: SimplePreset) => void;
   setHideAdvancedModeWarning: (hide: boolean) => void;
+  setAdvancedTooltips: (enabled: boolean) => void;
 }
 
 const safeLocalStorage: PersistStorage<DashboardSettingsState> = {
@@ -48,10 +50,12 @@ export const useDashboardSettingsStore = create<DashboardSettingsState>()(
       dashboardMode: 'simple',
       simplePreset: 'perspective',
       hideAdvancedModeWarning: false,
+      advancedTooltips: false,
       setTimeDisplayMode: (mode) => set({ timeDisplayMode: mode }),
       setDashboardMode: (mode) => set({ dashboardMode: mode }),
       setSimplePreset: () => set({ simplePreset: 'perspective' }),
       setHideAdvancedModeWarning: (hide) => set({ hideAdvancedModeWarning: hide }),
+      setAdvancedTooltips: (enabled) => set({ advancedTooltips: enabled }),
     }),
     {
       name: 'nos-dashboard-settings',
@@ -60,6 +64,9 @@ export const useDashboardSettingsStore = create<DashboardSettingsState>()(
       migrate: (persistedState) => {
         if (persistedState?.state?.simplePreset === 'balanced') {
           persistedState.state.simplePreset = 'perspective';
+        }
+        if (persistedState?.state && typeof persistedState.state.advancedTooltips !== 'boolean') {
+          persistedState.state.advancedTooltips = false;
         }
         return persistedState;
       },

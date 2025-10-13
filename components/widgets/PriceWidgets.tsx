@@ -7,11 +7,20 @@ import { WidgetContainer } from './WidgetLayout';
 import { apiClient, TimeRange } from '@/lib/api/client';
 import { cn, getDateLocale } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
-import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  type TooltipProps,
+} from 'recharts';
 import { format } from 'date-fns';
-import { formatRangeTick, toDate, formatLocal } from '@/lib/time';
+import { formatRangeTick, toDate } from '@/lib/time';
 import { useFormattedTimestamp } from '@/lib/hooks/useFormattedTimestamp';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDashboardSettingsStore } from '@/lib/stores/dashboardSettingsStore';
 
 type WidgetTimeRange = '24h' | '7d' | '30d' | '90d' | '180d' | '1y';
 
@@ -237,6 +246,8 @@ export function PriceInfoWidget({ isMobile = false }: { isMobile?: boolean }) {
 export function PriceChartWidget({ isMobile = false }: { isMobile?: boolean }) {
   const tw = useTranslations('widgets');
   const tc = useTranslations('common');
+  const locale = useLocale();
+  const advancedTooltipsEnabled = useDashboardSettingsStore((state) => state.advancedTooltips);
   const [selectedRange, setSelectedRange] = useState<TimeRange>('24h');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -258,7 +269,26 @@ export function PriceChartWidget({ isMobile = false }: { isMobile?: boolean }) {
       ? (chartDataRaw as any).data
       : [];
 
-  const formatXAxis = (timestamp: string) => formatRangeTick(timestamp, selectedRange);
+  const resolvedLocale = locale || 'en-US';
+  const baseLocale = resolvedLocale.split('-')[0] || 'en';
+  const dateLocale = getDateLocale(baseLocale);
+
+  const formatPriceForTooltip = (value: number) => {
+    if (!Number.isFinite(value)) return '—';
+    try {
+      return value.toLocaleString(resolvedLocale, {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 3,
+      });
+    } catch {
+      const formatted = value.toFixed(3).replace(/\.?0+$/, '');
+      return formatted.startsWith('$') ? formatted : `$${formatted}`;
+    }
+  };
+
+  const formatXAxis = (timestamp: string) => formatRangeTick(timestamp, selectedRange, locale);
 
   const formatYAxis = (value: number) => {
     return `$${value.toFixed(3)}`;
@@ -272,13 +302,19 @@ export function PriceChartWidget({ isMobile = false }: { isMobile?: boolean }) {
     { value: '1y', label: tc('timeRanges.1y') },
   ];
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload[0]) {
       try {
         const date = toDate(label);
         if (!date) return null;
 
         const point = payload[0].payload;
+        const value = Number(payload[0].value ?? point?.price);
+        if (!Number.isFinite(value)) return null;
+
+        const formattedDate = format(date, 'MMM dd, HH:mm', {
+          locale: dateLocale,
+        });
 
         return (
           <motion.div
@@ -286,10 +322,28 @@ export function PriceChartWidget({ isMobile = false }: { isMobile?: boolean }) {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-card p-2 rounded border border-border shadow-lg"
           >
-            <p className="text-[10px] text-muted-foreground">
-              {formatLocal(date, 'MMM dd, HH:mm')}
-            </p>
-            <p className="text-xs font-semibold">${payload[0].value.toFixed(4)}</p>
+            <p className="text-[10px] text-muted-foreground">{formattedDate}</p>
+            <p className="text-xs font-semibold">{formatPriceForTooltip(value)}</p>
+            {advancedTooltipsEnabled && point?.ohlc && (
+              <div className="mt-1 grid grid-cols-2 gap-x-2 gap-y-0.5 text-[10px] text-muted-foreground">
+                {selectedRange !== '24h' && (
+                  <>
+                    <span>O:</span>
+                    <span className="text-right">{formatPriceForTooltip(point.ohlc.open)}</span>
+                  </>
+                )}
+                <span>H:</span>
+                <span className="text-right">{formatPriceForTooltip(point.ohlc.high)}</span>
+                <span>L:</span>
+                <span className="text-right">{formatPriceForTooltip(point.ohlc.low)}</span>
+                {selectedRange !== '24h' && (
+                  <>
+                    <span>C:</span>
+                    <span className="text-right">{formatPriceForTooltip(point.ohlc.close)}</span>
+                  </>
+                )}
+              </div>
+            )}
             {point.source && (
               <p className="text-[10px] text-muted-foreground">
                 {tc('source')}: {tc(point.source as any)}
