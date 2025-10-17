@@ -1,10 +1,23 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Target, RefreshCw, Activity, DollarSign, Layers } from 'lucide-react';
+import {
+  Target,
+  RefreshCw,
+  Activity,
+  DollarSign,
+  Layers,
+  Table as TableIcon,
+  CandlestickChart,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CustomDropdown from '@/components/ui/CustomDropdown';
 import { MonitorWidgetFrame } from '@/components/monitor/MonitorWidgetFrame';
+import { OrderBookTradingView } from '@/components/order-book/OrderBookTradingView';
+import {
+  useOrderBookChartStream,
+  type OrderBookLimitLevel,
+} from '@/lib/monitor/useOrderBookChartStream';
 
 import {
   LIMIT_WALL_EXCHANGES,
@@ -39,6 +52,7 @@ const PRICE_RANGE_PERCENT = 0.2;
 
 type SideFilter = 'both' | 'buy' | 'sell';
 type DepthMode = 'base' | 'usd';
+type OrderBookViewMode = 'table' | 'depth' | 'trading';
 
 type BucketWithMeta = LimitWallV2Bucket & {
   usdPerBase?: number | null;
@@ -91,7 +105,7 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<LimitWallV2Response | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [showChart, setShowChart] = useState(false);
+  const [viewMode, setViewMode] = useState<OrderBookViewMode>('table');
   const [priceDomain, setPriceDomain] = useState<[number, number] | null>(null);
   const [isMobileViewport, setIsMobileViewport] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -102,6 +116,19 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
     return getDefaultRowLimit(window.innerWidth < MOBILE_BREAKPOINT);
   });
   const [refreshToken, setRefreshToken] = useState(0);
+  const tradingViewAggregationOptions = useMemo(
+    () => [
+      { value: '1', label: '±1%' },
+      { value: '2', label: '±2%' },
+      { value: '3', label: '±3%' },
+      { value: '5', label: '±5%' },
+      { value: '10', label: '±10%' },
+      { value: '20', label: '±20%' },
+      { value: '50', label: '±50%' },
+    ],
+    [],
+  );
+  const [tradingViewAggregationPct, setTradingViewAggregationPct] = useState<number>(1);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [lockedHeight, setLockedHeight] = useState<number | null>(null);
@@ -141,7 +168,7 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
     data && ((data.buyBuckets?.length ?? 0) || (data.sellBuckets?.length ?? 0)),
   );
   useEffect(() => {
-    if (lockedHeight || !hasData || loading || showChart) return;
+    if (lockedHeight || !hasData || loading || viewMode !== 'table') return;
     const id = requestAnimationFrame(() => {
       const host = wrapperRef.current;
       if (!host) return;
@@ -150,7 +177,7 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
       if (h > 0) setLockedHeight(h);
     });
     return () => cancelAnimationFrame(id);
-  }, [hasData, loading, showChart, lockedHeight]);
+  }, [hasData, loading, viewMode, lockedHeight]);
 
   useEffect(() => {
     import('./DepthChart').then((mod) => mod.DepthChart).catch(() => {});
@@ -460,6 +487,50 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
   }, [ladder, chartDomain]);
 
   const hasDataFlag = Boolean(ladder && (ladder.buys.length || ladder.sells.length));
+  const isTableView = viewMode === 'table';
+  const isDepthView = viewMode === 'depth';
+  const isTradingView = viewMode === 'trading';
+  const showChart = isDepthView;
+  const chartBaseSymbol = data?.base ?? 'NOS';
+  const chartQuoteSymbol = data?.quote ?? null;
+  const orderBookChart = useOrderBookChartStream({
+    base: chartBaseSymbol,
+    quote: chartQuoteSymbol ?? undefined,
+    range: '1d',
+    interval: '1m',
+    venues: venueSlugs.length ? venueSlugs : undefined,
+  });
+  const tradingViewAggregationSetting = useMemo(() => {
+    const pct = Number.isFinite(tradingViewAggregationPct)
+      ? Math.max(tradingViewAggregationPct, 0)
+      : 0;
+    if (pct <= 0) {
+      return { kind: 'none' } as const;
+    }
+    return { kind: 'pct', pct: Math.max(pct / 100, 0.0001) } as const;
+  }, [tradingViewAggregationPct]);
+  const tradingViewLimitLevels = useMemo<OrderBookLimitLevel[]>(() => {
+    if (!ladder) return [];
+    const mapBucket = (bucket: BucketWithMeta, side: 'buy' | 'sell'): OrderBookLimitLevel | null => {
+      const price = Number(bucket.usdPerBase ?? bucket.priceFloor ?? 0);
+      if (!Number.isFinite(price) || price <= 0) return null;
+      return {
+        price,
+        side,
+        usd: Number(bucket.usdLiquidity ?? 0) || 0,
+        base: Number(bucket.baseLiquidity ?? 0) || 0,
+        orders: Number(bucket.orders ?? 0) || 0,
+        source: typeof bucket.source === 'string' ? bucket.source : null,
+      };
+    };
+    const buys = ladder.buys
+      .map((bucket) => mapBucket(bucket, 'buy'))
+      .filter((entry): entry is OrderBookLimitLevel => entry !== null);
+    const sells = ladder.sells
+      .map((bucket) => mapBucket(bucket, 'sell'))
+      .filter((entry): entry is OrderBookLimitLevel => entry !== null);
+    return [...buys, ...sells];
+  }, [ladder]);
 
   const requestDomain = (domain: [number, number]) => {
     setPriceDomain(domain);
@@ -581,16 +652,41 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
   const updatedDisplay = lastUpdated ? formatRelative(lastUpdated) : '—';
   const venuesDisplay = venueSlugs.length ? `${venueSlugs.length} venues` : 'All venues';
 
-  const headerStatus = error
-    ? { label: 'Error', tone: 'danger' as const }
-    : refreshing
-      ? { label: 'Updating', tone: 'success' as const, pulse: true }
-      : loading || !hasData
+  const headerStatus = isTradingView
+    ? orderBookChart.error
+      ? { label: 'Error', tone: 'danger' as const }
+      : orderBookChart.loading
         ? { label: 'Syncing', tone: 'warning' as const, pulse: true }
-        : { label: 'Live', tone: 'success' as const, pulse: true };
+        : orderBookChart.connected
+          ? { label: 'Live', tone: 'success' as const, pulse: true }
+          : { label: 'Connecting', tone: 'warning' as const, pulse: true }
+    : error
+        ? { label: 'Error', tone: 'danger' as const }
+        : refreshing
+          ? { label: 'Updating', tone: 'success' as const, pulse: true }
+          : loading || !hasData
+            ? { label: 'Syncing', tone: 'warning' as const, pulse: true }
+            : { label: 'Live', tone: 'success' as const, pulse: true };
 
   const controlPillBase =
     'inline-flex items-center gap-1.5 rounded-xl border border-border/40 bg-background/80 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30';
+  const viewOptions: Array<{ key: OrderBookViewMode; label: string; icon: React.ReactNode }> = [
+    {
+      key: 'table',
+      label: 'Classic',
+      icon: <TableIcon className="h-3 w-3" />,
+    },
+    {
+      key: 'depth',
+      label: 'Depth',
+      icon: <Activity className="h-3 w-3" />,
+    },
+    {
+      key: 'trading',
+      label: 'TradingView',
+      icon: <CandlestickChart className="h-3 w-3" />,
+    },
+  ];
 
   const headerActions = (
     <div className="flex w-full flex-col gap-3">
@@ -718,19 +814,47 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => setShowChart(!showChart)}
-          className={cn(
-            controlPillBase,
-            showChart
-              ? 'border-primary/60 bg-primary/10 text-primary shadow-sm'
-              : 'border-border/50 bg-background/70',
-          )}
-        >
-          <Activity className="h-3.5 w-3.5" />
-          {showChart ? 'Hide Chart' : 'Show Chart'}
-        </button>
+        <div className="inline-flex items-center gap-1 rounded-xl border border-border/40 bg-background/70 p-1 text-xs font-semibold">
+          {viewOptions.map((option) => {
+            const active = viewMode === option.key;
+            const activeClasses =
+              option.key === 'table'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : option.key === 'depth'
+                  ? 'bg-sky-500/20 text-sky-600 shadow-sm dark:text-sky-300'
+                  : 'bg-emerald-500/20 text-emerald-600 shadow-sm dark:text-emerald-300';
+            return (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => setViewMode(option.key)}
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-lg px-2.5 py-1 transition-colors',
+                  active
+                    ? activeClasses
+                    : 'text-muted-foreground hover:bg-background/80 hover:text-foreground',
+                )}
+              >
+                {option.icon}
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+        {isTradingView && (
+          <CustomDropdown
+            options={tradingViewAggregationOptions}
+            value={String(tradingViewAggregationPct)}
+            onSelect={(value) => {
+              const next = Number.parseFloat(value);
+              if (Number.isNaN(next)) return;
+              setTradingViewAggregationPct(next);
+            }}
+            size="sm"
+            variant="ghost"
+            triggerClassName={cn(controlPillBase, 'min-w-[130px] justify-between')}
+          />
+        )}
       </div>
       <div className="flex flex-wrap gap-2" aria-label="Order book venue filters">
         {LIMIT_WALL_EXCHANGES.map((exchange) => {
@@ -780,7 +904,22 @@ export function ProfessionalOrderBook({ height }: ProfessionalOrderBookProps = {
       >
         <div className="flex-1 h-full overflow-hidden rounded-2xl border border-border/50 bg-background/80 shadow-inner min-h-0">
           <div className="flex-1 h-full overflow-hidden min-h-0">
-            {loading && !showChart ? (
+            {isTradingView ? (
+              <div className="p-2 min-h-0 h-full flex">
+                <OrderBookTradingView
+                  className="flex-1"
+                  candles={orderBookChart.candles}
+                  limitLevels={tradingViewLimitLevels}
+                  baseSymbol={chartBaseSymbol}
+                  quoteSymbol={chartQuoteSymbol}
+                  intervalSeconds={orderBookChart.metadata?.intervalSeconds ?? 60}
+                  loading={orderBookChart.loading}
+                  error={orderBookChart.error}
+                  aggregation={tradingViewAggregationSetting}
+                  midPrice={ladder?.midPrice ?? null}
+                />
+              </div>
+            ) : loading && !showChart ? (
               <div className="flex flex-col h-full min-h-0">
                 {/* Market Summary - shrink-0 to stay fixed */}
                 <div className="shrink-0 p-2 border-b border-border/30 bg-muted/20">
