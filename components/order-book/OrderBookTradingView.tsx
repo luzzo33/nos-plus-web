@@ -281,24 +281,6 @@ export function OrderBookTradingView({
       },
     });
 
-    const resizeChart = () => {
-      const rect = container.getBoundingClientRect();
-      const width = Math.max(1, Math.floor(rect.width || container.clientWidth));
-      const height = Math.max(
-        1,
-        Math.floor(rect.height || container.clientHeight || container.offsetHeight || 0),
-      );
-      if (width && height) {
-        chart.resize(width, height);
-        if (autoScrollRef.current) {
-          chart.timeScale().scrollToRealTime();
-        }
-      }
-    };
-
-    // Ensure the canvas gets a size immediately; some mobile browsers delay ResizeObserver callbacks.
-    resizeChart();
-
     chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
       if (!range) return;
       const lastIndex = dataRef.current.length - 1;
@@ -309,30 +291,20 @@ export function OrderBookTradingView({
       autoScrollRef.current = (range.to as number) >= lastIndex - 1;
     });
 
-    let cleanupResize: (() => void) | null = null;
-
-    if (typeof ResizeObserver !== 'undefined') {
-      const resizeObserver = new ResizeObserver(() => {
-        resizeChart();
-      });
-      resizeObserver.observe(container);
-      resizeObserverRef.current = resizeObserver;
-      cleanupResize = () => {
-        resizeObserver.disconnect();
-        resizeObserverRef.current = null;
-      };
-    } else {
-      const handleWindowResize = () => {
-        resizeChart();
-      };
-      window.addEventListener('resize', handleWindowResize);
-      cleanupResize = () => {
-        window.removeEventListener('resize', handleWindowResize);
-      };
-    }
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        chart.applyOptions({ width: entry.contentRect.width, height: entry.contentRect.height });
+      }
+      if (autoScrollRef.current) {
+        chart.timeScale().scrollToRealTime();
+      }
+    });
+    resizeObserver.observe(container);
+    resizeObserverRef.current = resizeObserver;
 
     return () => {
-      cleanupResize?.();
+      resizeObserver.disconnect();
+      resizeObserverRef.current = null;
       priceLinesRef.current.forEach((line) => {
         try {
           series.removePriceLine(line);
