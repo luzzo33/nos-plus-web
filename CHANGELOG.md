@@ -2,25 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.1.0](https://github.com/luzzo33/nos-plus-web/compare/v1.0.0...v1.1.0) (2025-10-17)
-
-
-### 🐞 Fixes
-
-* preserve monitor chart range ([d221846](https://github.com/luzzo33/nos-plus-web/commit/d221846afa9a0ca5c43f45f68f60c5a8f3aac8c5))
-* stabilise monitor streaming ranges ([c42034c](https://github.com/luzzo33/nos-plus-web/commit/c42034ccd88cd89d5a73d84863a22719c19b3047))
-* **staking:** update frontend logic and refactor utils ([#11](https://github.com/luzzo33/nos-plus-web/issues/11)) ([4386d34](https://github.com/luzzo33/nos-plus-web/commit/4386d344c95f285265899b04efd75e979847e507))
-
-
-### 🎨 UI Updates
-
-* add configurable price chart tooltips ([95f9429](https://github.com/luzzo33/nos-plus-web/commit/95f9429431789d63209126ad8305709df4d12607))
-
-
-### ✨ Features
-
-* improve order book trading view chart ([3de658d](https://github.com/luzzo33/nos-plus-web/commit/3de658d2054c71e57905c63ce560dd1eff38a8cc))
-
 ## 1.0.0 (2025-10-10)
 
 
