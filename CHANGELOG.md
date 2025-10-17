@@ -2,33 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [1.1.0](https://github.com/luzzo33/nos-plus-web/compare/v1.0.0...v1.1.0) (2025-10-17)
-
-
-### 🎨 UI Updates
-
-* add configurable price chart tooltips ([95f9429](https://github.com/luzzo33/nos-plus-web/commit/95f9429431789d63209126ad8305709df4d12607))
-
-
-### ⚙️ Maintenance
-
-* **release:** 1.1.0 ([ae26c59](https://github.com/luzzo33/nos-plus-web/commit/ae26c59ed2eb7f74978fdbfdbcbc46bef5f976c3))
-
-
-### ✨ Features
-
-* improve order book trading view chart ([3de658d](https://github.com/luzzo33/nos-plus-web/commit/3de658d2054c71e57905c63ce560dd1eff38a8cc))
-* **order-book:** refine trading view chart ([83e4150](https://github.com/luzzo33/nos-plus-web/commit/83e415073a1e47119412f3f60bfc387510531ebb))
-
-
-### 🐞 Fixes
-
-* preserve monitor chart range ([d221846](https://github.com/luzzo33/nos-plus-web/commit/d221846afa9a0ca5c43f45f68f60c5a8f3aac8c5))
-* restore trading view chart on mobile ([8deafab](https://github.com/luzzo33/nos-plus-web/commit/8deafab660016a525d4bfebbc990c03cbdaf9cf0))
-* restore trading view chart on mobile ([e4edd54](https://github.com/luzzo33/nos-plus-web/commit/e4edd549016d1e115586faed465f8a59fda3256c))
-* stabilise monitor streaming ranges ([c42034c](https://github.com/luzzo33/nos-plus-web/commit/c42034ccd88cd89d5a73d84863a22719c19b3047))
-* **staking:** update frontend logic and refactor utils ([#11](https://github.com/luzzo33/nos-plus-web/issues/11)) ([4386d34](https://github.com/luzzo33/nos-plus-web/commit/4386d344c95f285265899b04efd75e979847e507))
-
 ## 1.0.0 (2025-10-10)
 
 
@@ -44,7 +17,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ✨ Features
 
-* **dashboard:** refine exchange listings widget layout and interactions
 * add localized changelog page ([#1](https://github.com/luzzo33/nos-plus-web/issues/1)) ([eef25c0](https://github.com/luzzo33/nos-plus-web/commit/eef25c0d7f6774b4d6b218c96f554759dea7d0fa))
 * compact widget dropdowns on mobile ([83ef2b5](https://github.com/luzzo33/nos-plus-web/commit/83ef2b51dc0a684a9fa763fc1fa08e6556d397a9))
 * improve loading states and navigation ([25132b2](https://github.com/luzzo33/nos-plus-web/commit/25132b2a50575444b35d532650a4259d15529bbb))
