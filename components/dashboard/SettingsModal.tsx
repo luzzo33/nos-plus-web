@@ -89,6 +89,8 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
         return tw('holdersChart');
       case 'distribution-info':
         return tw('distribution');
+      case 'exchange-info':
+        return tw('exchanges');
       case 'raydium-info':
         return tw('raydium');
       case 'stakers-unstakers-info':

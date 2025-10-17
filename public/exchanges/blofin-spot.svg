@@ -1,0 +1,13 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title>BloFin</title>
+  <defs>
+    <linearGradient id="blofinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4C6FFF" />
+      <stop offset="100%" stop-color="#1B4BFF" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="32" fill="url(#blofinGradient)" />
+  <g fill="#fff" transform="translate(36 28)">
+    <path d="M12 0h22c15 0 26 9 26 22c0 9-6 16-13 18c8 3 13 10 13 19c0 14-11 25-27 25H12V0zm21 34c7 0 12-4 12-10c0-6-5-10-12-10h-9v20h9zm1 36c8 0 14-5 14-12s-6-12-14-12h-10v24h10z" />
+  </g>
+</svg>

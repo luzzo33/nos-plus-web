@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ✨ Features
 
+* **dashboard:** refine exchange listings widget layout and interactions
 * add localized changelog page ([#1](https://github.com/luzzo33/nos-plus-web/issues/1)) ([eef25c0](https://github.com/luzzo33/nos-plus-web/commit/eef25c0d7f6774b4d6b218c96f554759dea7d0fa))
 * compact widget dropdowns on mobile ([83ef2b5](https://github.com/luzzo33/nos-plus-web/commit/83ef2b51dc0a684a9fa763fc1fa08e6556d397a9))
 * improve loading states and navigation ([25132b2](https://github.com/luzzo33/nos-plus-web/commit/25132b2a50575444b35d532650a4259d15529bbb))

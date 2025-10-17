@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Users,
   Newspaper,
+  Building2,
 } from 'lucide-react';
 
 interface MobileReorderModalProps {
@@ -74,6 +75,8 @@ export function MobileReorderModal({ open, onOpenChange }: MobileReorderModalPro
         return tw('priceForecast');
       case 'distribution-info':
         return tw('distribution');
+      case 'exchange-info':
+        return tw('exchanges');
       case 'raydium-info':
         return tw('raydium');
       case 'stakers-unstakers-info':
@@ -103,6 +106,8 @@ export function MobileReorderModal({ open, onOpenChange }: MobileReorderModalPro
         return <Target className="w-4 h-4" />;
       case 'distribution-info':
         return <PieChart className="w-4 h-4" />;
+      case 'exchange-info':
+        return <Building2 className="w-4 h-4" />;
       case 'raydium-info':
         return <Waves className="w-4 h-4" />;
       case 'stakers-unstakers-info':

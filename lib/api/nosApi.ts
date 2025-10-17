@@ -20,7 +20,8 @@ export async function nosApiFetch(path: string, options: RequestInit = {}, acces
     });
 
     const apiKey = getMonitorApiKey();
-    if (apiKey && !headers.has('x-api-key')) {
+    const isServerEnvironment = typeof window === 'undefined';
+    if (apiKey && isServerEnvironment && !headers.has('x-api-key')) {
       headers.set('x-api-key', apiKey);
     }
   }
