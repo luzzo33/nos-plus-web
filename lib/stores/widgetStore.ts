@@ -19,6 +19,7 @@ export interface Widget {
     | 'stakers-unstakers-info'
     | 'staking-details'
     | 'staking-info'
+    | 'exchange-info'
     | 'blog-latest';
   visible: boolean;
   order: number;
@@ -75,17 +76,19 @@ const baseDefaultWidgets: Widget[] = [
   },
   { id: 'forecast-1', type: 'forecast', visible: true, order: 11, size: 'full' },
   { id: 'sentiment-1', type: 'sentiment', visible: true, order: 12, size: 'full' },
-  { id: BLOG_WIDGET_ID, type: 'blog-latest', visible: true, order: 13, size: 'half' },
+  { id: 'exchange-info-1', type: 'exchange-info', visible: true, order: 13, size: 'half' },
+  { id: BLOG_WIDGET_ID, type: 'blog-latest', visible: true, order: 14, size: 'half' },
 ];
 
 const baseSimpleModeWidgets: Widget[] = [
   { id: 'price-info-1', type: 'price-info', visible: true, order: 0, size: 'full' },
   { id: 'price-chart-1', type: 'price-chart', visible: true, order: 1, size: 'full' },
   { id: 'volume-info-1', type: 'volume-info', visible: true, order: 2, size: 'full' },
-  { id: 'sentiment-1', type: 'sentiment', visible: true, order: 3, size: 'full' },
-  { id: 'holders-info-1', type: 'holders-info', visible: true, order: 4, size: 'full' },
-  { id: 'staking-info-1', type: 'staking-info', visible: true, order: 5, size: 'full' },
-  { id: 'distribution-info-1', type: 'distribution-info', visible: true, order: 6, size: 'full' },
+  { id: 'exchange-info-1', type: 'exchange-info', visible: true, order: 3, size: 'half' },
+  { id: 'sentiment-1', type: 'sentiment', visible: true, order: 4, size: 'full' },
+  { id: 'holders-info-1', type: 'holders-info', visible: true, order: 5, size: 'full' },
+  { id: 'staking-info-1', type: 'staking-info', visible: true, order: 6, size: 'full' },
+  { id: 'distribution-info-1', type: 'distribution-info', visible: true, order: 7, size: 'full' },
 ];
 
 const defaultWidgets = baseDefaultWidgets.filter(isWidgetEnabled);

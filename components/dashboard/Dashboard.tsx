@@ -28,6 +28,7 @@ import { RaydiumWidget } from '@/components/widgets/RaydiumWidget';
 import { StakersUnstakersWidget } from '@/components/widgets/StakersUnstakersWidget';
 import { StakingDetailsWidget } from '@/components/widgets/StakingDetailsWidget';
 import { StakingWidget } from '@/components/widgets/StakingWidget';
+import { ExchangeWidget } from '@/components/widgets/ExchangeWidget';
 import { useToast } from '@/components/ui/Toast';
 import { SettingsModal } from '@/components/dashboard/SettingsModal';
 import { MobileReorderModal } from '@/components/dashboard/MobileReorderModal';
@@ -195,6 +196,14 @@ export function Dashboard() {
       case 'volume-chart':
         content = <VolumeChartWidget isMobile={isMobile} />;
         break;
+      case 'exchange-info':
+        content = (
+          <ExchangeWidget
+            isMobile={isMobile}
+            mode={!isMobile && widget.size === 'full' ? 'double' : 'single'}
+          />
+        );
+        break;
       case 'sentiment':
         content = <SentimentWidget isMobile={isMobile} />;
         break;
@@ -234,7 +243,8 @@ export function Dashboard() {
 
     const isChart = widget.type.endsWith('chart');
     const isBlogWidget = widget.type === 'blog-latest';
-    const isResizableWidget = isChart || isBlogWidget;
+    const isExchangeWidget = widget.type === 'exchange-info';
+    const isResizableWidget = isChart || isBlogWidget || isExchangeWidget;
     const isHalfSize = widget.size === 'half';
     const spansTwoColumns = isResizableWidget && !isHalfSize;
     const beingDragged = draggedWidget === widget.id;
