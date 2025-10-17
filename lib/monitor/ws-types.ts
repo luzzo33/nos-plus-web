@@ -3,7 +3,6 @@ export type MonitorWsChannel =
   | 'monitor.stats'
   | 'monitor.metrics'
   | 'monitor.limitWall'
-  | 'monitor.orderBookChart'
   | 'monitor.dcaPlans'
   | 'monitor.limitPlans'
   | 'monitor.dashboard';
