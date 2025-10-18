@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/luzzo33/nos-plus-web/compare/v1.1.1...v1.1.2) (2025-10-18)
+
+
+### 🎨 UI Updates
+
+* remove changelog from navbar ([d840020](https://github.com/luzzo33/nos-plus-web/commit/d84002087aa0e70a8d42d532769eba88f9c10048))
+
 ### [1.1.1](https://github.com/luzzo33/nos-plus-web/compare/v1.1.0...v1.1.1) (2025-10-18)
 
 
