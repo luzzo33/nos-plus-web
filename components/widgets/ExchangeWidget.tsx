@@ -12,6 +12,7 @@ import type { ExchangeMarket, ExchangeWidgetData } from '@/types/exchanges';
 import { cn, formatCurrency } from '@/lib/utils';
 import { useFormattedTimestamp } from '@/lib/hooks/useFormattedTimestamp';
 import { ExchangesApiClient } from '@/lib/api/exchanges-client';
+import { resolveExchangeLogoPath } from '@/lib/exchanges/logoMap';
 
 type ExchangeWidgetMode = 'single' | 'double';
 type SlideDirection = 1 | -1;
@@ -52,32 +53,8 @@ const PAGE_ANIMATION_VARIANTS = {
   }),
 };
 
-const LOGO_MAP: Record<string, string> = {
-  'bitvenus-spot': '/exchanges/bitvenus-spot.svg',
-  bitvenus_spot: '/exchanges/bitvenus-spot.svg',
-  'blofin-spot': '/exchanges/blofin-spot.svg',
-  blofin_spot: '/exchanges/blofin-spot.svg',
-  coinex: '/exchanges/coinex.svg',
-  'crypto-com': '/exchanges/crypto-com.svg',
-  crypto_com: '/exchanges/crypto-com.svg',
-  meteora: '/exchanges/meteora.svg',
-  novadax: '/exchanges/novadax.svg',
-  orca: '/exchanges/orca.svg',
-  ourbit: '/exchanges/ourbit.svg',
-  xt: '/exchanges/xt.svg',
-  gate: '/gate-io.svg',
-  bitvavo: '/bitvavo.svg',
-  kraken: '/kraken.svg',
-  mxc: '/mexc.svg',
-  mexc: '/mexc.svg',
-  raydium: '/raydium.svg',
-  raydium2: '/raydium.svg',
-  jupiter: '/jupiter.svg',
-  swissborg: '/exchanges/swissborg.svg',
-};
-
 function resolveLogoPath(market: ExchangeMarket): string | null {
-  return LOGO_MAP[market.slug] ?? LOGO_MAP[market.identifier] ?? null;
+  return resolveExchangeLogoPath(market.slug, market.identifier, market.name);
 }
 
 function buildFallbackInitial(name: string): string {
@@ -343,12 +320,6 @@ export function ExchangeWidget({ isMobile = false, mode = 'single' }: ExchangeWi
           >
             {isFetching ? tc('loading') : tc('retry')}
           </button>
-        </div>
-      )}
-
-      {!isLoading && !error && data?.error && (
-        <div className="rounded-md border border-amber-400/40 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-500">
-          {tw('exchangeStaleNotice', { reason: data.error })}
         </div>
       )}
 
