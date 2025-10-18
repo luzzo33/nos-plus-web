@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/luzzo33/nos-plus-web/compare/v1.1.2...v1.1.3) (2025-10-18)
+
 ### [1.1.2](https://github.com/luzzo33/nos-plus-web/compare/v1.1.1...v1.1.2) (2025-10-18)
+
+### ✨ Features
+
+* add CDC exchange coverage to monitor ([feature/add-cryptocom-exchange](https://github.com/luzzo33/nos-plus-web/tree/feature/add-cryptocom-exchange))
 
 
 ### 🎨 UI Updates

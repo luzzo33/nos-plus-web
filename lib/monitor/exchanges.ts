@@ -15,6 +15,7 @@ export const MONITOR_EXCHANGES: readonly MonitorExchange[] = [
   { id: 'raydium', label: 'Raydium', venues: ['raydium'], icon: '/raydium.svg' },
   { id: 'gate', label: 'Gate.io', venues: ['gate'], icon: '/gate-io.svg' },
   { id: 'mexc', label: 'MEXC', venues: ['mexc'], icon: '/mexc.svg' },
+  { id: 'cryptocom', label: 'CDC', venues: ['cryptocom'], icon: '/cryptocom.svg' },
   { id: 'bitvavo', label: 'Bitvavo', venues: ['bitvavo'], icon: '/bitvavo.svg' },
   { id: 'kraken', label: 'Kraken', venues: ['kraken'], icon: '/kraken.svg' },
 ] as const;
@@ -23,6 +24,7 @@ export const LIMIT_WALL_EXCHANGES: readonly MonitorExchange[] = [
   { id: 'jupiter', label: 'Jupiter (LO)', venues: ['jupiter-limit-nos'], icon: '/jupiter.svg' },
   { id: 'gate', label: 'Gate.io', venues: ['gate'], icon: '/gate-io.svg' },
   { id: 'mexc', label: 'MEXC', venues: ['mexc'], icon: '/mexc.svg' },
+  { id: 'cryptocom', label: 'CDC', venues: ['cryptocom'], icon: '/cryptocom.svg' },
   { id: 'bitvavo', label: 'Bitvavo', venues: ['bitvavo'], icon: '/bitvavo.svg' },
   { id: 'kraken', label: 'Kraken', venues: ['kraken'], icon: '/kraken.svg' },
 ] as const;

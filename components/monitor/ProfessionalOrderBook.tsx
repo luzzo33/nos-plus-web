@@ -67,6 +67,7 @@ const SOURCE_META: Record<string, { label: string; icon?: string }> = {
   mexc: { label: 'MEXC', icon: '/mexc.svg' },
   bitvavo: { label: 'Bitvavo', icon: '/bitvavo.svg' },
   kraken: { label: 'Kraken', icon: '/kraken.svg' },
+  cryptocom: { label: 'CDC', icon: '/cryptocom.svg' },
 };
 
 const getDefaultRowLimit = (isMobile: boolean) =>

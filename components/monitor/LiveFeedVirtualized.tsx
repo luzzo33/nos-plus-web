@@ -30,6 +30,7 @@ const VENUE_LABELS: Record<string, string> = {
   'jupiter-limit-nos': 'Jupiter LO',
   'jupiter-dca-nos': 'Jupiter DCA',
   kraken: 'Kraken',
+  cryptocom: 'CDC',
 };
 
 const STABLE_QUOTES = new Set(['USDC', 'USDT', 'USD', 'UST', 'USDC.SOL']);
@@ -489,6 +490,9 @@ function actionTooltipContent(evt: LiveMonitorEvent) {
     } else if (venue.includes('mexc')) {
       const p = `${base || 'NOS'}_${quote || 'USDT'}`;
       marketLink = `https://www.mexc.com/exchange/${p}`;
+    } else if (venue.includes('cryptocom') || venue.includes('crypto.com') || venue.includes('cdc')) {
+      const p = `${base || 'NOS'}_${quote || 'USDT'}`;
+      marketLink = `https://crypto.com/exchange/trade/spot/${p}`;
     }
   }
 
@@ -625,6 +629,20 @@ function resolveVenueBadges(evt: LiveMonitorEvent): VenueBadge[] {
     return badges;
   }
 
+  const cryptocomSignals =
+    venueHint.includes('cryptocom') ||
+    venueHint.includes('crypto.com') ||
+    venueHint.includes('cdc') ||
+    metaSource.includes('cryptocom') ||
+    metaSource.includes('crypto.com') ||
+    metaSource.includes('cdc') ||
+    (evt.marketUrl ?? '').toLowerCase().includes('crypto.com') ||
+    (evt.tradeUrl ?? '').toLowerCase().includes('crypto.com');
+  if (cryptocomSignals) {
+    badges.push({ slug: 'cryptocom', icon: '/cryptocom.svg', label: 'CDC' });
+    return badges;
+  }
+
   const bitvavoSignals =
     venueHint.includes('bitvavo') ||
     metaSource.includes('bitvavo') ||
@@ -656,7 +674,9 @@ function resolveVenueBadges(evt: LiveMonitorEvent): VenueBadge[] {
       ? '/bitvavo.svg'
       : venueHint.includes('kraken')
         ? '/kraken.svg'
-        : '/raydium.svg',
+        : venueHint.includes('cryptocom') || venueHint.includes('crypto.com') || venueHint.includes('cdc')
+          ? '/cryptocom.svg'
+          : '/raydium.svg',
     label: prettyVenueLabel(evt.venue ?? 'Raydium'),
   });
   return badges;
