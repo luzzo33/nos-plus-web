@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/luzzo33/nos-plus-web/compare/v1.1.0...v1.1.1) (2025-10-18)
+
+
+### 🎨 UI Updates
+
+* update alpha modal version ([cc70917](https://github.com/luzzo33/nos-plus-web/commit/cc709171001542bee8ebb3fadc3d10a9b86afb41))
+
 ## [1.1.0](https://github.com/luzzo33/nos-plus-web/compare/v1.0.0...v1.1.0) (2025-10-18)
 
 
