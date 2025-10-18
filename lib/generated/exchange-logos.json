@@ -1,0 +1,119 @@
+{
+  "generatedAt": "2025-10-18T15:43:25.256Z",
+  "token": "nosana",
+  "source": "coingecko",
+  "exchanges": [
+    {
+      "identifier": "bitvavo",
+      "slug": "bitvavo",
+      "name": "Bitvavo",
+      "filename": "bitvavo.png",
+      "path": "/exchanges/bitvavo.png",
+      "source": "https://coin-images.coingecko.com/markets/images/714/small/bitvavo-mark-square-black.png?1706864670"
+    },
+    {
+      "identifier": "bitvenus_spot",
+      "slug": "bitvenus-spot",
+      "name": "BVOX",
+      "filename": "bitvenus-spot.png",
+      "path": "/exchanges/bitvenus-spot.png",
+      "source": "https://coin-images.coingecko.com/markets/images/1253/small/BVOX-%E5%9B%BE%E5%BD%A2%E6%A0%87-%E5%9C%86.png?1745501686"
+    },
+    {
+      "identifier": "blofin_spot",
+      "slug": "blofin-spot",
+      "name": "BloFin",
+      "filename": "blofin-spot.jpg",
+      "path": "/exchanges/blofin-spot.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/1645/small/blofin_logo.jpeg?1718852326"
+    },
+    {
+      "identifier": "coinex",
+      "slug": "coinex",
+      "name": "CoinEx",
+      "filename": "coinex.jpg",
+      "path": "/exchanges/coinex.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/135/small/coinex.jpg?1706864305"
+    },
+    {
+      "identifier": "crypto_com",
+      "slug": "crypto-com",
+      "name": "Crypto.com Exchange",
+      "filename": "crypto-com.jpg",
+      "path": "/exchanges/crypto-com.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/589/small/h2oMjPp6_400x400.jpg?1706864542"
+    },
+    {
+      "identifier": "gate",
+      "slug": "gate",
+      "name": "Gate",
+      "filename": "gate.png",
+      "path": "/exchanges/gate.png",
+      "source": "https://coin-images.coingecko.com/markets/images/60/small/Frame_1.png?1747795534"
+    },
+    {
+      "identifier": "kraken",
+      "slug": "kraken",
+      "name": "Kraken",
+      "filename": "kraken.jpg",
+      "path": "/exchanges/kraken.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/29/small/kraken.jpg?1706864265"
+    },
+    {
+      "identifier": "meteora",
+      "slug": "meteora",
+      "name": "Meteora",
+      "filename": "meteora.jpg",
+      "path": "/exchanges/meteora.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/1520/small/meteora.jpeg?1710908196"
+    },
+    {
+      "identifier": "mxc",
+      "slug": "mxc",
+      "name": "MEXC",
+      "filename": "mxc.png",
+      "path": "/exchanges/mxc.png",
+      "source": "https://coin-images.coingecko.com/markets/images/409/small/logo_new.png?1743600043"
+    },
+    {
+      "identifier": "novadax",
+      "slug": "novadax",
+      "name": "NovaDAX",
+      "filename": "novadax.jpg",
+      "path": "/exchanges/novadax.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/328/small/preview-full-novadax-exchange.jpg?1706864379"
+    },
+    {
+      "identifier": "orca",
+      "slug": "orca",
+      "name": "Orca",
+      "filename": "orca.png",
+      "path": "/exchanges/orca.png",
+      "source": "https://coin-images.coingecko.com/markets/images/691/small/orca.png?1706864640"
+    },
+    {
+      "identifier": "ourbit",
+      "slug": "ourbit",
+      "name": "Ourbit",
+      "filename": "ourbit.png",
+      "path": "/exchanges/ourbit.png",
+      "source": "https://coin-images.coingecko.com/markets/images/11731/small/logo_200_200_2.png?1755659673"
+    },
+    {
+      "identifier": "raydium2",
+      "slug": "raydium2",
+      "name": "Raydium",
+      "filename": "raydium2.jpg",
+      "path": "/exchanges/raydium2.jpg",
+      "source": "https://coin-images.coingecko.com/markets/images/649/small/raydium.jpeg?1706864594"
+    },
+    {
+      "identifier": "xt",
+      "slug": "xt",
+      "name": "XT.COM",
+      "filename": "xt.png",
+      "path": "/exchanges/xt.png",
+      "source": "https://coin-images.coingecko.com/markets/images/404/small/xt.png?1758800896"
+    }
+  ]
+}
