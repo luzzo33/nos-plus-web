@@ -25,7 +25,6 @@ import {
   Key,
   BookText,
   Newspaper,
-  History,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
@@ -152,12 +151,6 @@ export function Navbar() {
           description: t('descriptions.apiKeys'),
         },
         { href: '/docs', label: t('docs'), icon: BookText, description: t('descriptions.docs') },
-        {
-          href: '/changelog',
-          label: t('changelog'),
-          icon: History,
-          description: t('descriptions.changelog'),
-        },
         { href: '/blog', label: t('blog'), icon: Newspaper, description: t('descriptions.blog') },
       ],
     },
