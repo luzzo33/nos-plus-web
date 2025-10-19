@@ -17,16 +17,34 @@ interface Toast {
 
 interface ToastStore {
   toasts: Toast[];
-  addToast: (toast: Omit<Toast, 'id'>) => void;
+  addToast: (toast: ToastPayload) => void;
   removeToast: (id: string) => void;
 }
+
+type ToastPayload = {
+  type?: ToastType;
+  variant?: ToastType;
+  title: string;
+  description?: string;
+  duration?: number;
+};
 
 export const useToast = create<ToastStore>((set) => ({
   toasts: [],
   addToast: (toast) => {
     const id = Math.random().toString(36).substring(7);
+    const type = toast.type ?? toast.variant ?? 'info';
     set((state) => ({
-      toasts: [...state.toasts, { ...toast, id }],
+      toasts: [
+        ...state.toasts,
+        {
+          id,
+          type,
+          title: toast.title,
+          description: toast.description,
+          duration: toast.duration,
+        },
+      ],
     }));
   },
   removeToast: (id) => {

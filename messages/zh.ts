@@ -21,6 +21,7 @@ import sentiment from './zh/sentiment.json';
 import stakersUnstakers from './zh/stakersUnstakers.json';
 import stakingDapp from './zh/stakingDapp.json';
 import stakingDetails from './zh/stakingDetails.json';
+import stakingAnalysis from './zh/stakingAnalysis.json';
 import status from './zh/status.json';
 import volume from './zh/volume.json';
 import widgets from './zh/widgets.json';
@@ -75,6 +76,7 @@ const zh = {
   stakersUnstakers,
   stakingDapp,
   stakingDetails,
+  stakingAnalysis,
   status,
   volume,
   widgets,

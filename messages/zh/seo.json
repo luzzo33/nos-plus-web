@@ -88,6 +88,10 @@
       "title": "Nosana 质押 dApp",
       "description": "质押 NOS、监控 xNOS 收益，并以实时 APR 数据管理你的仓位。"
     },
+    "stakingAnalysis": {
+      "title": "Nosana 质押分析套件",
+      "description": "在一个面板中获取 Nosana 质押的完整洞察，包括钱包收益、APR 稳定性与供给动态。"
+    },
     "stakingDetails": {
       "title": "Nosana 质押分析",
       "description": "深入了解验证者表现、锁仓周期与巨鲸行为，洞察 Nosana 质押网络。"

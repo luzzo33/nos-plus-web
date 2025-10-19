@@ -67,7 +67,7 @@ export default async function LocaleLayout({
         <AlphaModalProvider>
           <div className="flex flex-col min-h-screen">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-6 md:py-8">
+            <main className="flex-1 container mx-auto px-4 pt-3 pb-6 md:pt-5 md:pb-8">
               {/* Log visitor (once per session) */}
               <VisitorTracker locale={typedLocale} />
               {children}

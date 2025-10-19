@@ -41,6 +41,13 @@ import {
   DistributionWidgetData,
   DistributionStatsResponse,
   StakingWidgetResponse,
+  StakingChartResponse,
+  StakingStatsResponse,
+  StakingTableResponse,
+  StakingEarningsResponse,
+  StakingEarningsEventsResponse,
+  StakingJobsResponse,
+  StakingJobResponse,
   RichListChartResponse,
   RichListTableResponse,
   RichListWidgetData,
@@ -421,14 +428,42 @@ class NOSApiClient {
   async getStakingWidget(): Promise<StakingWidgetResponse> {
     return this.stakingClient.getWidget();
   }
-  async getStakingChart(params: Parameters<StakingApiClient['getChart']>[0]) {
+  async getStakingChart(
+    params: Parameters<StakingApiClient['getChart']>[0],
+  ): Promise<StakingChartResponse> {
     return this.stakingClient.getChart(params);
   }
-  async getStakingStats(range?: string) {
+  async getStakingStats(range?: string): Promise<StakingStatsResponse> {
     return this.stakingClient.getStats(range);
   }
-  async getStakingTable(params: Parameters<StakingApiClient['getTable']>[0]) {
+  async getStakingTable(
+    params: Parameters<StakingApiClient['getTable']>[0],
+  ): Promise<StakingTableResponse> {
     return this.stakingClient.getTable(params);
+  }
+  async getStakingEarningsEvents(
+    params: Parameters<StakingApiClient['getEarningsEvents']>[0],
+  ): Promise<StakingEarningsEventsResponse> {
+    return this.stakingClient.getEarningsEvents(params);
+  }
+  async getStakingEarnings(params: Parameters<StakingApiClient['getEarnings']>[0]): Promise<StakingEarningsResponse> {
+    return this.stakingClient.getEarnings(params);
+  }
+  async refreshStakingEarnings(
+    params: Parameters<StakingApiClient['refreshEarnings']>[0],
+  ): Promise<StakingEarningsResponse> {
+    return this.stakingClient.refreshEarnings(params);
+  }
+  async getStakingJobs(): Promise<StakingJobsResponse> {
+    return this.stakingClient.listJobs();
+  }
+  async getStakingJob(jobId: string): Promise<StakingJobResponse> {
+    return this.stakingClient.getJob(jobId);
+  }
+  async createStakingJob(
+    params: Parameters<StakingApiClient['createJob']>[0],
+  ): Promise<StakingJobResponse> {
+    return this.stakingClient.createJob(params);
   }
 
   async submitSentimentVote(sentiment: 'bullish' | 'bearish') {

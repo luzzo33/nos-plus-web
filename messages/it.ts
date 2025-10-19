@@ -21,6 +21,7 @@ import sentiment from './it/sentiment.json';
 import stakersUnstakers from './it/stakersUnstakers.json';
 import stakingDapp from './it/stakingDapp.json';
 import stakingDetails from './it/stakingDetails.json';
+import stakingAnalysis from './it/stakingAnalysis.json';
 import status from './it/status.json';
 import volume from './it/volume.json';
 import widgets from './it/widgets.json';
@@ -75,6 +76,7 @@ const it = {
   stakersUnstakers,
   stakingDapp,
   stakingDetails,
+  stakingAnalysis,
   status,
   volume,
   widgets,

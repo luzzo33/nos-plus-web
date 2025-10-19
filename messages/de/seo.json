@@ -88,6 +88,10 @@
       "title": "Nosana Staking dApp",
       "description": "Stake NOS, kontrolliere xNOS-Belohnungen und verwalte Positionen mit APR-Tracking in Echtzeit."
     },
+    "stakingAnalysis": {
+      "title": "Nosana Staking Analyse Suite",
+      "description": "Ganzheitliche Nosana Staking-Insights mit Wallet-Erträgen, APR-Stabilität und Angebotsdynamik in einem Dashboard."
+    },
     "stakingDetails": {
       "title": "Nosana Staking Analytik",
       "description": "Untersuche Validatorleistung, Sperrfristen und Whale-Bewegungen im Nosana-Staking-Programm."
