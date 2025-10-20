@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Wallet, ArrowRight, Sparkles, Shield, Zap, TrendingUp, Loader2 } from 'lucide-react';
 
 interface WalletInputProps {
@@ -19,6 +20,7 @@ export function WalletInput({
 }: WalletInputProps) {
   const [wallet, setWallet] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(false);
+  const t = useTranslations('stakingAnalysis.walletInput');
 
   useEffect(() => {
     setWallet(defaultValue);
@@ -59,7 +61,7 @@ export function WalletInput({
               transition={{ delay: 0.3 }}
               className="mb-4 bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-5xl lg:text-6xl"
             >
-              Staking Analytics
+              {t('title')}
             </motion.h1>
 
             <motion.p
@@ -68,8 +70,7 @@ export function WalletInput({
               transition={{ delay: 0.4 }}
               className="mx-auto max-w-xl text-lg text-muted-foreground"
             >
-              Enter your Solana wallet address to unlock comprehensive insights into your NOS
-              staking performance and transaction history
+              {t('description')}
             </motion.p>
           </div>
 
@@ -82,7 +83,7 @@ export function WalletInput({
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="wallet" className="mb-3 block text-sm font-semibold text-foreground">
-                    Wallet Address
+                    {t('label')}
                   </label>
                   <div className="relative">
                     <input
@@ -92,7 +93,7 @@ export function WalletInput({
                       onChange={(event) => setWallet(event.target.value)}
                       onFocus={() => setIsFocused(true)}
                       onBlur={() => setIsFocused(false)}
-                      placeholder="e.g., CqJviA1TaBWWnkX515NthiykyA42a5hyXrEgLXoSZM5R"
+                      placeholder={t('placeholder')}
                       className="w-full rounded-xl border-2 border-border bg-background px-4 py-4 pr-12 font-mono text-sm transition-all duration-300 placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/20"
                     />
                     <motion.div
@@ -104,7 +105,7 @@ export function WalletInput({
                     </motion.div>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Wallet lookups may be cached during analysis; clear the form if you need to stop.
+                    {t('helper')}
                   </p>
                   {errorMessage && (
                     <p className="mt-2 text-xs font-medium text-rose-500">
@@ -124,11 +125,11 @@ export function WalletInput({
                     {loading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Loading
+                        {t('loading')}
                       </>
                     ) : (
                       <>
-                        Analyze Wallet
+                        {t('submit')}
                         <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                       </>
                     )}
@@ -155,20 +156,20 @@ export function WalletInput({
             {[
               {
                 icon: Shield,
-                title: 'Secure',
-                description: 'Read-only access',
+                title: t('features.secure.title'),
+                description: t('features.secure.description'),
                 color: 'text-green-500',
               },
               {
                 icon: Zap,
-                title: 'Fast',
-                description: 'Instant analytics',
+                title: t('features.fast.title'),
+                description: t('features.fast.description'),
                 color: 'text-yellow-500',
               },
               {
                 icon: TrendingUp,
-                title: 'Detailed',
-                description: 'Complete history',
+                title: t('features.detailed.title'),
+                description: t('features.detailed.description'),
                 color: 'text-blue-500',
               },
             ].map((feature, index) => {

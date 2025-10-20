@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 import type { TimelineDataPoint } from '../../analytics';
 
@@ -22,12 +23,12 @@ interface TimelineChartProps {
 type MetricKey = 'deposits' | 'withdrawals' | 'purchases' | 'sales' | 'netFlow';
 type ViewMode = 'daily' | 'cumulative';
 
-const METRICS: { key: MetricKey; label: string; color: string }[] = [
-  { key: 'deposits', label: 'Stake Deposits', color: '#8b5cf6' },
-  { key: 'withdrawals', label: 'Withdrawals', color: '#0ea5e9' },
-  { key: 'purchases', label: 'Purchases', color: '#38bdf8' },
-  { key: 'sales', label: 'Sales', color: '#fb7185' },
-  { key: 'netFlow', label: 'Net Flow', color: '#22c55e' },
+const METRICS: { key: MetricKey; color: string }[] = [
+  { key: 'deposits', color: '#8b5cf6' },
+  { key: 'withdrawals', color: '#0ea5e9' },
+  { key: 'purchases', color: '#38bdf8' },
+  { key: 'sales', color: '#fb7185' },
+  { key: 'netFlow', color: '#22c55e' },
 ];
 
 const METRIC_KEY_BY_MODE: Record<
@@ -42,10 +43,22 @@ const METRIC_KEY_BY_MODE: Record<
 };
 
 export function TimelineChart({ data, className = '' }: TimelineChartProps) {
+  const t = useTranslations('stakingAnalysis.timeline');
+  const tUnits = useTranslations('stakingAnalysis.units');
+
   const [selectedMetrics, setSelectedMetrics] = useState<Set<MetricKey>>(
     () => new Set(['deposits', 'withdrawals', 'netFlow']),
   );
   const [viewMode, setViewMode] = useState<ViewMode>('cumulative');
+
+  const metrics = useMemo(
+    () =>
+      METRICS.map((metric) => ({
+        ...metric,
+        label: t(`metrics.${metric.key}` as const),
+      })),
+    [t],
+  );
 
   const chartData = useMemo(() => {
     if (!data?.length) return [];
@@ -86,7 +99,7 @@ export function TimelineChart({ data, className = '' }: TimelineChartProps) {
                 <span className="text-xs text-muted-foreground">{entry.name}</span>
               </div>
               <span className="text-sm font-semibold">
-                {entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} NOS
+                {entry.value.toLocaleString(undefined, { maximumFractionDigits: 2 })} {tUnits('nos')}
               </span>
             </div>
           ))}
@@ -100,9 +113,9 @@ export function TimelineChart({ data, className = '' }: TimelineChartProps) {
       <div className="mb-4 space-y-3 sm:mb-6 sm:space-y-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h3 className="text-base font-semibold sm:text-lg md:text-xl">Activity Timeline</h3>
+            <h3 className="text-base font-semibold sm:text-lg md:text-xl">{t('title')}</h3>
             <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
-              Historical flow of staking events over time
+              {t('subtitle')}
             </p>
           </div>
           <div className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-secondary/40 p-1">
@@ -117,14 +130,14 @@ export function TimelineChart({ data, className = '' }: TimelineChartProps) {
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {mode === 'daily' ? 'Daily totals' : 'Cumulative totals'}
+                {mode === 'daily' ? t('view.daily') : t('view.cumulative')}
               </button>
             ))}
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {METRICS.map((metric) => (
+          {metrics.map((metric) => (
             <motion.button
               key={metric.key}
               onClick={() => toggleMetric(metric.key)}
@@ -147,7 +160,7 @@ export function TimelineChart({ data, className = '' }: TimelineChartProps) {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
-              {METRICS.map((metric) => (
+              {metrics.map((metric) => (
                 <linearGradient key={metric.key} id={`gradient-${metric.key}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={metric.color} stopOpacity={0.3} />
                   <stop offset="95%" stopColor={metric.color} stopOpacity={0} />
@@ -173,18 +186,20 @@ export function TimelineChart({ data, className = '' }: TimelineChartProps) {
               tickFormatter={(value: number) => `${(value / 1000).toFixed(0)}K`}
             />
             <Tooltip content={<CustomTooltip />} />
-            {METRICS.filter((metric) => selectedMetrics.has(metric.key)).map((metric) => (
-              <Area
-                key={metric.key}
-                type="monotone"
-                dataKey={resolveDataKey(metric.key)}
-                stroke={metric.color}
-                strokeWidth={2}
-                fill={`url(#gradient-${metric.key})`}
-                name={metric.label}
-                animationDuration={1000}
-              />
-            ))}
+            {metrics
+              .filter((metric) => selectedMetrics.has(metric.key))
+              .map((metric) => (
+                <Area
+                  key={metric.key}
+                  type="monotone"
+                  dataKey={resolveDataKey(metric.key)}
+                  stroke={metric.color}
+                  strokeWidth={2}
+                  fill={`url(#gradient-${metric.key})`}
+                  name={metric.label}
+                  animationDuration={1000}
+                />
+              ))}
           </AreaChart>
         </ResponsiveContainer>
       </div>

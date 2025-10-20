@@ -61,38 +61,36 @@ import {
   RefreshCcw,
   Loader2,
   ExternalLink,
+  Calculator,
+  Layers,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 const EVENT_FETCH_LIMIT = 500;
 
-const STAGE_LABELS: Record<string, string> = {
-  queued: 'Queued for processing',
-  running: 'Sync in progress',
-  account_signatures_fetch: 'Scanning account signatures',
-  account_signatures_collected: 'Collecting signature history',
-  signature_collection_complete: 'Signatures collected',
-  signatures_progress: 'Collecting account signatures',
-  fetch_transactions_start: 'Downloading transactions',
-  fetch_transactions_batch: 'Downloading transactions',
-  fetch_transactions_complete: 'Transactions ready',
-  fetch_transactions_progress: 'Downloading transactions',
-  fetch_transactions_error: 'Retrying transaction download',
-  fetch_transactions_fallback: 'Retrying missing transactions',
-  classification_progress: 'Classifying staking activity',
-  events_stored: 'Persisting events',
-  events_classified: 'Classified staking events',
-  events_persist: 'Persisting events',
-  events_synced: 'Events synced',
-  summary_ready: 'Finalizing summary',
-  no_updates_required: 'Already up to date',
-  no_new_signatures: 'No NOS activity detected',
-};
-
-function mapStageToLabel(stage?: string | null) {
-  if (!stage) return 'Preparing sync';
-  return STAGE_LABELS[stage] || stage.replace(/_/g, ' ');
-}
+const STAGE_KEYS = [
+  'queued',
+  'running',
+  'account_signatures_fetch',
+  'account_signatures_collected',
+  'signature_collection_complete',
+  'signatures_progress',
+  'fetch_transactions_start',
+  'fetch_transactions_batch',
+  'fetch_transactions_complete',
+  'fetch_transactions_progress',
+  'fetch_transactions_error',
+  'fetch_transactions_fallback',
+  'classification_progress',
+  'events_stored',
+  'events_classified',
+  'events_persist',
+  'events_synced',
+  'summary_ready',
+  'no_updates_required',
+  'no_new_signatures',
+] as const;
 
 type StageProgressPayload = {
   progressStage?: string;
@@ -123,22 +121,6 @@ type StakingJobMutationVariables = {
   wallet: string;
   mode?: 'initial' | 'incremental' | 'force' | 'empty';
 };
-
-function formatEta(ms: number | null | undefined) {
-  if (!ms || !Number.isFinite(ms) || ms <= 0) return null;
-  const totalSeconds = Math.round(ms / 1000);
-  if (totalSeconds < 60) {
-    return `${totalSeconds}s remaining`;
-  }
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  if (minutes >= 60) {
-    const hours = Math.floor(minutes / 60);
-    const remMinutes = minutes % 60;
-    return `${hours}h ${remMinutes}m remaining`;
-  }
-  return seconds > 0 ? `${minutes}m ${seconds}s remaining` : `${minutes}m remaining`;
-}
 
 function formatNos(value?: number | null, fractionDigits = 2) {
   if (value == null || Number.isNaN(value)) return '0';
@@ -175,6 +157,24 @@ export default function StakingAnalysisPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addToast } = useToast();
+  const tButtons = useTranslations('stakingAnalysis.buttons');
+  const tLabels = useTranslations('stakingAnalysis.labels');
+  const tHero = useTranslations('stakingAnalysis.hero');
+  const tQuickStats = useTranslations('stakingAnalysis.quickStats');
+  const tStatCards = useTranslations('stakingAnalysis.statCards');
+  const tPerformance = useTranslations('stakingAnalysis.performance');
+  const tRewards = useTranslations('stakingAnalysis.rewardBreakdown');
+  const tDisclaimers = useTranslations('stakingAnalysis.disclaimer');
+  const tUnits = useTranslations('stakingAnalysis.units');
+  const tStageLabels = useTranslations('stakingAnalysis.progress.stageLabels');
+  const tProgressDefaults = useTranslations('stakingAnalysis.progress.defaults');
+  const tProgressDetails = useTranslations('stakingAnalysis.progress.details');
+  const tProgressMode = useTranslations('stakingAnalysis.progress.modeMessages');
+  const tProgressOverlay = useTranslations('stakingAnalysis.progress.overlays');
+  const tProgressEta = useTranslations('stakingAnalysis.progress.eta');
+  const tJobLabels = useTranslations('stakingAnalysis.progress.jobLabels');
+  const tToasts = useTranslations('stakingAnalysis.toasts');
+  const tLimit = useTranslations('stakingAnalysis.limit');
 
   const [walletInput, setWalletInput] = useState('');
   const [activeWallet, setActiveWallet] = useState<string | null>(null);
@@ -184,6 +184,7 @@ export default function StakingAnalysisPage() {
 
   const [activeSyncJobId, setActiveSyncJobId] = useState<string | null>(null);
   const [syncJob, setSyncJob] = useState<StakingJob | null>(null);
+  const [limitExceeded, setLimitExceeded] = useState(false);
 
   const lastErrorRef = useRef<string | null>(null);
   const internalNavigationRef = useRef(false);
@@ -376,7 +377,14 @@ export default function StakingAnalysisPage() {
     queryFn: () => apiClient.getStakingEarnings({ wallet: activeWallet! }),
     enabled: hasWallet,
     staleTime: 60_000,
-    refetchInterval: 5 * 60_000,
+    refetchInterval: limitExceeded ? false : 5 * 60_000,
+    retry: (failureCount, error) => {
+      const apiError = error as Error & { code?: string };
+      if (apiError?.code === 'NOS_ACTIVITY_LIMIT_EXCEEDED') {
+        return false;
+      }
+      return failureCount < 2;
+    },
     onSuccess: (data) => {
       const job = data?.job;
       if (!job) return;
@@ -405,7 +413,7 @@ export default function StakingAnalysisPage() {
         order: 'desc',
         sortBy: 'timestamp',
       }),
-    enabled: hasWallet,
+    enabled: hasWallet && !limitExceeded,
     staleTime: 60_000,
     keepPreviousData: true,
   });
@@ -430,20 +438,21 @@ export default function StakingAnalysisPage() {
       lastJobStatusRef.current = nextJob.status;
 
       const isFullSync = nextJob.mode === 'force';
-      const jobLabel = isFullSync ? 'Full sync job' : 'Sync job';
+      const jobLabel = isFullSync ? tJobLabels('full') : tJobLabels('incremental');
+      const shortJobId = `${nextJob.id.slice(0, 8)}…`;
       const description = isFullSync
-        ? `Job ${nextJob.id.slice(0, 8)}… queued for wallet ${nextJob.wallet}. Rebuilding analytics from the ground up.`
-        : `Job ${nextJob.id.slice(0, 8)}… queued for wallet ${nextJob.wallet}. Progress will appear below.`;
+        ? tToasts('syncStartedFull', { id: shortJobId, wallet: nextJob.wallet })
+        : tToasts('syncStartedIncremental', { id: shortJobId, wallet: nextJob.wallet });
       addToast({
-        title: `${jobLabel} started`,
+        title: tToasts('syncStartedTitle', { label: jobLabel }),
         description,
         type: 'success',
       });
     },
     onError: (error) => {
       addToast({
-        title: 'Sync failed',
-        description: error.message,
+        title: tToasts('syncFailedTitle'),
+        description: error.message ?? tToasts('syncFailedDescription'),
         type: 'error',
       });
     },
@@ -492,11 +501,11 @@ export default function StakingAnalysisPage() {
         }
         console.error('[staking-analysis] job stream error', error);
         addToast({
-          title: 'Sync progress unavailable',
+          title: tToasts('progressUnavailableTitle'),
           description:
             error instanceof Error
               ? error.message
-              : 'Unable to stream sync progress from the API.',
+              : tToasts('progressUnavailableDescription'),
           type: 'info',
         });
         return pollJobStatus(activeSyncJobId, controller.signal, handleJobUpdate);
@@ -505,11 +514,11 @@ export default function StakingAnalysisPage() {
         if (controller.signal.aborted) return;
         console.error('[staking-analysis] job polling error', error);
         addToast({
-          title: 'Sync status unavailable',
+          title: tToasts('statusUnavailableTitle'),
           description:
             error instanceof Error
               ? error.message
-              : 'Unable to retrieve sync status from the API.',
+              : tToasts('statusUnavailableDescription'),
           type: 'error',
         });
       });
@@ -553,11 +562,11 @@ export default function StakingAnalysisPage() {
       if (controller.signal.aborted) return;
       console.error('[staking-analysis] job stream error', error);
       addToast({
-        title: 'Sync progress unavailable',
+        title: tToasts('progressUnavailableTitle'),
         description:
           error instanceof Error
             ? error.message
-            : 'Unable to stream sync progress from the API.',
+            : tToasts('progressUnavailableDescription'),
         type: 'info',
       });
     });
@@ -580,19 +589,25 @@ export default function StakingAnalysisPage() {
 
   useEffect(() => {
     if (combinedError) {
-      const message = combinedError.message;
-      if (message && message !== lastErrorRef.current) {
+      const apiError = combinedError as Error & { code?: string };
+      const message = apiError?.message || combinedError.message;
+      const code = typeof apiError?.code === 'string' ? apiError.code : null;
+      const translatedMessage =
+        code === 'NOS_ACTIVITY_LIMIT_EXCEEDED' ? tLimit('message') : message;
+      setLimitExceeded(code === 'NOS_ACTIVITY_LIMIT_EXCEEDED');
+      if (translatedMessage && translatedMessage !== lastErrorRef.current) {
         addToast({
-          title: 'Unable to load staking analytics',
-          description: message,
+          title: tToasts('loadErrorTitle'),
+          description: translatedMessage,
           type: 'error',
         });
-        lastErrorRef.current = message;
+        lastErrorRef.current = translatedMessage;
       }
-      setInputError(combinedError.message);
+      setInputError(translatedMessage);
     } else {
       setInputError(null);
       lastErrorRef.current = null;
+      setLimitExceeded(false);
     }
   }, [combinedError, addToast]);
 
@@ -607,37 +622,42 @@ export default function StakingAnalysisPage() {
       const totalSignatures = syncInfo?.totalSignatures ?? null;
       const jobMode = syncJob.mode || syncInfo?.mode || syncJob.result?.mode || null;
 
-      let title = 'Sync complete';
-      let description = 'Wallet analytics have been refreshed with the latest data.';
+      let title = tToasts('syncCompleteTitle');
+      let description = tToasts('syncCompleteDescription');
       let type: 'success' | 'info' = 'success';
 
       if (status === 'no_activity') {
-        title = 'No NOS activity detected';
-        description = 'This wallet has no NOS-related transactions yet. We will continue checking for new activity.';
+        title = tToasts('noActivityTitle');
+        description = tToasts('noActivityDescription');
         type = 'info';
       } else if (status === 'up_to_date') {
         if (jobMode === 'force') {
-          title = 'Full sync finished with no changes';
-          description =
-            'Full sync completed successfully, but no differences were detected. Cached analytics were already current.';
+          title = tToasts('fullSyncNoChangesTitle');
+          description = tToasts('fullSyncNoChangesDescription');
         } else {
-          title = 'Already up to date';
-          description = 'No new NOS transactions were found since your previous sync.';
+          title = tToasts('alreadyUpToDateTitle');
+          description = tToasts('alreadyUpToDateDescription');
         }
         type = 'info';
       } else if (processedEvents && processedEvents > 0) {
-        const eventLabel = processedEvents === 1 ? 'event' : 'events';
-        const signatureLabel = totalSignatures != null ? `${totalSignatures.toLocaleString()} signatures` : 'new signatures';
-        description = `Indexed ${processedEvents.toLocaleString()} ${eventLabel} across ${signatureLabel}.`;
+        const eventsLabel = tToasts('eventCount', { count: processedEvents });
+        const signatureLabel =
+          totalSignatures != null
+            ? tToasts('signatureCount', { count: totalSignatures })
+            : tToasts('newSignatures');
+        description = tToasts('syncCompleteCounts', {
+          events: eventsLabel,
+          signatures: signatureLabel,
+        });
       }
 
       addToast({ title, description, type });
       void refetchEarnings();
       void refetchEvents();
     } else if (syncJob.status === 'failed') {
-      const errMsg = syncJob.error?.message || 'Sync job failed unexpectedly. Please try again shortly.';
+      const errMsg = syncJob.error?.message || tToasts('syncFailedDescription');
       addToast({
-        title: 'Sync failed',
+        title: tToasts('syncFailedTitle'),
         description: errMsg,
         type: 'error',
       });
@@ -711,16 +731,22 @@ export default function StakingAnalysisPage() {
     }
     const parts: string[] = [];
     if (performanceMetrics.restakedRewards > 0.0001) {
-      parts.push(`${formatNos(performanceMetrics.restakedRewards, 2)} restaked`);
+      parts.push(
+        tRewards('restaked', { amount: formatNos(performanceMetrics.restakedRewards, 2) }),
+      );
     }
     if (performanceMetrics.claimedRewards > 0.0001) {
-      parts.push(`${formatNos(performanceMetrics.claimedRewards, 2)} claimed`);
+      parts.push(
+        tRewards('claimed', { amount: formatNos(performanceMetrics.claimedRewards, 2) }),
+      );
     }
     if (performanceMetrics.realizedRewards > 0.0001) {
-      parts.push(`${formatNos(performanceMetrics.realizedRewards, 2)} realized`);
+      parts.push(
+        tRewards('realized', { amount: formatNos(performanceMetrics.realizedRewards, 2) }),
+      );
     }
     if (parts.length) {
-      segments.push(parts.join(' · '));
+      segments.push(parts.join(tRewards('separator')));
     }
     return segments.join(' • ');
   }, [
@@ -728,6 +754,7 @@ export default function StakingAnalysisPage() {
     performanceMetrics.claimedRewards,
     performanceMetrics.realizedRewards,
     performanceMetrics.totalRewardsUsd,
+    tRewards,
   ]);
 
   const stakeAddress = earningsData?.stakeAddress ?? null;
@@ -763,6 +790,7 @@ export default function StakingAnalysisPage() {
       setIsTransitioning(true);
       setSyncJob(null);
       setActiveSyncJobId(null);
+      setLimitExceeded(false);
       const params = new URLSearchParams(window.location.search);
       params.set('wallet', normalized);
       const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -778,6 +806,7 @@ export default function StakingAnalysisPage() {
     setHasSubmitted(false);
     setIsTransitioning(false);
     setInputError(null);
+    setLimitExceeded(false);
     const params = new URLSearchParams(window.location.search);
     params.delete('wallet');
     const search = params.toString();
@@ -794,27 +823,27 @@ export default function StakingAnalysisPage() {
 
   const quickStats = [
     {
-      label: 'Active Stake',
+      label: tQuickStats('activeStake'),
       value: formatNos(performanceMetrics.activeStake, 0),
-      suffix: ' NOS',
+      suffix: ` ${tUnits('nos')}`,
       color: 'text-purple-500',
     },
     {
-      label: 'Total Rewards',
+      label: tQuickStats('totalRewards'),
       value: formatNos(performanceMetrics.totalRewards, 2),
-      suffix: ' NOS',
+      suffix: ` ${tUnits('nos')}`,
       color: 'text-green-500',
       footnote: rewardBreakdown || undefined,
     },
     {
-      label: 'ROI',
+      label: tQuickStats('roi'),
       value: performanceMetrics.roi >= 0 ? '+' : '',
       extraValue: safeNumber(performanceMetrics.roi, 0).toFixed(2),
       suffix: '%',
       color: performanceMetrics.roi >= 0 ? 'text-green-500' : 'text-rose-500',
     },
     {
-      label: 'Avg APR',
+      label: tQuickStats('avgApr'),
       value: safeNumber(performanceMetrics.averageAPR, 0).toFixed(2),
       suffix: '%',
       color: 'text-blue-500',
@@ -827,24 +856,56 @@ export default function StakingAnalysisPage() {
 
   const isIdle = !hasWallet && !hasSubmitted;
 
+  const stageLabelMap = useMemo(() => {
+    const entries: Record<string, string> = {};
+    STAGE_KEYS.forEach((key) => {
+      entries[key] = tStageLabels(key);
+    });
+    return entries;
+  }, [tStageLabels]);
+
+  const formatStageLabel = (stage: string | null | undefined) => {
+    if (!stage) return tProgressDefaults('stagePreparing');
+    return stageLabelMap[stage] ?? stage.replace(/_/g, ' ');
+  };
+
+  const formatEtaValue = (ms: number | null | undefined): string | null => {
+    if (!ms || !Number.isFinite(ms) || ms <= 0) return null;
+    const totalSeconds = Math.round(ms / 1000);
+    if (totalSeconds < 60) {
+      return tProgressEta('seconds', { count: totalSeconds });
+    }
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    if (minutes >= 60) {
+      const hours = Math.floor(minutes / 60);
+      const remMinutes = minutes % 60;
+      return tProgressEta('hoursMinutes', { hours, minutes: remMinutes });
+    }
+    return seconds > 0
+      ? tProgressEta('minutesSeconds', { minutes, seconds })
+      : tProgressEta('minutes', { minutes });
+  };
+
+  const wrappingText = tProgressEta('wrapping');
+  const almostText = tProgressEta('almost');
+
   const progressInfo = useMemo(() => {
     if (!syncJob) {
-      const stageLabel = syncPending ? 'Preparing sync' : 'Fetching cached analytics';
-      const modeMessage = syncPending
-        ? 'Requesting sync job from the NOS API…'
-        : 'Loading previously cached summary and event data.';
-      const progressDetails = syncPending
-        ? 'Provisioning a background worker to process the latest NOS activity.'
-        : 'If this wallet was never synced, click “Sync Latest” to start indexing on-chain history.';
-
       return {
         stagePercent: null as number | null,
-        stageEtaText: syncPending ? 'Usually ready in a few seconds…' : null,
+        stageEtaText: syncPending ? tProgressDefaults('etaSoon') : null,
         overallPercent: null as number | null,
         overallEtaText: null as string | null,
-        stageLabel,
-        modeMessage,
-        progressDetails,
+        stageLabel: syncPending
+          ? tProgressDefaults('stagePreparing')
+          : tProgressDefaults('stageCached'),
+        modeMessage: syncPending
+          ? tProgressDefaults('modeRequesting')
+          : tProgressDefaults('modeCached'),
+        progressDetails: syncPending
+          ? tProgressDefaults('detailsProvisioning')
+          : tProgressDefaults('detailsPromptSync'),
         jobMode: null as StakingJob['mode'] | null,
         stageStep: null as number | null,
         stageCount: null as number | null,
@@ -857,6 +918,7 @@ export default function StakingAnalysisPage() {
     const totalSignatures = metrics?.totalSignatures ?? syncSummary?.totalSignatures ?? 0;
     const processedSignatures = metrics?.processedSignatures ?? syncSummary?.processedSignatures ?? 0;
     const finalStatus = syncSummary?.status || syncJob.status || null;
+
     const stagePercentFromPayload =
       progressPayload?.stagePercent != null ? Number(progressPayload.stagePercent) : null;
     const overallPercentFromPayload =
@@ -867,7 +929,7 @@ export default function StakingAnalysisPage() {
         ? stagePercentFromPayload
         : null;
     if ((stagePercent == null || Number.isNaN(stagePercent)) && totalSignatures > 0) {
-      const ratio = processedSignatures / totalSignatures;
+      const ratio = processedSignatures / Math.max(totalSignatures, 1);
       stagePercent = Math.min(100, Math.max(0, Math.round(ratio * 100)));
     }
     if (stagePercent != null && Number.isNaN(stagePercent)) {
@@ -886,16 +948,16 @@ export default function StakingAnalysisPage() {
     let stageEtaText: string | null = null;
     if (stageEtaSeconds != null && stageEtaSeconds >= 0) {
       stageEtaText =
-        stageEtaSeconds === 0 ? 'Wrapping up…' : formatEta(stageEtaSeconds * 1000) ?? 'Wrapping up…';
+        stageEtaSeconds === 0 ? wrappingText : formatEtaValue(stageEtaSeconds * 1000) ?? wrappingText;
     }
     if (!stageEtaText && stagePercent != null && stagePercent > 0 && stagePercent < 100) {
       const startedAt = metrics?.startedAt ? new Date(metrics.startedAt).getTime() : null;
-      if (startedAt) {
+      if (startedAt && processedSignatures > 0) {
         const elapsedMs = Date.now() - startedAt;
-        if (elapsedMs > 1000 && processedSignatures > 0) {
+        if (elapsedMs > 1000) {
           const avgMsPerSig = elapsedMs / processedSignatures;
           const remaining = totalSignatures - processedSignatures;
-          stageEtaText = formatEta(avgMsPerSig * remaining);
+          stageEtaText = formatEtaValue(avgMsPerSig * remaining);
         }
       }
     }
@@ -909,8 +971,8 @@ export default function StakingAnalysisPage() {
     if (overallEtaSeconds != null && overallEtaSeconds >= 0) {
       overallEtaText =
         overallEtaSeconds === 0
-          ? 'Almost finished'
-          : formatEta(overallEtaSeconds * 1000) ?? 'Almost finished';
+          ? almostText
+          : formatEtaValue(overallEtaSeconds * 1000) ?? almostText;
     }
     if (!overallEtaText && stageEtaText) {
       overallEtaText = stageEtaText;
@@ -919,19 +981,21 @@ export default function StakingAnalysisPage() {
       stageEtaText = overallEtaText;
     }
     if (!stageEtaText && metrics?.etaSeconds != null) {
-      stageEtaText = formatEta(metrics.etaSeconds * 1000);
+      stageEtaText = formatEtaValue(metrics.etaSeconds * 1000);
     }
     if (!overallEtaText && metrics?.etaSeconds != null) {
-      overallEtaText = formatEta(metrics.etaSeconds * 1000);
+      overallEtaText = formatEtaValue(metrics.etaSeconds * 1000);
     }
     if (!stageEtaText && stagePercent != null && stagePercent >= 100) {
-      stageEtaText = 'Wrapping up…';
+      stageEtaText = wrappingText;
     }
     if (!overallEtaText && overallPercent != null && overallPercent >= 100) {
-      overallEtaText = 'Almost finished';
+      overallEtaText = almostText;
     }
 
-    const stageLabel = progressPayload?.stageLabel || mapStageToLabel(syncJob.stage || syncJob.status);
+    const baseStage = syncJob.stage || syncJob.status || null;
+    const derivedStageLabel = formatStageLabel(baseStage);
+    const stageLabel = progressPayload?.stageLabel || derivedStageLabel;
     const stageMessage = progressPayload?.stageMessage || stageLabel;
 
     let progressDetails: string | null = null;
@@ -944,17 +1008,26 @@ export default function StakingAnalysisPage() {
         progressPayload.accountsProcessed != null &&
         progressPayload.accountsTotal != null
       ) {
-        progressDetails = `Scanned ${progressPayload.accountsProcessed.toLocaleString()} of ${progressPayload.accountsTotal.toLocaleString()} related accounts.`;
+        progressDetails = tProgressDetails('accounts', {
+          processed: progressPayload.accountsProcessed.toLocaleString(),
+          total: progressPayload.accountsTotal.toLocaleString(),
+        });
       } else if (
         progressPayload.processedTransactions != null &&
         progressPayload.totalTransactions != null
       ) {
-        progressDetails = `Classified ${progressPayload.processedTransactions.toLocaleString()} of ${progressPayload.totalTransactions.toLocaleString()} transactions.`;
+        progressDetails = tProgressDetails('transactions', {
+          processed: progressPayload.processedTransactions.toLocaleString(),
+          total: progressPayload.totalTransactions.toLocaleString(),
+        });
       } else if (
         progressPayload.processedEvents != null &&
         progressPayload.totalEvents != null
       ) {
-        progressDetails = `Persisted ${progressPayload.processedEvents.toLocaleString()} of ${progressPayload.totalEvents.toLocaleString()} events.`;
+        progressDetails = tProgressDetails('events', {
+          processed: progressPayload.processedEvents.toLocaleString(),
+          total: progressPayload.totalEvents.toLocaleString(),
+        });
       }
     }
     if (progressDetails && stageMessage && progressDetails.trim() === stageMessage.trim()) {
@@ -964,26 +1037,26 @@ export default function StakingAnalysisPage() {
     const jobMode = syncJob.mode || syncJob.result?.mode || null;
 
     let modeMessage: string | null = null;
-    if (progressPayload?.stageMessage) {
-      if (progressPayload.progressStage === 'no_updates_required' && jobMode === 'force') {
-        modeMessage =
-          'Full sync completed successfully but analytics were already current. No new signatures were detected.';
-      } else {
-        modeMessage = progressPayload.stageMessage;
-      }
+    if (progressPayload?.progressStage === 'no_updates_required' && jobMode === 'force') {
+      modeMessage = tProgressMode('forceNoChanges');
+    } else if (progressPayload?.stageMessage) {
+      modeMessage = progressPayload.stageMessage;
     }
     if (!modeMessage) {
       if (finalStatus === 'up_to_date' && jobMode === 'force') {
-        modeMessage =
-          'Full sync completed successfully, but cached analytics were already current—no new NOS activity was found.';
+        modeMessage = tProgressMode('forceUpToDate');
       } else if (jobMode === 'initial') {
-        modeMessage = 'Initial sync may take a couple of minutes while we index historical activity.';
+        modeMessage = tProgressMode('initial');
       } else if (jobMode === 'incremental') {
-        modeMessage = 'Checking for the latest NOS activity and updating cached analytics.';
+        modeMessage = tProgressMode('incremental');
       } else if (jobMode === 'force') {
-        modeMessage = 'Rebuilding cached analytics from scratch. This can take a bit longer than usual.';
+        modeMessage = tProgressMode('force');
       }
     }
+
+    const stageStep =
+      progressPayload?.stageIndex != null ? Number(progressPayload.stageIndex) + 1 : null;
+    const stageCount = progressPayload?.stageCount ?? null;
 
     return {
       stagePercent,
@@ -994,10 +1067,20 @@ export default function StakingAnalysisPage() {
       modeMessage,
       progressDetails: progressDetails ?? (stageMessage !== stageLabel ? stageMessage : null),
       jobMode,
-      stageStep: progressPayload?.stageIndex != null ? Number(progressPayload.stageIndex) + 1 : null,
-      stageCount: progressPayload?.stageCount ?? null,
+      stageStep,
+      stageCount,
     };
-  }, [syncJob, syncPending]);
+  }, [
+    syncJob,
+    syncPending,
+    stageLabelMap,
+    tProgressDefaults,
+    tProgressDetails,
+    wrappingText,
+    almostText,
+    tProgressEta,
+    tProgressMode,
+  ]);
 
   const shouldShowSyncOverlay = syncPending || syncInFlight;
   const showSpinnerOverlay = !shouldShowSyncOverlay && isTransitioning;
@@ -1044,7 +1127,7 @@ export default function StakingAnalysisPage() {
                   whileTap={{ scale: 0.97 }}
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  Change Wallet
+                  {tButtons('changeWallet')}
                 </motion.button>
 
                 {hasWallet ? (
@@ -1060,7 +1143,7 @@ export default function StakingAnalysisPage() {
                     ) : (
                       <RefreshCcw className="h-4 w-4" />
                     )}
-                    {syncButtonBusy ? 'Syncing…' : 'Sync Latest'}
+                    {syncButtonBusy ? tButtons('syncing') : tButtons('syncLatest')}
                   </motion.button>
                 ) : null}
 
@@ -1074,23 +1157,27 @@ export default function StakingAnalysisPage() {
                 <div className="flex items-center gap-3">
                   <Wallet className="h-5 w-5 text-primary" />
                   <div className="space-y-1">
-                    <p className="type-meta mb-0.5">Analyzing Wallet</p>
-                    {solscanWalletUrl ? (
-                      <a
-                        href={solscanWalletUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex max-w-full items-center gap-1 font-mono text-sm text-primary transition-colors hover:text-primary/80"
-                      >
-                        <span className="truncate">{activeWallet}</span>
-                        <ExternalLink className="h-3.5 w-3.5 transition-opacity group-hover:opacity-80" />
-                      </a>
-                    ) : (
-                      <p className="font-mono text-sm break-all">{activeWallet}</p>
-                    )}
+                    <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+                      <span className="type-meta text-xs uppercase tracking-wider text-muted-foreground">
+                        {tLabels('analyzingWallet')}
+                      </span>
+                      {solscanWalletUrl ? (
+                        <a
+                          href={solscanWalletUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex max-w-full items-center gap-1 font-mono text-sm text-primary transition-colors hover:text-primary/80"
+                        >
+                          <span className="truncate">{activeWallet}</span>
+                          <ExternalLink className="h-3.5 w-3.5 transition-opacity group-hover:opacity-80" />
+                        </a>
+                      ) : (
+                        <span className="font-mono text-sm break-all text-foreground">{activeWallet}</span>
+                      )}
+                    </div>
                     {stakeAddress ? (
                       <p className="type-meta mt-1 text-xs text-muted-foreground">
-                        Stake account:{' '}
+                        {tLabels('stakeAccount')}{' '}
                         {solscanStakeUrl ? (
                           <a
                             href={solscanStakeUrl}
@@ -1110,14 +1197,19 @@ export default function StakingAnalysisPage() {
                 </div>
                 <div className="text-xs text-muted-foreground">
                   <div>
-                    <span className="font-medium text-foreground">Last updated:</span>{' '}
+                    <span className="font-medium text-foreground">{tLabels('lastUpdated')}</span>{' '}
                     {lastUpdatedLabel}
                   </div>
                   <div className="mt-1">
-                    <span className="font-medium text-foreground">Last synced:</span>{' '}
+                    <span className="font-medium text-foreground">{tLabels('lastSynced')}</span>{' '}
                     {lastSyncedLabel}
                   </div>
                 </div>
+                {limitExceeded && inputError ? (
+                  <p className="mt-3 text-xs font-medium text-rose-500 sm:basis-full sm:mt-3">
+                    {inputError}
+                  </p>
+                ) : null}
               </motion.div>
 
               <motion.div
@@ -1135,7 +1227,7 @@ export default function StakingAnalysisPage() {
                   >
                     <Zap className="h-3 w-3 text-primary sm:h-3.5 sm:w-3.5" />
                     <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-primary sm:text-xs">
-                      Live Analytics
+                      {tHero('badge')}
                     </span>
                   </motion.div>
 
@@ -1146,7 +1238,7 @@ export default function StakingAnalysisPage() {
                       transition={{ delay: 0.3 }}
                       className="bg-gradient-to-br from-foreground via-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl md:text-4xl lg:text-5xl"
                     >
-                      Staking Analysis Dashboard
+                      {tHero('title')}
                     </motion.h1>
                     <motion.p
                       initial={{ opacity: 0, y: 20 }}
@@ -1154,9 +1246,7 @@ export default function StakingAnalysisPage() {
                       transition={{ delay: 0.4 }}
                       className="mt-2 max-w-3xl text-xs text-muted-foreground sm:mt-3 sm:text-sm md:text-base"
                     >
-                      Comprehensive insights into your NOS staking performance with real-time
-                      analytics, detailed transaction history, and rich visualizations powered by
-                      the live staking API.
+                      {tHero('description')}
                     </motion.p>
                   </div>
 
@@ -1206,16 +1296,16 @@ export default function StakingAnalysisPage() {
 
               <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-2 xl:grid-cols-4">
                 <AnimatedStatCard
-                  title="Total Staked"
+                  title={tStatCards('totalStaked')}
                   value={safeNumber(performanceMetrics.totalStaked, 0)}
-                  suffix=" NOS"
+                  suffix={` ${tUnits('nos')}`}
                   decimals={0}
                   icon={Coins}
                   iconColor="text-purple-500"
                   delay={0}
                 />
                 <AnimatedStatCard
-                  title="Current Value"
+                  title={tStatCards('currentValue')}
                   value={safeNumber(performanceMetrics.currentValue, 0)}
                   prefix="$"
                   decimals={2}
@@ -1224,7 +1314,7 @@ export default function StakingAnalysisPage() {
                   delay={100}
                 />
                 <AnimatedStatCard
-                  title="Realized P&L"
+                  title={tStatCards('realizedPnL')}
                   value={safeNumber(performanceMetrics.realizedPnL, 0)}
                   prefix="$"
                   decimals={2}
@@ -1234,9 +1324,9 @@ export default function StakingAnalysisPage() {
                   delay={200}
                 />
                 <AnimatedStatCard
-                  title="Staking Duration"
+                  title={tStatCards('stakingDuration')}
                   value={safeNumber(performanceMetrics.stakingDuration, 0)}
-                  suffix=" days"
+                  suffix={` ${tLabels('daysSuffix')}`}
                   decimals={0}
                   icon={Calendar}
                   iconColor="text-amber-500"
@@ -1246,25 +1336,25 @@ export default function StakingAnalysisPage() {
 
               <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <AnimatedStatCard
-                  title="Total Deposits"
+                  title={tStatCards('totalDeposits')}
                   value={safeNumber(performanceMetrics.totalDeposits, 0)}
-                  suffix=" NOS"
+                  suffix={` ${tUnits('nos')}`}
                   decimals={0}
                   icon={Activity}
                   iconColor="text-cyan-500"
                   delay={100}
                 />
                 <AnimatedStatCard
-                  title="Total Withdrawals"
+                  title={tStatCards('totalWithdrawals')}
                   value={safeNumber(performanceMetrics.totalWithdrawals, 0)}
-                  suffix=" NOS"
+                  suffix={` ${tUnits('nos')}`}
                   decimals={0}
                   icon={BarChart3}
                   iconColor="text-rose-500"
                   delay={200}
                 />
                 <AnimatedStatCard
-                  title="Cost Basis"
+                  title={tStatCards('costBasis')}
                   value={safeNumber(performanceMetrics.costBasis, 0)}
                   prefix="$"
                   decimals={2}
@@ -1273,7 +1363,7 @@ export default function StakingAnalysisPage() {
                   delay={300}
                 />
                 <AnimatedStatCard
-                  title="Unrealized P&L"
+                  title={tStatCards('unrealizedPnL')}
                   value={safeNumber(performanceMetrics.unrealizedPnL, 0)}
                   prefix="$"
                   decimals={2}
@@ -1320,19 +1410,19 @@ export default function StakingAnalysisPage() {
                 <div className="card-base p-3 sm:p-4 md:p-6">
                   <div className="mb-4 sm:mb-6">
                     <h3 className="text-base font-semibold sm:text-lg md:text-xl">
-                      Performance Breakdown
+                      {tPerformance('title')}
                     </h3>
                     <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
-                      Detailed metrics across all categories
+                      {tPerformance('subtitle')}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
                     {[
                       {
-                        label: 'Net Flow',
+                        label: tPerformance('netFlow'),
                         value: formatNos(aggregates.flow.net, 2),
-                        suffix: ' NOS',
+                        suffix: ` ${tUnits('nos')}`,
                         icon: Activity,
                         color:
                           aggregates.flow.net >= 0
@@ -1340,38 +1430,50 @@ export default function StakingAnalysisPage() {
                             : 'text-rose-500',
                       },
                       {
-                        label: 'Total USD Volume',
+                        label: tPerformance('totalUsdVolume'),
                         value: formatUsd(aggregates.totals.usdValue),
                         icon: DollarSign,
                         color: 'text-blue-500',
                       },
                       {
-                        label: 'Total Events',
+                        label: tPerformance('totalEvents'),
                         value: totalEvents.toLocaleString(),
                         icon: BarChart3,
                         color: 'text-purple-500',
                       },
                       {
-                        label: 'Avg Event Size',
+                        label: tPerformance('avgEventSize'),
                         value: formatNos(averageEventSize, 2),
-                        suffix: ' NOS',
+                        suffix: ` ${tUnits('nos')}`,
                         icon: PieChartIcon,
                         color: 'text-cyan-500',
                       },
                       {
-                        label: 'Average APR',
+                        label: tPerformance('averageApr'),
                         value: safeNumber(performanceMetrics.averageAPR, 0).toFixed(2),
                         suffix: '%',
                         icon: Percent,
                         color: 'text-amber-500',
                       },
                       {
-                        label: 'Total Rewards Earned',
+                        label: tPerformance('totalRewards'),
                         value: formatNos(performanceMetrics.totalRewards, 2),
-                        suffix: ' NOS',
+                        suffix: ` ${tUnits('nos')}`,
                         icon: Award,
                         color: 'text-emerald-500',
                         subtext: rewardBreakdown || undefined,
+                      },
+                      {
+                        label: tPerformance('dcaValue'),
+                        value: formatUsd(performanceMetrics.dcaValue),
+                        icon: Calculator,
+                        color: 'text-sky-500',
+                      },
+                      {
+                        label: tPerformance('dcaValueWithRewards'),
+                        value: formatUsd(performanceMetrics.dcaValueWithRewards),
+                        icon: Layers,
+                        color: 'text-teal-500',
                       },
                     ].map((stat, index) => {
                       const Icon = stat.icon;
@@ -1425,10 +1527,10 @@ export default function StakingAnalysisPage() {
                 className="mt-8 text-center"
               >
                 <p className="type-meta text-muted-foreground">
-                  Alpha release — please don&apos;t use this as your primary source. Always double-check the figures before making decisions.
+                  {tDisclaimers('alpha')}
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Mistakes can happen; report them in the Discord channel, on Twitter, or through GitHub for quick follow-ups.
+                  {tDisclaimers('feedback')}
                 </p>
               </motion.div>
             </div>
@@ -1453,11 +1555,14 @@ export default function StakingAnalysisPage() {
                     />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Syncing wallet data</p>
+                    <p className="text-sm font-semibold text-foreground">{tProgressOverlay('syncTitle')}</p>
                     <p className="text-xs text-muted-foreground">
                       {progressInfo.stageLabel}
                       {progressInfo.stageStep && progressInfo.stageCount
-                        ? ` • Step ${progressInfo.stageStep} of ${progressInfo.stageCount}`
+                        ? ` • ${tProgressOverlay('stepProgress', {
+                            current: progressInfo.stageStep,
+                            total: progressInfo.stageCount,
+                          })}`
                         : null}
                     </p>
                   </div>
@@ -1478,14 +1583,18 @@ export default function StakingAnalysisPage() {
                       />
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{progressInfo.stagePercent}% this step</span>
+                      <span>
+                        {tProgressOverlay('stagePercent', { percent: progressInfo.stagePercent })}
+                      </span>
                       {progressInfo.stageEtaText ? <span>{progressInfo.stageEtaText}</span> : null}
                     </div>
                     {progressInfo.overallPercent != null || progressInfo.overallEtaText ? (
                       <div className="flex items-center justify-between text-[0.65rem] text-muted-foreground/80">
                         <span>
                           {progressInfo.overallPercent != null
-                            ? `Overall ${progressInfo.overallPercent}%`
+                            ? tProgressOverlay('overallPercent', {
+                                percent: progressInfo.overallPercent,
+                              })
                             : '\u00a0'}
                         </span>
                         {progressInfo.overallEtaText ? <span>{progressInfo.overallEtaText}</span> : null}
@@ -1495,7 +1604,7 @@ export default function StakingAnalysisPage() {
                 ) : (
                   <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Preparing sync job…
+                    {tProgressOverlay('preparingJob')}
                   </div>
                 )}
 
@@ -1507,7 +1616,7 @@ export default function StakingAnalysisPage() {
 
                 {activeJobMode === 'initial' && syncInFlight ? (
                   <p className="mt-3 text-[0.65rem] text-muted-foreground/80">
-                    You can keep this tab open; data will continue to populate as batches finish.
+                    {tProgressOverlay('initialHint')}
                   </p>
                 ) : null}
               </div>
@@ -1518,7 +1627,7 @@ export default function StakingAnalysisPage() {
                     <Loader2 className="h-5 w-5 animate-spin" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Loading wallet analytics</p>
+                    <p className="text-sm font-semibold text-foreground">{tProgressOverlay('loadingTitle')}</p>
                     <p className="text-xs text-muted-foreground">
                       {progressInfo.stageLabel}
                     </p>
@@ -1528,12 +1637,14 @@ export default function StakingAnalysisPage() {
                 <ul className="mt-4 space-y-2 text-xs text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>Retrieving the latest saved analytics for this wallet.</span>
+                    <span>{tProgressOverlay('loadingList.retrieving')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
                     <span>
-                      First time here? Run <strong>Sync Latest</strong> to index on-chain history and refresh data.
+                      {tProgressOverlay.rich('loadingList.firstTime', {
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                      })}
                     </span>
                   </li>
                 </ul>
@@ -1545,7 +1656,7 @@ export default function StakingAnalysisPage() {
                 ) : null}
 
                 <p className="mt-4 text-[0.65rem] text-muted-foreground/80">
-                  Cached loads typically finish within a few seconds. The overlay closes automatically once fresh data is ready.
+                  {tProgressOverlay('loadingFooter')}
                 </p>
               </div>
             )}

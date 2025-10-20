@@ -104,7 +104,52 @@ export class StakingApiClient {
     });
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`Staking API ${res.status}: ${text || res.statusText}`);
+      let parsed: Record<string, unknown> | null = null;
+      let message =
+        (res.statusText && res.statusText.trim().length > 0 ? res.statusText : '') ||
+        `Request failed with status ${res.status}`;
+      let code: string | undefined;
+      if (text && text.trim().length > 0) {
+        try {
+          const candidate = JSON.parse(text);
+          if (candidate && typeof candidate === 'object') {
+            parsed = candidate as Record<string, unknown>;
+            const parsedMessage = parsed.error;
+            if (typeof parsedMessage === 'string' && parsedMessage.trim().length > 0) {
+              message = parsedMessage.trim();
+            } else if (!parsedMessage && typeof parsed.message === 'string') {
+              const fallback = (parsed.message as string).trim();
+              if (fallback.length > 0) {
+                message = fallback;
+              }
+            }
+            if (typeof parsed.code === 'string' && parsed.code.trim().length > 0) {
+              code = parsed.code.trim();
+            }
+          } else if (text.trim().length > 0) {
+            message = text.trim();
+          }
+        } catch {
+          if (text.trim().length > 0) {
+            message = text.trim();
+          }
+        }
+      }
+      const enhancedError = new Error(
+        message || `Request failed with status ${res.status}`,
+      ) as Error & {
+        status?: number;
+        code?: string;
+        payload?: Record<string, unknown>;
+      };
+      enhancedError.status = res.status;
+      if (code) {
+        enhancedError.code = code;
+      }
+      if (parsed) {
+        enhancedError.payload = parsed;
+      }
+      throw enhancedError;
     }
     return res.json();
   }

@@ -2029,6 +2029,9 @@ export interface StakingEarningsTotals {
   salesProceedsUsd?: number;
   averagePurchasePrice?: number | null;
   effectiveAveragePrice?: number | null;
+  stakeDepositCostUsd?: number;
+  stakeDcaValue?: number | null;
+  stakeDcaValueWithRewards?: number | null;
 }
 
 export interface StakingEarningsMetadata {
@@ -2063,6 +2066,17 @@ export interface StakingEarningsMetadata {
   stakeSecondsToUnlock?: number | null;
   stakeIsUnstaking?: boolean;
   stakeIsCooldownComplete?: boolean;
+  stakeDepositCostUsd?: number;
+  stakeDcaValue?: number | null;
+  stakeDcaValueWithRewards?: number | null;
+  averageApr?: number | null;
+  averageAprSampleCount?: number | null;
+  averageAprStart?: string | null;
+  averageAprEnd?: string | null;
+  averageAprDurationDays?: number | null;
+  averageAprInterpolationRatio?: number | null;
+  aprComputationStart?: string | null;
+  aprComputationEnd?: string | null;
 }
 
 export type StakeStatus =

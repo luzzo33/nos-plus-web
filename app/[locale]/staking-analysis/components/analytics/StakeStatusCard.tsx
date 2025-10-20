@@ -11,55 +11,59 @@ import {
   HelpCircle,
   type LucideIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+type StatusLabelKey = `labels.${StakeStatus}`;
+type StatusBadgeKey = `badges.${string}`;
 
 type StatusConfig = {
-  label: string;
+  labelKey: StatusLabelKey;
   icon: LucideIcon;
   iconColor: string;
   iconBg: string;
   badgeClasses: string;
-  badgeLabel?: string;
+  badgeKey?: StatusBadgeKey;
 };
 
 const STATUS_CONFIG: Record<StakeStatus, StatusConfig> = {
   active: {
-    label: 'Active Stake',
+    labelKey: 'labels.active',
     icon: ShieldCheck,
     iconColor: 'text-emerald-500',
     iconBg: 'from-emerald-500/20 to-emerald-500/10',
     badgeClasses: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-500',
   },
   cooldown: {
-    label: 'Unstaking In Progress',
+    labelKey: 'labels.cooldown',
     icon: Hourglass,
     iconColor: 'text-amber-500',
     iconBg: 'from-amber-500/20 to-amber-500/10',
     badgeClasses: 'border-amber-500/40 bg-amber-500/10 text-amber-500',
-    badgeLabel: 'unstaking',
+    badgeKey: 'badges.cooldown',
   },
   ready_to_withdraw: {
-    label: 'Ready To Withdraw',
+    labelKey: 'labels.ready_to_withdraw',
     icon: Unlock,
     iconColor: 'text-sky-500',
     iconBg: 'from-sky-500/20 to-sky-500/10',
     badgeClasses: 'border-sky-500/40 bg-sky-500/10 text-sky-500',
   },
   inactive: {
-    label: 'Stake Inactive',
+    labelKey: 'labels.inactive',
     icon: PauseCircle,
     iconColor: 'text-muted-foreground',
     iconBg: 'from-muted/30 to-muted/20',
     badgeClasses: 'border-muted-foreground/40 bg-muted/20 text-muted-foreground',
   },
   not_staked: {
-    label: 'No Stake Detected',
+    labelKey: 'labels.not_staked',
     icon: Power,
     iconColor: 'text-muted-foreground',
     iconBg: 'from-muted/30 to-muted/20',
     badgeClasses: 'border-muted-foreground/40 bg-muted/20 text-muted-foreground',
   },
   unknown: {
-    label: 'Status Unknown',
+    labelKey: 'labels.unknown',
     icon: HelpCircle,
     iconColor: 'text-purple-500',
     iconBg: 'from-purple-500/20 to-purple-500/10',
@@ -72,38 +76,6 @@ function formatNumber(value: number | null | undefined): string | null {
   return value.toLocaleString(undefined, {
     maximumFractionDigits: value < 1 ? 4 : 2,
   });
-}
-
-function formatNosAmount(value: number | null | undefined): string | null {
-  const formatted = formatNumber(value);
-  return formatted ? `${formatted} NOS` : null;
-}
-
-function formatDurationDays(days: number | null | undefined): string | null {
-  if (days == null || Number.isNaN(days) || !Number.isFinite(days)) return null;
-  if (days <= 0) return '< 1 day';
-  const rounded = Math.round(days);
-  const approxMonths = Math.round(days / 30);
-  if (approxMonths >= 2) {
-    return `${rounded} days (~${approxMonths} mo)`;
-  }
-  return `${rounded} days`;
-}
-
-function formatCountdown(seconds: number | null | undefined): string | null {
-  if (seconds == null || Number.isNaN(seconds) || !Number.isFinite(seconds)) return null;
-  const clamped = Math.max(0, Math.floor(seconds));
-  const days = Math.floor(clamped / 86400);
-  const hours = Math.floor((clamped % 86400) / 3600);
-  const minutes = Math.floor((clamped % 3600) / 60);
-  const parts: string[] = [];
-  if (days > 0) parts.push(`${days}d`);
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
-  if (parts.length === 0) {
-    parts.push(`${clamped}s`);
-  }
-  return parts.join(' ');
 }
 
 function formatDateTime(value: string | null | undefined): string | null {
@@ -127,74 +99,114 @@ export function StakeStatusCard({
   stakeAccount: StakingStakeAccountDetails | null | undefined;
   className?: string;
 }) {
+  const t = useTranslations('stakingAnalysis.stakeStatus');
+  const tUnits = useTranslations('stakingAnalysis.units');
+
   const status = resolveStatus(stakeAccount);
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.unknown;
   const Icon = config.icon;
 
-  const amountDisplay = formatNosAmount(stakeAccount?.amount ?? null);
+  const amount = stakeAccount?.amount ?? null;
+  const amountDisplay =
+    amount != null && !Number.isNaN(amount)
+      ? `${formatNumber(amount)} ${tUnits('nos')}`
+      : null;
+
+  const formatDuration = (daysValue: number | null | undefined): string | null => {
+    if (daysValue == null || Number.isNaN(daysValue) || !Number.isFinite(daysValue)) return null;
+    if (daysValue <= 0) return t('duration.lessThanOne');
+    const rounded = Math.round(daysValue);
+    const approxMonths = Math.round(daysValue / 30);
+    if (approxMonths >= 2) {
+      return t('duration.daysWithMonths', { days: rounded, months: approxMonths });
+    }
+    return t('duration.days', { count: rounded });
+  };
+
+  const formatCountdown = (secondsValue: number | null | undefined): string | null => {
+    if (secondsValue == null || Number.isNaN(secondsValue) || !Number.isFinite(secondsValue)) {
+      return null;
+    }
+    const clamped = Math.max(0, Math.floor(secondsValue));
+    const days = Math.floor(clamped / 86400);
+    const hours = Math.floor((clamped % 86400) / 3600);
+    const minutes = Math.floor((clamped % 3600) / 60);
+    const parts: string[] = [];
+    if (days > 0) parts.push(t('countdown.days', { count: days }));
+    if (hours > 0) parts.push(t('countdown.hours', { count: hours }));
+    if (minutes > 0) parts.push(t('countdown.minutes', { count: minutes }));
+    if (parts.length === 0) {
+      const seconds = clamped % 60;
+      parts.push(t('countdown.seconds', { count: seconds }));
+    }
+    return parts.join(' ');
+  };
+
   const durationDisplay =
-    formatDurationDays(stakeAccount?.durationDays ?? null) ??
-    formatDurationDays(stakeAccount?.durationSeconds != null ? stakeAccount.durationSeconds / 86400 : null);
+    formatDuration(stakeAccount?.durationDays ?? null) ??
+    formatDuration(
+      stakeAccount?.durationSeconds != null ? stakeAccount.durationSeconds / 86400 : null,
+    );
   const cooldownCountdown = formatCountdown(stakeAccount?.secondsToUnlock ?? null);
   const cooldownEndsAt = formatDateTime(stakeAccount?.cooldownEndsAt ?? null);
   const timeUnstakeAt = formatDateTime(stakeAccount?.timeUnstake ?? null);
 
-  let description = '';
+  let description: string;
   switch (status) {
     case 'active':
       description = durationDisplay
-        ? `Stake is currently active with a ${durationDisplay} lock period.`
-        : 'Stake is currently active and earning rewards.';
+        ? t('descriptions.activeWithDuration', { duration: durationDisplay })
+        : t('descriptions.active');
       break;
     case 'cooldown':
       if (cooldownCountdown && cooldownEndsAt) {
-        description = `Unstaking in progress. Unlocks in ${cooldownCountdown} (${cooldownEndsAt}).`;
+        description = t('descriptions.cooldownCountdownAndDate', {
+          countdown: cooldownCountdown,
+          date: cooldownEndsAt,
+        });
       } else if (cooldownCountdown) {
-        description = `Unstaking in progress. Unlocks in ${cooldownCountdown}.`;
+        description = t('descriptions.cooldownCountdown', { countdown: cooldownCountdown });
       } else if (cooldownEndsAt) {
-        description = `Unstaking in progress. Unlocks on ${cooldownEndsAt}.`;
+        description = t('descriptions.cooldownDate', { date: cooldownEndsAt });
       } else {
-        description = 'Unstaking in progress.';
+        description = t('descriptions.cooldown');
       }
       break;
     case 'ready_to_withdraw':
       description = cooldownEndsAt
-        ? `Unstaking completed on ${cooldownEndsAt}. Funds are ready to withdraw or restake.`
-        : 'Unstaking completed. Funds are ready to withdraw or restake.';
+        ? t('descriptions.readyWithDate', { date: cooldownEndsAt })
+        : t('descriptions.ready');
       break;
     case 'inactive':
-      description = 'Stake account exists but currently holds no NOS.';
+      description = t('descriptions.inactive');
       break;
     case 'unknown':
-      description = 'Stake address discovered, but account details could not be loaded.';
+      description = t('descriptions.unknown');
       break;
     case 'not_staked':
     default:
-      description = 'No stake account detected for this wallet.';
+      description = t('descriptions.not_staked');
       break;
   }
 
-  const statusBadgeLabel = (config.badgeLabel ?? status).replace(/_/g, ' ');
+  const heading = t('heading');
+  const label = t(config.labelKey);
+  const statusBadgeLabel = config.badgeKey ? t(config.badgeKey) : label;
 
   return (
     <div className={cn('card-base card-hover p-3 sm:p-4 md:p-5', className)}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className={cn(
-              'rounded-xl bg-gradient-to-br p-2 sm:p-2.5',
-              config.iconBg,
-            )}
+            className={cn('rounded-xl bg-gradient-to-br p-2 sm:p-2.5', config.iconBg)}
           >
             <Icon className={cn('h-4 w-4 sm:h-5 sm:w-5', config.iconColor)} />
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground sm:text-sm">
-              Staking Lifecycle
+              {heading}
             </p>
-            <p className="text-lg font-semibold text-foreground sm:text-xl">
-              {config.label}
-            </p>
+            <p className="text-lg font-semibold text-foreground sm:text-xl">{label}</p>
           </div>
         </div>
         <span
@@ -213,7 +225,7 @@ export function StakeStatusCard({
         {amountDisplay && (
           <div>
             <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground/80 sm:text-xs">
-              On-chain Stake
+              {t('fields.onChainStake')}
             </dt>
             <dd className="text-sm font-semibold text-foreground sm:text-base">{amountDisplay}</dd>
           </div>
@@ -222,7 +234,7 @@ export function StakeStatusCard({
         {durationDisplay && (
           <div>
             <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground/80 sm:text-xs">
-              Lock Duration
+              {t('fields.lockDuration')}
             </dt>
             <dd className="text-sm font-semibold text-foreground sm:text-base">
               {durationDisplay}
@@ -233,7 +245,7 @@ export function StakeStatusCard({
         {timeUnstakeAt && (
           <div>
             <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground/80 sm:text-xs">
-              Unstake Initiated
+              {t('fields.unstakeInitiated')}
             </dt>
             <dd className="text-sm font-semibold text-foreground sm:text-base">
               {timeUnstakeAt}
@@ -244,7 +256,7 @@ export function StakeStatusCard({
         {status === 'cooldown' && (cooldownCountdown || cooldownEndsAt) && (
           <div>
             <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground/80 sm:text-xs">
-              Unlocks
+              {t('fields.unlocks')}
             </dt>
             <dd className="text-sm font-semibold text-foreground sm:text-base">
               {cooldownCountdown && <span>{cooldownCountdown}</span>}
@@ -257,7 +269,7 @@ export function StakeStatusCard({
         {status === 'ready_to_withdraw' && cooldownEndsAt && (
           <div>
             <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground/80 sm:text-xs">
-              Unlocked
+              {t('fields.unlocked')}
             </dt>
             <dd className="text-sm font-semibold text-foreground sm:text-base">
               {cooldownEndsAt}

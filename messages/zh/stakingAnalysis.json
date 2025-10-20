@@ -1,7 +1,327 @@
 {
   "layout": {
-    "badge": "Wallet intelligence",
-    "title": "Personalized NOS staking intelligence",
-    "subtitle": "Paste a Solana wallet or staking account to unlock lifecycle analytics, transaction traces, and bespoke rewards insights."
+    "badge": "钱包情报",
+    "title": "专属 NOS 质押分析",
+    "subtitle": "粘贴任意 Solana 钱包或质押账户，解锁生命周期分析、交易追踪以及自定义奖励洞察。"
+  },
+  "walletInput": {
+    "title": "质押分析",
+    "description": "输入 Solana 钱包地址，即可获得全面的 NOS 质押表现和交易历史洞察。",
+    "label": "钱包地址",
+    "placeholder": "例如 CqJviA1TaBWWnkX515NthiykyA42a5hyXrEgLXoSZM5R",
+    "helper": "在面板打开期间会缓存查询结果；如需清除或切换地址，请点击“更换钱包”。",
+    "submit": "分析钱包",
+    "loading": "加载中",
+    "features": {
+      "secure": {
+        "title": "安全",
+        "description": "仅读取权限"
+      },
+      "fast": {
+        "title": "快速",
+        "description": "即时分析"
+      },
+      "detailed": {
+        "title": "详尽",
+        "description": "完整历史"
+      }
+    }
+  },
+  "buttons": {
+    "changeWallet": "更换钱包",
+    "syncLatest": "刷新数据",
+    "syncing": "正在刷新…"
+  },
+  "labels": {
+    "analyzingWallet": "正在分析钱包：",
+    "stakeAccount": "质押账户：",
+    "lastUpdated": "最近更新：",
+    "lastSynced": "最近同步：",
+    "daysSuffix": "天"
+  },
+  "hero": {
+    "badge": "实时分析",
+    "title": "质押分析仪表盘",
+    "description": "结合实时分析、交易详情与质押 API 提供的可视化，为您的 NOS 质押表现提供全方位洞察。"
+  },
+  "quickStats": {
+    "activeStake": "当前质押",
+    "totalRewards": "总收益",
+    "roi": "ROI",
+    "avgApr": "平均 APR"
+  },
+  "statCards": {
+    "totalStaked": "质押总量",
+    "currentValue": "当前价值",
+    "realizedPnL": "已实现盈亏",
+    "stakingDuration": "质押时长",
+    "totalDeposits": "总存入",
+    "totalWithdrawals": "总取出",
+    "costBasis": "成本基准",
+    "unrealizedPnL": "未实现盈亏"
+  },
+  "performance": {
+    "title": "绩效概览",
+    "subtitle": "各类别的详细指标",
+    "netFlow": "净流量",
+    "totalUsdVolume": "USD 总量",
+    "totalEvents": "事件总数",
+    "avgEventSize": "平均事件规模",
+    "averageApr": "平均 APR",
+    "totalRewards": "累计收益",
+    "dcaValue": "DCA 成本",
+    "dcaValueWithRewards": "含收益的 DCA 成本"
+  },
+  "rewardBreakdown": {
+    "restaked": "{amount} 再质押",
+    "claimed": "{amount} 已领取",
+    "realized": "{amount} 已实现",
+    "separator": " · "
+  },
+  "disclaimer": {
+    "alpha": "Alpha 版本 —— 请勿作为唯一信息来源。做出决定前务必再次核对数据。",
+    "feedback": "若发现错误，欢迎通过 Discord、Twitter 或 GitHub 反馈，我们会尽快处理。"
+  },
+  "progress": {
+    "stageLabels": {
+      "queued": "等待处理",
+      "running": "正在同步",
+      "account_signatures_fetch": "正在获取账户签名",
+      "account_signatures_collected": "正在整理签名历史",
+      "signature_collection_complete": "签名收集完成",
+      "signatures_progress": "正在收集签名",
+      "fetch_transactions_start": "正在下载交易",
+      "fetch_transactions_batch": "正在下载交易",
+      "fetch_transactions_complete": "交易准备就绪",
+      "fetch_transactions_progress": "正在下载交易",
+      "fetch_transactions_error": "下载出错，正在重试",
+      "fetch_transactions_fallback": "补齐缺失交易",
+      "classification_progress": "正在分类 NOS 活动",
+      "events_stored": "正在写入事件",
+      "events_classified": "事件分类完成",
+      "events_persist": "正在持久化事件",
+      "events_synced": "事件已同步",
+      "summary_ready": "总结准备中",
+      "no_updates_required": "已是最新",
+      "no_new_signatures": "未检测到 NOS 活动"
+    },
+    "defaults": {
+      "stagePreparing": "正在准备同步",
+      "stageCached": "正在加载缓存分析",
+      "modeRequesting": "正在向 NOS API 请求同步任务…",
+      "modeCached": "正在加载缓存的摘要和事件。",
+      "detailsProvisioning": "正在分配后台任务以处理最新的 NOS 活动。",
+      "detailsPromptSync": "若此钱包从未同步，请点击“刷新数据”以索引链上历史。",
+      "etaSoon": "通常几秒内即可完成…"
+    },
+    "details": {
+      "accounts": "已扫描 {processed} / {total} 个关联账户。",
+      "transactions": "已分类 {processed} / {total} 笔交易。",
+      "events": "已保存 {processed} / {total} 个事件。"
+    },
+    "modeMessages": {
+      "initial": "首次同步可能需要几分钟，以建立完整历史。",
+      "incremental": "正在检查最新 NOS 活动并更新缓存。",
+      "force": "正在重新构建分析，可能耗时更久。",
+      "forceNoChanges": "完整同步已完成，但分析已是最新状态，未发现新签名。",
+      "forceUpToDate": "完整同步成功，但未检测到新的 NOS 活动。"
+    },
+    "jobLabels": {
+      "full": "完整同步任务",
+      "incremental": "同步任务"
+    },
+    "overlays": {
+      "syncTitle": "正在同步钱包数据",
+      "loadingTitle": "正在加载钱包分析",
+      "stagePercent": "当前步骤 {percent}%",
+      "overallPercent": "总体 {percent}%",
+      "stepProgress": "第 {current} 步 / 共 {total} 步",
+      "preparingJob": "正在准备同步任务…",
+      "initialHint": "可以保持当前标签页打开；批量处理完成后数据会自动更新。",
+      "loadingList": {
+        "retrieving": "正在获取该钱包最近一次保存的分析数据。",
+        "firstTime": "第一次使用？请执行 <strong>刷新数据</strong> 以索引链上历史并更新数据。"
+      },
+      "loadingFooter": "缓存加载通常只需几秒，数据就绪后将自动关闭此提示。"
+    },
+    "eta": {
+      "wrapping": "即将完成…",
+      "almost": "马上完成",
+      "seconds": "{count, plural, one {剩余 {count} 秒} other {剩余 {count} 秒}}",
+      "minutesSeconds": "剩余 {minutes} 分 {seconds} 秒",
+      "minutes": "剩余 {minutes} 分",
+      "hoursMinutes": "剩余 {hours} 小时 {minutes} 分"
+    }
+  },
+  "toasts": {
+    "syncStartedTitle": "{label} 已启动",
+    "syncStartedFull": "已为钱包 {wallet} 排队任务 {id}，正在重新构建全部分析。",
+    "syncStartedIncremental": "已为钱包 {wallet} 排队任务 {id}，进度稍后显示。",
+    "syncFailedTitle": "同步失败",
+    "syncFailedDescription": "同步任务意外失败，请稍后重试。",
+    "progressUnavailableTitle": "无法获取同步进度",
+    "progressUnavailableDescription": "无法从 API 获取同步进度。",
+    "statusUnavailableTitle": "无法获取同步状态",
+    "statusUnavailableDescription": "无法从 API 拉取同步状态。",
+    "loadErrorTitle": "无法加载质押分析",
+    "syncCompleteTitle": "同步完成",
+    "syncCompleteDescription": "已使用最新数据更新钱包分析。",
+    "noActivityTitle": "未检测到 NOS 活动",
+    "noActivityDescription": "该钱包尚无 NOS 相关交易，我们会持续监控。",
+    "fullSyncNoChangesTitle": "完整同步，无新变化",
+    "fullSyncNoChangesDescription": "完整同步成功，但分析数据本已最新。",
+    "alreadyUpToDateTitle": "已是最新",
+    "alreadyUpToDateDescription": "自上次同步以来未发现新的 NOS 交易。",
+    "eventCount": "{count, plural, one {{count} 个事件} other {{count} 个事件}}",
+    "signatureCount": "{count, plural, one {{count} 条签名} other {{count} 条签名}}",
+    "newSignatures": "新签名",
+    "syncCompleteCounts": "已索引 {events}，共 {signatures}。",
+    "genericError": "{message}"
+  },
+  "limit": {
+    "message": "该钱包拥有超过 20,000 笔 NOS 交易。出于安全考虑不会自动处理。如需继续，请通过 Twitter 联系 nos.plus、在 GitHub 提交需求或在 Nosana Discord 的 nos.plus 频道留言。"
+  },
+  "flow": {
+    "title": "NOS 流向分析",
+    "subtitle": "入场与出场的可视化分布",
+    "inflow": "总流入",
+    "outflow": "总流出",
+    "net": "净流量",
+    "categories": {
+      "purchases": "买入",
+      "transfersIn": "转入",
+      "stakeWithdrawals": "质押提款",
+      "sales": "卖出",
+      "transfersOut": "转出",
+      "stakePrincipalDeposits": "质押本金存入",
+      "stakeRewardRestaked": "奖励再质押（不计入总额）"
+    }
+  },
+  "distribution": {
+    "title": "事件分布",
+    "subtitle": "按数量统计各类交易",
+    "labels": {
+      "purchase": "买入",
+      "sale": "卖出",
+      "transfer_in": "转入",
+      "transfer_out": "转出",
+      "stake_deposit": "质押存入",
+      "stake_withdrawal": "质押取出",
+      "stake_slash": "削减"
+    },
+    "tooltip": {
+      "count": "次数",
+      "amount": "数量",
+      "percentage": "占比"
+    }
+  },
+  "timeline": {
+    "title": "活动时间线",
+    "subtitle": "质押事件的历史走势",
+    "view": {
+      "daily": "每日数据",
+      "cumulative": "累计数据"
+    },
+    "metrics": {
+      "deposits": "质押存入",
+      "withdrawals": "取出",
+      "purchases": "买入",
+      "sales": "卖出",
+      "netFlow": "净流量"
+    }
+  },
+  "eventsTable": {
+    "title": "交易历史",
+    "subtitle": "共找到 {count, plural, one {{count} 条记录} other {{count} 条记录}}",
+    "filters": {
+      "all": "所有类型"
+    },
+    "labels": {
+      "purchase": "买入",
+      "sale": "卖出",
+      "transfer_in": "转入",
+      "transfer_out": "转出",
+      "stake_deposit": "质押存入",
+      "stake_withdrawal": "取出",
+      "stake_slash": "削减"
+    },
+    "columns": {
+      "date": "日期",
+      "type": "类型",
+      "amount": "数量",
+      "usdValue": "USD 价值",
+      "signature": "签名"
+    },
+    "unknown": "未知",
+    "rowsLabel": "每页行数：",
+    "pageLabel": "第 {current} 页 / 共 {total} 页",
+    "toast": {
+      "copied": "签名已复制到剪贴板",
+      "failed": "复制失败，请重试。"
+    }
+  },
+  "copy": {
+    "signature": "复制签名"
+  },
+  "pagination": {
+    "rows": "每页行数：",
+    "page": "第 {current} 页 / 共 {total} 页"
+  },
+  "selectors": {
+    "pageSize": {
+      "ten": "10",
+      "twenty": "20",
+      "fifty": "50",
+      "hundred": "100"
+    }
+  },
+  "stakeStatus": {
+    "heading": "质押生命周期",
+    "labels": {
+      "active": "质押进行中",
+      "cooldown": "正在解除质押",
+      "ready_to_withdraw": "可提取",
+      "inactive": "质押未启用",
+      "not_staked": "未检测到质押",
+      "unknown": "状态未知"
+    },
+    "badges": {
+      "cooldown": "unstaking"
+    },
+    "descriptions": {
+      "activeWithDuration": "质押处于活跃状态，锁定期为 {duration}。",
+      "active": "质押活跃中并持续产出奖励。",
+      "cooldownCountdownAndDate": "解除质押中。{countdown} 后（{date}）解锁。",
+      "cooldownCountdown": "解除质押中。{countdown} 后解锁。",
+      "cooldownDate": "解除质押中。将于 {date} 解锁。",
+      "cooldown": "解除质押中。",
+      "readyWithDate": "已于 {date} 解除质押，可提取或再次质押。",
+      "ready": "解除质押完成，可提取或再次质押。",
+      "inactive": "存在质押账户，但目前没有持有 NOS。",
+      "unknown": "检测到质押地址，但无法加载详细信息。",
+      "not_staked": "未检测到该钱包的质押账户。"
+    },
+    "fields": {
+      "onChainStake": "链上质押量",
+      "lockDuration": "锁定期限",
+      "unstakeInitiated": "开始解除质押",
+      "unlocks": "解锁时间",
+      "unlocked": "已解锁"
+    },
+    "duration": {
+      "lessThanOne": "< 1 天",
+      "days": "{count} 天",
+      "daysWithMonths": "{days} 天（约 {months} 个月）"
+    },
+    "countdown": {
+      "days": "{count} 天",
+      "hours": "{count} 小时",
+      "minutes": "{count} 分",
+      "seconds": "{count} 秒"
+    }
+  },
+  "units": {
+    "nos": "NOS",
+    "usd": "USD"
   }
 }

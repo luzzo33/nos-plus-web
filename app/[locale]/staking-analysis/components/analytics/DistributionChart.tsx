@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 import type { StakingAnalyticsAggregates, StakingEventType } from '../../analytics';
 import { KNOWN_EVENT_TYPES } from '../../analytics';
@@ -22,19 +23,20 @@ const COLOR_MAP: Partial<Record<StakingEventType, string>> = {
   stake_slash: '#eab308',
 };
 
-const LABEL_MAP: Partial<Record<StakingEventType, string>> = {
-  purchase: 'Purchases',
-  sale: 'Sales',
-  transfer_in: 'Transfers In',
-  transfer_out: 'Transfers Out',
-  stake_deposit: 'Stake Deposits',
-  stake_withdrawal: 'Withdrawals',
-  stake_slash: 'Slashes',
-};
-
 const DEFAULT_COLOR = '#94a3b8';
 
 export function DistributionChart({ aggregates, className = '' }: DistributionChartProps) {
+  const t = useTranslations('stakingAnalysis.distribution');
+  const tUnits = useTranslations('stakingAnalysis.units');
+
+  const formatType = (type: StakingEventType) => {
+    try {
+      return t(`labels.${type}` as const);
+    } catch {
+      return type;
+    }
+  };
+
   const totalCount = Math.max(aggregates.totals.count, 0);
 
   const computedData = useMemo(
@@ -44,7 +46,7 @@ export function DistributionChart({ aggregates, className = '' }: DistributionCh
           const eventType = type as StakingEventType;
           return {
             type: eventType,
-            name: LABEL_MAP[eventType] ?? eventType,
+            name: formatType(eventType),
             value: data.count,
             amount: data.amount,
             color: COLOR_MAP[eventType] ?? DEFAULT_COLOR,
@@ -84,17 +86,17 @@ export function DistributionChart({ aggregates, className = '' }: DistributionCh
         </div>
         <div className="space-y-1 text-sm">
           <div className="flex justify-between gap-4">
-            <span className="text-muted-foreground">Count:</span>
+            <span className="text-muted-foreground">{t('tooltip.count')}:</span>
             <span className="font-medium">{count.toLocaleString()}</span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="text-muted-foreground">Amount:</span>
+            <span className="text-muted-foreground">{t('tooltip.amount')}:</span>
             <span className="font-medium">
-              {data.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} NOS
+              {data.amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} {tUnits('nos')}
             </span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="text-muted-foreground">Percentage:</span>
+            <span className="text-muted-foreground">{t('tooltip.percentage')}:</span>
             <span className="font-medium">{percentage}%</span>
           </div>
         </div>
@@ -115,7 +117,7 @@ export function DistributionChart({ aggregates, className = '' }: DistributionCh
         ? chartData
         : KNOWN_EVENT_TYPES.map((type) => ({
             type,
-            name: LABEL_MAP[type] ?? type,
+            name: formatType(type),
             value: 0,
             amount: 0,
             color: COLOR_MAP[type] ?? DEFAULT_COLOR,
@@ -126,9 +128,9 @@ export function DistributionChart({ aggregates, className = '' }: DistributionCh
   return (
     <div className={`card-base p-3 sm:p-4 md:p-6 ${className}`}>
       <div className="mb-4 sm:mb-6">
-        <h3 className="text-base font-semibold sm:text-lg md:text-xl">Event Distribution</h3>
+        <h3 className="text-base font-semibold sm:text-lg md:text-xl">{t('title')}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
-          Breakdown of transaction types by count
+          {t('subtitle')}
         </p>
       </div>
 
@@ -174,7 +176,7 @@ export function DistributionChart({ aggregates, className = '' }: DistributionCh
                   <div>
                     <p className="text-sm font-medium">{entry.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} NOS
+                      {entry.amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} {tUnits('nos')}
                     </p>
                   </div>
                 </div>

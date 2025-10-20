@@ -9,6 +9,7 @@ import {
   ArrowLeftRight,
   Sparkles,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import type { StakingAnalyticsAggregates } from '../../analytics';
 
@@ -21,6 +22,8 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
   const flow = aggregates.flow;
   const fmt = (value: number) =>
     value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const t = useTranslations('stakingAnalysis.flow');
+  const tUnits = useTranslations('stakingAnalysis.units');
 
   const totalInflow = flow?.walletInflow ?? 0;
   const totalOutflow = flow?.walletOutflow ?? 0;
@@ -28,7 +31,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
 
   const flows = [
     {
-      label: 'Purchases',
+      label: t('categories.purchases'),
       amount: flow?.categories.purchases.amount ?? 0,
       color: 'from-blue-500/20 to-blue-500/5',
       borderColor: 'border-blue-500/30',
@@ -37,7 +40,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
       direction: 'in' as const,
     },
     {
-      label: 'Transfers In',
+      label: t('categories.transfersIn'),
       amount: flow?.categories.transfersIn.amount ?? 0,
       color: 'from-green-500/20 to-green-500/5',
       borderColor: 'border-green-500/30',
@@ -46,7 +49,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
       direction: 'in' as const,
     },
     {
-      label: 'Stake Withdrawals',
+      label: t('categories.stakeWithdrawals'),
       amount: flow?.categories.stakeWithdrawals.amount ?? 0,
       color: 'from-cyan-500/20 to-cyan-500/5',
       borderColor: 'border-cyan-500/30',
@@ -55,7 +58,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
       direction: 'in' as const,
     },
     {
-      label: 'Sales',
+      label: t('categories.sales'),
       amount: flow?.categories.sales.amount ?? 0,
       color: 'from-rose-500/20 to-rose-500/5',
       borderColor: 'border-rose-500/30',
@@ -64,7 +67,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
       direction: 'out' as const,
     },
     {
-      label: 'Transfers Out',
+      label: t('categories.transfersOut'),
       amount: flow?.categories.transfersOut.amount ?? 0,
       color: 'from-orange-500/20 to-orange-500/5',
       borderColor: 'border-orange-500/30',
@@ -73,7 +76,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
       direction: 'out' as const,
     },
     {
-      label: 'Stake Deposits (Principal)',
+      label: t('categories.stakePrincipalDeposits'),
       amount: flow?.categories.stakePrincipalDeposits.amount ?? 0,
       color: 'from-purple-500/20 to-purple-500/5',
       borderColor: 'border-purple-500/30',
@@ -87,7 +90,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
     (flow?.categories.stakeRewardRestaked.amount ?? 0) > 0
       ? [
           {
-            label: 'Rewards Restaked (excluded from totals)',
+            label: t('categories.stakeRewardRestaked'),
             amount: flow?.categories.stakeRewardRestaked.amount ?? 0,
             color: 'from-emerald-500/20 to-emerald-500/5',
             borderColor: 'border-emerald-500/30',
@@ -110,9 +113,9 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
   return (
     <div className={`card-base p-3 sm:p-4 md:p-6 ${className}`}>
       <div className="mb-4 sm:mb-6">
-        <h3 className="text-base font-semibold sm:text-lg md:text-xl">NOS Flow Analysis</h3>
+        <h3 className="text-base font-semibold sm:text-lg md:text-xl">{t('title')}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">
-          Visual breakdown of inflows and outflows
+          {t('subtitle')}
         </p>
       </div>
 
@@ -122,11 +125,11 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
           animate={{ opacity: 1, y: 0 }}
           className="rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/10 to-green-500/5 p-4"
         >
-          <p className="type-meta text-green-500">Total Inflow</p>
+          <p className="type-meta text-green-500">{t('inflow')}</p>
           <p className="mt-2 text-2xl font-bold text-green-500">
             +{fmt(totalInflow)}
           </p>
-          <p className="text-xs text-muted-foreground">NOS</p>
+          <p className="text-xs text-muted-foreground">{tUnits('nos')}</p>
         </motion.div>
 
         <motion.div
@@ -135,11 +138,11 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
           transition={{ delay: 0.1 }}
           className="rounded-xl border border-rose-500/20 bg-gradient-to-br from-rose-500/10 to-rose-500/5 p-4"
         >
-          <p className="type-meta text-rose-500">Total Outflow</p>
+          <p className="type-meta text-rose-500">{t('outflow')}</p>
           <p className="mt-2 text-2xl font-bold text-rose-500">
             -{fmt(totalOutflow)}
           </p>
-          <p className="text-xs text-muted-foreground">NOS</p>
+          <p className="text-xs text-muted-foreground">{tUnits('nos')}</p>
         </motion.div>
 
         <motion.div
@@ -157,7 +160,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
               netFlow >= 0 ? 'text-blue-500' : 'text-amber-500'
             }`}
           >
-            Net Flow
+            {t('net')}
           </p>
           <p
             className={`mt-2 text-2xl font-bold ${
@@ -167,7 +170,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
             {netFlow >= 0 ? '+' : ''}
             {fmt(netFlow)}
           </p>
-          <p className="text-xs text-muted-foreground">NOS</p>
+          <p className="text-xs text-muted-foreground">{tUnits('nos')}</p>
         </motion.div>
       </div>
 
@@ -204,7 +207,7 @@ export function FlowVisualization({ aggregates, className = '' }: FlowVisualizat
                   <p className={`text-sm font-semibold ${isInfo ? 'text-muted-foreground' : ''}`}>
                     {fmt(flowEntry.amount)}
                   </p>
-                  <p className="text-xs text-muted-foreground">NOS</p>
+                  <p className="text-xs text-muted-foreground">{tUnits('nos')}</p>
                 </div>
               </div>
               <div className={`h-3 overflow-hidden rounded-full ${isInfo ? 'bg-secondary/60' : 'bg-secondary'}`}>

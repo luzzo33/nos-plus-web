@@ -14,6 +14,8 @@ import {
   ExternalLink,
   Copy,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useToast } from '@/components/ui/Toast';
 
 import type { StakingAnalyticsEvent, StakingEventType } from '../../analytics';
 import { KNOWN_EVENT_TYPES } from '../../analytics';
@@ -36,48 +38,55 @@ const COLOR_MAP: Partial<Record<StakingEventType, string>> = {
   stake_slash: 'bg-amber-500/20 text-amber-500 border-amber-500/30',
 };
 
-const LABEL_MAP: Partial<Record<StakingEventType, string>> = {
-  purchase: 'Purchase',
-  sale: 'Sale',
-  transfer_in: 'Transfer In',
-  transfer_out: 'Transfer Out',
-  stake_deposit: 'Stake Deposit',
-  stake_withdrawal: 'Withdrawal',
-  stake_slash: 'Slash',
-};
-
-function formatDate(value: string) {
-  if (!value) return 'Unknown';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Unknown';
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-}
-
-function formatType(type: StakingEventType) {
-  return LABEL_MAP[type] ?? type;
-}
-
 export function EventsTable({ events, className = '' }: EventsTableProps) {
+  const t = useTranslations('stakingAnalysis.eventsTable');
+  const tCopy = useTranslations('stakingAnalysis.copy');
+  const { addToast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [sortKey, setSortKey] = useState<SortKey>('timestamp');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-  const [filterType, setFilterType] =
-    useState<StakingEventType | 'all'>('all');
+  const [filterType, setFilterType] = useState<StakingEventType | 'all'>('all');
+
+  const usdFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+    [],
+  );
+
+  const formatType = (type: StakingEventType) => {
+    try {
+      return t(`labels.${type}` as const);
+    } catch {
+      return type;
+    }
+  };
+
+  const formatDate = (value: string) => {
+    if (!value) return t('unknown');
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return t('unknown');
+    return new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  };
 
   const filteredEvents = useMemo(() => {
     const result = (filterType === 'all'
       ? [...events]
       : events.filter((event) => event.type === filterType)
     ).sort((a, b) => {
-      let aValue: number | string | null = a[sortKey] as any;
-      let bValue: number | string | null = b[sortKey] as any;
+      let aValue: number | string | null = (a as any)[sortKey];
+      let bValue: number | string | null = (b as any)[sortKey];
 
       if (sortKey === 'timestamp') {
         aValue = a.timestamp ? Date.parse(a.timestamp) : Number.NEGATIVE_INFINITY;
@@ -93,17 +102,15 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
       if (typeof aValue === 'number' && typeof bValue === 'number') {
         return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
       }
-      if (String(aValue).toLowerCase() < String(bValue).toLowerCase()) {
-        return sortOrder === 'asc' ? -1 : 1;
-      }
-      if (String(aValue).toLowerCase() > String(bValue).toLowerCase()) {
-        return sortOrder === 'asc' ? 1 : -1;
-      }
+      const aString = String(aValue).toLowerCase();
+      const bString = String(bValue).toLowerCase();
+      if (aString < bString) return sortOrder === 'asc' ? -1 : 1;
+      if (aString > bString) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
 
     return result;
-  }, [events, filterType, sortKey, sortOrder]);
+  }, [events, filterType, sortKey, sortOrder, t]);
 
   const totalPages = Math.max(1, Math.ceil(filteredEvents.length / pageSize));
   const paginatedEvents = filteredEvents.slice(
@@ -137,24 +144,48 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
     }
   };
 
-  const handleCopy = (signature: string) => {
+  const handleCopy = async (signature: string) => {
     if (!signature) return;
     try {
-      void navigator.clipboard.writeText(signature);
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(signature);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = signature;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (!success) {
+          throw new Error('clipboard copy failed');
+        }
+      }
+      addToast({
+        title: t('toast.copied'),
+        type: 'success',
+      });
     } catch {
-      // noop fallback for environments without clipboard API
+      addToast({
+        title: t('toast.failed'),
+        type: 'error',
+      });
     }
   };
+
+  const eventsCountLabel = t('subtitle', { count: filteredEvents.length });
+  const rowsLabel = t('rowsLabel');
+  const pageLabel = t('pageLabel', { current: currentPage, total: totalPages });
 
   return (
     <div className={`card-base overflow-hidden ${className}`}>
       <div className="border-b border-border/60 p-3 sm:p-4 md:p-6">
         <div className="mb-2 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div>
-            <h3 className="text-base font-semibold sm:text-lg md:text-xl">Transaction History</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-              {filteredEvents.length.toLocaleString()} events found
-            </p>
+            <h3 className="text-base font-semibold sm:text-lg md:text-xl">{t('title')}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">{eventsCountLabel}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -169,7 +200,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
             >
               {eventTypeOptions.map((type) => (
                 <option key={type} value={type}>
-                  {type === 'all' ? 'All Types' : formatType(type)}
+                  {type === 'all' ? t('filters.all') : formatType(type)}
                 </option>
               ))}
             </select>
@@ -186,7 +217,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
                 onClick={() => handleSort('timestamp')}
               >
                 <div className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground sm:gap-2 sm:text-xs">
-                  Date <SortIcon column="timestamp" />
+                  {t('columns.date')} <SortIcon column="timestamp" />
                 </div>
               </th>
               <th
@@ -194,7 +225,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
                 onClick={() => handleSort('type')}
               >
                 <div className="flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground sm:gap-2 sm:text-xs">
-                  Type <SortIcon column="type" />
+                  {t('columns.type')} <SortIcon column="type" />
                 </div>
               </th>
               <th
@@ -202,7 +233,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
                 onClick={() => handleSort('amount')}
               >
                 <div className="flex items-center justify-end gap-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground sm:gap-2 sm:text-xs">
-                  Amount <SortIcon column="amount" />
+                  {t('columns.amount')} <SortIcon column="amount" />
                 </div>
               </th>
               <th
@@ -210,12 +241,12 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
                 onClick={() => handleSort('usdValue')}
               >
                 <div className="flex items-center justify-end gap-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground sm:gap-2 sm:text-xs">
-                  USD Value <SortIcon column="usdValue" />
+                  {t('columns.usdValue')} <SortIcon column="usdValue" />
                 </div>
               </th>
               <th className="px-1.5 py-1.5 text-right sm:px-3.5 sm:py-3 md:px-5.5 md:py-4">
                 <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground sm:text-xs">
-                  Signature
+                  {t('columns.signature')}
                 </span>
               </th>
             </tr>
@@ -227,12 +258,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
                   COLOR_MAP[event.type] ??
                   'bg-secondary/30 text-foreground border-border/40';
                 const usdDisplay =
-                  event.usdValue != null
-                    ? `$${event.usdValue.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}`
-                    : '—';
+                  event.usdValue != null ? usdFormatter.format(event.usdValue) : '—';
                 const amountDisplay = event.amount.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 });
@@ -292,10 +318,10 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
                             type="button"
                             onClick={(event) => {
                               event.stopPropagation();
-                              handleCopy(signature);
+                              void handleCopy(signature);
                             }}
                             className="rounded-full border border-border/60 p-1 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary sm:p-1.5"
-                            aria-label="Copy signature"
+                            aria-label={tCopy('signature')}
                           >
                             <Copy className="h-3.5 w-3.5" />
                           </button>
@@ -314,7 +340,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
 
       <div className="flex flex-col items-center justify-between gap-3 border-t border-border/60 p-2 sm:flex-row sm:gap-4 sm:p-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground sm:text-sm">Rows:</span>
+          <span className="text-xs text-muted-foreground sm:text-sm">{rowsLabel}</span>
           <select
             value={pageSize}
             onChange={(e) => {
@@ -331,9 +357,7 @@ export function EventsTable({ events, className = '' }: EventsTableProps) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <span className="text-xs text-muted-foreground sm:text-sm">
-            Page {currentPage} of {totalPages}
-          </span>
+          <span className="text-xs text-muted-foreground sm:text-sm">{pageLabel}</span>
 
           <div className="flex items-center gap-0.5 sm:gap-1">
             <button

@@ -123,6 +123,8 @@ export interface PerformanceMetrics {
   costBasis: number;
   currentValue: number;
   roi: number;
+  dcaValue: number;
+  dcaValueWithRewards: number;
 }
 
 function sanitizeTimestamp(value: string | number | null | undefined): string {
@@ -586,12 +588,34 @@ export function buildPerformanceMetrics({
         100
       : 0;
 
-  const aprDisplay =
+  const aprFromMetadata =
+    typeof metadata?.averageApr === 'number' && Number.isFinite(metadata.averageApr)
+      ? metadata.averageApr
+      : null;
+  const aprFromWidget =
     typeof widget?.apr?.current === 'number' && Number.isFinite(widget.apr.current)
       ? Number(widget.apr.current)
       : typeof widget?.apr?.display === 'string'
       ? Number(widget.apr.display.replace(/[^0-9.-]/g, ''))
+      : null;
+  const aprDisplay =
+    aprFromMetadata != null && Number.isFinite(aprFromMetadata)
+      ? aprFromMetadata
+      : aprFromWidget != null && Number.isFinite(aprFromWidget)
+      ? aprFromWidget
       : 0;
+
+  const dcaPrincipalRaw = totals?.stakeDcaValue ?? metadata?.stakeDcaValue ?? null;
+  const dcaWithRewardsRaw =
+    totals?.stakeDcaValueWithRewards ?? metadata?.stakeDcaValueWithRewards ?? null;
+  const dcaPrincipalValue =
+    typeof dcaPrincipalRaw === 'number' && Number.isFinite(dcaPrincipalRaw)
+      ? dcaPrincipalRaw
+      : null;
+  const dcaWithRewardsValue =
+    typeof dcaWithRewardsRaw === 'number' && Number.isFinite(dcaWithRewardsRaw)
+      ? dcaWithRewardsRaw
+      : null;
 
   const startTs =
     sanitizeTimestamp(metadata?.firstEventAt) || aggregates.range.start;
@@ -631,5 +655,9 @@ export function buildPerformanceMetrics({
     costBasis: Number.isFinite(currentCostBasisUsd) ? currentCostBasisUsd : 0,
     currentValue: Number.isFinite(currentValueUsd) ? currentValueUsd : 0,
     roi: Number.isFinite(roi) ? roi : 0,
+    dcaValue: Number.isFinite(dcaPrincipalValue ?? NaN) ? (dcaPrincipalValue ?? 0) : 0,
+    dcaValueWithRewards: Number.isFinite(dcaWithRewardsValue ?? NaN)
+      ? (dcaWithRewardsValue ?? 0)
+      : 0,
   };
 }
