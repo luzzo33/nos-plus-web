@@ -1,12 +1,19 @@
 import type {
-  StakingWidgetData,
-  StakingWidgetResponse,
-  StakingTimeframe,
-  StakingWidgetValueChange,
-  StakingWidgetRangeEntry,
   ApiMeta,
+  StakingChartResponse,
+  StakingEarningsEventsResponse,
+  StakingEarningsResponse,
+  StakingJobResponse,
+  StakingJobsResponse,
+  StakingStatsResponse,
+  StakingTableResponse,
+  StakingTimeframe,
+  StakingWidgetData,
+  StakingWidgetRangeEntry,
+  StakingWidgetResponse,
+  StakingWidgetValueChange,
 } from './types';
-import { buildNosApiUrl } from './monitorConfig';
+import { buildNosApiUrl, buildMonitorAuthHeaders, getMonitorApiKey } from './monitorConfig';
 
 interface RawStakingWidgetChange {
   absolute?: number;
@@ -67,16 +74,82 @@ export class StakingApiClient {
     this.baseUrl = baseUrl.replace(/\/$/, '');
   }
 
-  private async request<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+  private async request<T = unknown>(path: string, init: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${path}`;
+    const headers = new Headers(init.headers ?? {});
+    if (!headers.has('Accept')) {
+      headers.set('Accept', 'application/json');
+    }
+    if (!headers.has('Content-Type') && init.body) {
+      headers.set('Content-Type', 'application/json');
+    }
+
+    const defaultAuth = buildMonitorAuthHeaders();
+    Object.entries(defaultAuth).forEach(([key, value]) => {
+      if (value && !headers.has(key)) {
+        headers.set(key, value);
+      }
+    });
+
+    const apiKey = getMonitorApiKey();
+    const isServer = typeof window === 'undefined';
+    if (apiKey && isServer && !headers.has('x-api-key')) {
+      headers.set('x-api-key', apiKey);
+    }
+
     const res = await fetch(url, {
-      cache: 'no-store',
-      headers: { Accept: 'application/json' },
+      cache: init.cache ?? 'no-store',
       ...init,
+      headers,
     });
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`Staking API ${res.status}: ${text || res.statusText}`);
+      let parsed: Record<string, unknown> | null = null;
+      let message =
+        (res.statusText && res.statusText.trim().length > 0 ? res.statusText : '') ||
+        `Request failed with status ${res.status}`;
+      let code: string | undefined;
+      if (text && text.trim().length > 0) {
+        try {
+          const candidate = JSON.parse(text);
+          if (candidate && typeof candidate === 'object') {
+            parsed = candidate as Record<string, unknown>;
+            const parsedMessage = parsed.error;
+            if (typeof parsedMessage === 'string' && parsedMessage.trim().length > 0) {
+              message = parsedMessage.trim();
+            } else if (!parsedMessage && typeof parsed.message === 'string') {
+              const fallback = (parsed.message as string).trim();
+              if (fallback.length > 0) {
+                message = fallback;
+              }
+            }
+            if (typeof parsed.code === 'string' && parsed.code.trim().length > 0) {
+              code = parsed.code.trim();
+            }
+          } else if (text.trim().length > 0) {
+            message = text.trim();
+          }
+        } catch {
+          if (text.trim().length > 0) {
+            message = text.trim();
+          }
+        }
+      }
+      const enhancedError = new Error(
+        message || `Request failed with status ${res.status}`,
+      ) as Error & {
+        status?: number;
+        code?: string;
+        payload?: Record<string, unknown>;
+      };
+      enhancedError.status = res.status;
+      if (code) {
+        enhancedError.code = code;
+      }
+      if (parsed) {
+        enhancedError.payload = parsed;
+      }
+      throw enhancedError;
     }
     return res.json();
   }
@@ -175,18 +248,18 @@ export class StakingApiClient {
       interval?: string;
       metric?: string;
     } = {},
-  ): Promise<Record<string, unknown>> {
+  ): Promise<StakingChartResponse> {
     const search = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
       if (v != null) search.set(k, String(v));
     });
     const qs = search.toString() ? `?${search.toString()}` : '';
-    return this.request<Record<string, unknown>>(`/chart${qs}`);
+    return this.request<StakingChartResponse>(`/chart${qs}`);
   }
 
-  async getStats(range?: string): Promise<Record<string, unknown>> {
+  async getStats(range?: string): Promise<StakingStatsResponse> {
     const qs = range ? `?range=${encodeURIComponent(range)}` : '';
-    return this.request<Record<string, unknown>>(`/stats${qs}`);
+    return this.request<StakingStatsResponse>(`/stats${qs}`);
   }
 
   async getTable(
@@ -199,12 +272,105 @@ export class StakingApiClient {
       sortOrder?: string;
       timeframe?: string;
     } = {},
-  ): Promise<Record<string, unknown>> {
+  ): Promise<StakingTableResponse> {
     const search = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
       if (v != null) search.set(k, String(v));
     });
     const qs = search.toString() ? `?${search.toString()}` : '';
-    return this.request<Record<string, unknown>>(`/table${qs}`);
+    return this.request<StakingTableResponse>(`/table${qs}`);
+  }
+
+  async getEarnings(params: {
+    wallet: string;
+    forceRefresh?: boolean;
+    debug?: boolean;
+  }): Promise<StakingEarningsResponse> {
+    const search = new URLSearchParams();
+    search.set('wallet', params.wallet);
+    if (params.forceRefresh != null) search.set('forceRefresh', String(params.forceRefresh));
+    if (params.debug) search.set('debug', '1');
+    const qs = `?${search.toString()}`;
+    return this.request<StakingEarningsResponse>(`/earnings${qs}`);
+  }
+
+  async getEarningsEvents(params: {
+    wallet: string;
+    limit?: number;
+    offset?: number;
+    order?: 'asc' | 'desc';
+    types?: string[];
+    start?: string;
+    end?: string;
+    page?: number;
+    sortBy?: 'timestamp' | 'type' | 'amount' | 'usdValue' | 'priceUsd';
+  }): Promise<StakingEarningsEventsResponse> {
+    const search = new URLSearchParams();
+    search.set('wallet', params.wallet);
+    if (params.limit != null) search.set('limit', String(params.limit));
+    if (params.offset != null) search.set('offset', String(params.offset));
+    if (params.order) search.set('order', params.order);
+    if (params.types && params.types.length) {
+      search.set('types', params.types.join(','));
+    }
+    if (params.start) search.set('start', params.start);
+    if (params.end) search.set('end', params.end);
+    if (params.page != null) search.set('page', String(params.page));
+    if (params.sortBy) search.set('sortBy', params.sortBy);
+    const qs = `?${search.toString()}`;
+    try {
+      return await this.request<StakingEarningsEventsResponse>(`/earnings/events${qs}`);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('404')) {
+        throw new Error(
+          'Wallet event history is not available yet on this environment. Please sync again in a few minutes.',
+        );
+      }
+      throw error;
+    }
+  }
+
+  async refreshEarnings(params: {
+    wallet: string;
+    forceRefresh?: boolean;
+    debug?: boolean;
+  }): Promise<StakingEarningsResponse> {
+    return this.request<StakingEarningsResponse>('/earnings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        wallet: params.wallet,
+        forceRefresh: params.forceRefresh,
+        debug: params.debug,
+      }),
+    });
+  }
+
+  async listJobs(): Promise<StakingJobsResponse> {
+    return this.request<StakingJobsResponse>('/jobs');
+  }
+
+  async getJob(jobId: string): Promise<StakingJobResponse> {
+    return this.request<StakingJobResponse>(`/jobs/${encodeURIComponent(jobId)}`);
+  }
+
+  async createJob(params: {
+    wallet: string;
+    mode?: 'initial' | 'incremental' | 'force' | 'empty';
+    debug?: boolean;
+  }): Promise<StakingJobResponse> {
+    return this.request<StakingJobResponse>('/jobs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        wallet: params.wallet,
+        mode: params.mode,
+        debug: params.debug,
+      }),
+    });
   }
 }

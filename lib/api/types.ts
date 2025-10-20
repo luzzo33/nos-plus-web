@@ -1820,6 +1820,429 @@ export interface StakingWidgetResponse {
   meta?: ApiMeta;
 }
 
+export interface StakingChartPoint {
+  timestamp: string;
+  xnos?: number;
+  apr?: number;
+  interval?: string;
+  source?: 'live' | 'historical';
+  aprMin?: number;
+  aprMax?: number;
+  aprAvg?: number;
+  dataPoints?: number;
+}
+
+export interface StakingChartSummaryMetric {
+  current?: number;
+  min?: number;
+  max?: number;
+  avg?: number;
+  volatility?: number;
+}
+
+export interface StakingChartSummary {
+  xnos?: StakingChartSummaryMetric;
+  apr?: StakingChartSummaryMetric;
+}
+
+export interface StakingChartMetadata {
+  range: string;
+  interval: string;
+  dataPoints: number;
+  startDate: string;
+  endDate: string;
+  metric?: string;
+}
+
+export interface StakingChartData {
+  data: StakingChartPoint[];
+  summary?: StakingChartSummary;
+  metadata: StakingChartMetadata;
+}
+
+export interface StakingChartResponse {
+  success: boolean;
+  chart: {
+    data: StakingChartData;
+  };
+  meta: ApiMeta;
+}
+
+export interface StakingStatsCurrent {
+  xnos?: number;
+  apr?: number;
+  lastUpdate?: string | null;
+  source?: string | null;
+}
+
+export interface StakingHistoricalMetricSummary {
+  start?: number;
+  end?: number;
+  min?: number;
+  max?: number;
+  avg?: number;
+  median?: number;
+  current?: number;
+}
+
+export interface StakingHistoricalSummary {
+  period?: string;
+  startDate?: string;
+  endDate?: string;
+  dataPoints?: number;
+  xnos?: StakingHistoricalMetricSummary;
+  apr?: StakingHistoricalMetricSummary;
+}
+
+export interface StakingMetricDistribution {
+  current?: number;
+  average?: number;
+  averageDisplay?: string;
+  median?: number;
+  medianDisplay?: string;
+  range?: {
+    min?: number;
+    max?: number;
+  };
+  stability?: {
+    volatility?: number;
+  };
+  percentiles?: {
+    p90?: number;
+    p75?: number;
+    p50?: number;
+    p25?: number;
+    p10?: number;
+  };
+  trend?: unknown;
+}
+
+export interface StakingExtendedMetrics {
+  completeness?: {
+    coveragePct?: number;
+  };
+  streaks?: {
+    xnos?: {
+      direction?: 'up' | 'down';
+      length?: number;
+    } | null;
+    apr?: {
+      direction?: 'up' | 'down';
+      length?: number;
+    } | null;
+  };
+  drawdowns?: {
+    xnos?: number;
+    apr?: number;
+  };
+}
+
+export interface StakingStatsMetrics {
+  apr?: StakingMetricDistribution;
+  xnos?: StakingMetricDistribution;
+  extended?: StakingExtendedMetrics;
+}
+
+export interface StakingStatsData {
+  current?: StakingStatsCurrent | null;
+  summary?: {
+    xnos?: number;
+    apr?: number;
+  };
+  historical?: StakingHistoricalSummary;
+  metrics?: StakingStatsMetrics;
+}
+
+export interface StakingStatsResponse {
+  success: boolean;
+  stats: StakingStatsData;
+  meta: ApiMeta;
+}
+
+export interface StakingTableColumn {
+  key: string;
+  label: string;
+  type: string;
+  sortable: boolean;
+}
+
+export interface StakingTableRowDisplay {
+  xnos?: string;
+  change?: string;
+  high?: string;
+  low?: string;
+  apr?: string;
+  [key: string]: string | undefined;
+}
+
+export interface StakingTableRow {
+  id: number | string;
+  timestamp: string;
+  xnos?: number;
+  change?: number;
+  high?: number;
+  low?: number;
+  dataPoints?: number;
+  apr?: number;
+  display?: StakingTableRowDisplay;
+}
+
+export interface StakingTablePagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export interface StakingTableResponse {
+  success: boolean;
+  table: {
+    columns: StakingTableColumn[];
+    rows: StakingTableRow[];
+  };
+  pagination?: StakingTablePagination;
+  meta: ApiMeta;
+}
+
+export interface StakingEarningsTotals {
+  stakeDeposited?: number;
+  stakeWithdrawn?: number;
+  stakeSlashed?: number;
+  realizedRewards?: number;
+  realizedRewardsUsd?: number;
+  principalDeposited?: number;
+  rewardRestaked?: number;
+  rewardRestakedUsd?: number;
+  rewardsClaimed?: number;
+  rewardsClaimedUsd?: number;
+  totalRewardsAccrued?: number;
+  totalRewardsAccruedUsd?: number;
+  currentStakedAmount?: number;
+  currentLiquidAmount?: number;
+  currentTokensHeld?: number;
+  currentCostBasisUsd?: number;
+  purchasedAmount?: number;
+  purchaseCostUsd?: number;
+  salesAmount?: number;
+  salesProceedsUsd?: number;
+  averagePurchasePrice?: number | null;
+  effectiveAveragePrice?: number | null;
+  stakeDepositCostUsd?: number;
+  stakeDcaValue?: number | null;
+  stakeDcaValueWithRewards?: number | null;
+}
+
+export interface StakingEarningsMetadata {
+  eventCount?: number;
+  firstEventAt?: string | number | null;
+  lastEventAt?: string | number | null;
+  depositEventCount?: number;
+  withdrawEventCount?: number;
+  slashTotal?: number;
+  stakedPrincipal?: number;
+  stakedPrincipalRaw?: number;
+  liquidPositionRaw?: number;
+  currentTokensHeldRaw?: number;
+  transferInAmount?: number;
+  transferOutAmount?: number;
+  principalDeposited?: number;
+  rewardRestaked?: number;
+  rewardRestakedUsd?: number;
+  rewardsClaimed?: number;
+  rewardsClaimedUsd?: number;
+  totalRewardsAccrued?: number;
+  totalRewardsAccruedUsd?: number;
+  stakeStatus?: string;
+  stakeDurationSeconds?: number | null;
+  stakeDurationDays?: number | null;
+  stakeAmountOnChain?: number | null;
+  stakeAmountRawOnChain?: number | null;
+  stakeTimeUnstake?: string | null;
+  stakeTimeUnstakeUnix?: number | null;
+  stakeCooldownEndsAt?: string | null;
+  stakeCooldownEndsAtUnix?: number | null;
+  stakeSecondsToUnlock?: number | null;
+  stakeIsUnstaking?: boolean;
+  stakeIsCooldownComplete?: boolean;
+  stakeDepositCostUsd?: number;
+  stakeDcaValue?: number | null;
+  stakeDcaValueWithRewards?: number | null;
+  averageApr?: number | null;
+  averageAprSampleCount?: number | null;
+  averageAprStart?: string | null;
+  averageAprEnd?: string | null;
+  averageAprDurationDays?: number | null;
+  averageAprInterpolationRatio?: number | null;
+  aprComputationStart?: string | null;
+  aprComputationEnd?: string | null;
+}
+
+export type StakeStatus =
+  | 'active'
+  | 'cooldown'
+  | 'ready_to_withdraw'
+  | 'inactive'
+  | 'not_staked'
+  | 'unknown';
+
+export interface StakingStakeAccountDetails {
+  address: string | null;
+  status: StakeStatus;
+  amount: number | null;
+  amountRaw?: number | null;
+  durationSeconds?: number | null;
+  durationDays?: number | null;
+  timeUnstake?: string | null;
+  timeUnstakeUnix?: number | null;
+  cooldownEndsAt?: string | null;
+  cooldownEndsAtUnix?: number | null;
+  secondsToUnlock?: number | null;
+  isUnstaking?: boolean;
+  isCooldownComplete?: boolean;
+  vault?: string | null;
+}
+
+export interface StakingEarningsSummary {
+  wallet: string;
+  stakeAddress?: string | null;
+  totals: StakingEarningsTotals;
+  metadata: StakingEarningsMetadata;
+  stakeAccount?: StakingStakeAccountDetails | null;
+}
+
+export interface StakingEarningsSyncInfo {
+  processedTransactions?: number;
+  processedEvents?: number;
+  newestSignature?: string | null;
+  discoveredStakeAccounts?: string[];
+  discoveredVaultAccounts?: string[];
+  discoveredTokenAccounts?: string[];
+  totalSignatures?: number;
+  processedSignatures?: number;
+  status?: 'complete' | 'up_to_date' | 'no_activity' | 'no_classified_activity';
+  mode?: 'initial' | 'incremental' | 'empty' | 'force';
+  nosActivityCount?: number;
+  hasActivity?: boolean;
+  cached?: boolean;
+  accountsDiscovered?: number | null;
+  classificationStats?: Record<string, unknown> | null;
+  lastSummaryAt?: string | null;
+}
+
+export interface StakingEarningsCacheInfo {
+  wallet: string;
+  hasSummary: boolean;
+  lastSummaryAt: string | null;
+  eventsCount: number;
+  latestEventSignature: string | null;
+  latestEventAt: string | null;
+  accountsCount: number;
+}
+
+export interface StakingEarningsResponse {
+  wallet: string;
+  stakeAddress?: string | null;
+  stakeAccount?: StakingStakeAccountDetails | null;
+  summary: StakingEarningsSummary | null;
+  sync?: StakingEarningsSyncInfo | null;
+  cacheInfo?: StakingEarningsCacheInfo | null;
+  job?: StakingJob | null;
+}
+
+export interface StakingJob {
+  id: string;
+  wallet: string;
+  forceRefresh: boolean;
+  status: 'queued' | 'running' | 'completed' | 'failed';
+  stage: string;
+  createdAt: string;
+  updatedAt: string;
+  mode?: 'initial' | 'incremental' | 'empty' | 'force';
+  progress: {
+    stage: string;
+    payload: unknown;
+    updatedAt?: string;
+  } | null;
+  metrics?: {
+    totalSignatures?: number;
+    processedSignatures?: number;
+    processedTransactions?: number;
+    processedEvents?: number;
+    batchesTotal?: number;
+    batchesCompleted?: number;
+    startedAt?: string;
+    etaSeconds?: number | null;
+  } | null;
+  result: StakingEarningsResponse | null;
+  error: { message?: string; stack?: string } | null;
+  history: StakingJobHistoryEntry[];
+}
+
+export interface StakingJobHistoryEntry {
+  timestamp: string;
+  stage: string;
+  payload: unknown;
+}
+
+export interface StakingJobsResponse {
+  jobs: StakingJob[];
+}
+
+export interface StakingJobResponse {
+  job: StakingJob;
+}
+
+export interface StakingEarningsEvent {
+  id: number;
+  signature: string;
+  timestamp: string | null;
+  type: string;
+  amount: number;
+  priceUsd: number | null;
+  usdValue: number | null;
+  metadata?: unknown;
+}
+
+export interface StakingEarningsEventTypeAggregate {
+  amount: number;
+  usdValue: number | null;
+  count: number;
+  averageAmount: number;
+  averageUsdValue: number | null;
+  firstSeen: string | null;
+  lastSeen: string | null;
+}
+
+export interface StakingEarningsEventsAggregates {
+  totals: {
+    amount: number;
+    usdValue: number;
+    netAmount: number;
+    netUsdValue: number;
+    count: number;
+  };
+  byType: Record<string, StakingEarningsEventTypeAggregate>;
+  range: {
+    start: string | null;
+    end: string | null;
+  };
+}
+
+export interface StakingEarningsEventsResponse {
+  wallet: string;
+  events: StakingEarningsEvent[];
+  pagination: {
+    limit: number;
+    offset: number;
+    total: number;
+    count: number;
+    hasMore: boolean;
+  };
+  aggregates: StakingEarningsEventsAggregates;
+}
+
 export type TimeRange = '1h' | '4h' | '24h' | '7d' | '30d' | '90d' | '180d' | '1y' | 'all';
 export type ForecastRange = '1m' | '3m' | '6m' | '1y' | 'all';
 export type Interval = '5m' | '15m' | '1h' | '4h' | '1d' | '1w' | '1M' | 'raw' | 'auto';

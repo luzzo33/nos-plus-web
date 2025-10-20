@@ -110,6 +110,12 @@ export function Navbar() {
           icon: Layers,
           description: t('descriptions.stakingDapp'),
         },
+        {
+          href: '/staking-analysis',
+          label: t('stakingAnalysis'),
+          icon: Search,
+          description: t('descriptions.stakingAnalysis'),
+        },
       ],
     },
     {

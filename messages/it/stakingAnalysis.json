@@ -1,0 +1,327 @@
+{
+  "layout": {
+    "badge": "Intelligenza wallet",
+    "title": "Analisi di staking NOS personalizzate",
+    "subtitle": "Incolla un wallet Solana o un account di staking per ottenere analisi del ciclo di vita, tracciamento delle transazioni e insight dedicati sulle ricompense."
+  },
+  "walletInput": {
+    "title": "Analisi di staking",
+    "description": "Inserisci l'indirizzo del wallet Solana per sbloccare informazioni complete sulle performance di staking di NOS e sulla cronologia delle transazioni.",
+    "label": "Indirizzo del wallet",
+    "placeholder": "es. CqJviA1TaBWWnkX515NthiykyA42a5hyXrEgLXoSZM5R",
+    "helper": "Le analisi del wallet restano in cache finché il dashboard è aperto; usa “Cambia wallet” per svuotare o cambiare indirizzo.",
+    "submit": "Analizza wallet",
+    "loading": "Caricamento",
+    "features": {
+      "secure": {
+        "title": "Sicuro",
+        "description": "Accesso in sola lettura"
+      },
+      "fast": {
+        "title": "Veloce",
+        "description": "Analisi istantanee"
+      },
+      "detailed": {
+        "title": "Dettagliato",
+        "description": "Storico completo"
+      }
+    }
+  },
+  "buttons": {
+    "changeWallet": "Cambia wallet",
+    "syncLatest": "Aggiorna",
+    "syncing": "Aggiornamento…"
+  },
+  "labels": {
+    "analyzingWallet": "Analisi wallet:",
+    "stakeAccount": "Account di staking:",
+    "lastUpdated": "Ultimo aggiornamento:",
+    "lastSynced": "Ultima sincronizzazione:",
+    "daysSuffix": "giorni"
+  },
+  "hero": {
+    "badge": "Analisi live",
+    "title": "Dashboard di analisi dello staking",
+    "description": "Approfondimenti completi sulle performance di staking di NOS con analisi in tempo reale, cronologia dettagliata delle transazioni e visualizzazioni basate sulla staking API."
+  },
+  "quickStats": {
+    "activeStake": "Stake attivo",
+    "totalRewards": "Ricompense totali",
+    "roi": "ROI",
+    "avgApr": "APR medio"
+  },
+  "statCards": {
+    "totalStaked": "Totale in staking",
+    "currentValue": "Valore attuale",
+    "realizedPnL": "P&L realizzato",
+    "stakingDuration": "Durata dello staking",
+    "totalDeposits": "Depositi totali",
+    "totalWithdrawals": "Prelievi totali",
+    "costBasis": "Costo medio",
+    "unrealizedPnL": "P&L non realizzato"
+  },
+  "performance": {
+    "title": "Panoramica delle performance",
+    "subtitle": "Metriche dettagliate per tutte le categorie",
+    "netFlow": "Flusso netto",
+    "totalUsdVolume": "Volume totale in USD",
+    "totalEvents": "Eventi totali",
+    "avgEventSize": "Dimensione media evento",
+    "averageApr": "APR medio",
+    "totalRewards": "Ricompense ottenute",
+    "dcaValue": "Valore DCA",
+    "dcaValueWithRewards": "DCA incl. ricompense"
+  },
+  "rewardBreakdown": {
+    "restaked": "{amount} restakeati",
+    "claimed": "{amount} riscossi",
+    "realized": "{amount} realizzati",
+    "separator": " · "
+  },
+  "disclaimer": {
+    "alpha": "Versione alpha — non usarla come unica fonte. Confronta sempre i numeri con una seconda verifica.",
+    "feedback": "Possono verificarsi errori; segnala problemi su Discord, Twitter o GitHub per ricevere supporto rapido."
+  },
+  "progress": {
+    "stageLabels": {
+      "queued": "In coda per l'elaborazione",
+      "running": "Sincronizzazione in corso",
+      "account_signatures_fetch": "Recupero delle firme dell'account",
+      "account_signatures_collected": "Raccolta dello storico firme",
+      "signature_collection_complete": "Firme raccolte",
+      "signatures_progress": "Raccolta firme in corso",
+      "fetch_transactions_start": "Download delle transazioni",
+      "fetch_transactions_batch": "Download delle transazioni",
+      "fetch_transactions_complete": "Transazioni pronte",
+      "fetch_transactions_progress": "Download delle transazioni",
+      "fetch_transactions_error": "Errore di download, nuovo tentativo",
+      "fetch_transactions_fallback": "Recupero delle transazioni mancanti",
+      "classification_progress": "Classificazione dell'attività NOS",
+      "events_stored": "Eventi salvati",
+      "events_classified": "Eventi classificati",
+      "events_persist": "Persistenza degli eventi",
+      "events_synced": "Eventi sincronizzati",
+      "summary_ready": "Finalizzazione del riepilogo",
+      "no_updates_required": "Già aggiornato",
+      "no_new_signatures": "Nessuna attività NOS rilevata"
+    },
+    "defaults": {
+      "stagePreparing": "Preparazione della sincronizzazione",
+      "stageCached": "Caricamento analisi in cache",
+      "modeRequesting": "Richiesta del job alla API di NOS…",
+      "modeCached": "Caricamento di riepilogo ed eventi salvati.",
+      "detailsProvisioning": "Allocazione di un worker in background per elaborare l'attività recente di NOS.",
+      "detailsPromptSync": "Se questa wallet non è mai stata sincronizzata, premi “Aggiorna” per indicizzare la cronologia on-chain.",
+      "etaSoon": "Pronto solitamente in pochi secondi…"
+    },
+    "details": {
+      "accounts": "Scansionati {processed} di {total} account collegati.",
+      "transactions": "Classificate {processed} di {total} transazioni.",
+      "events": "Persistiti {processed} di {total} eventi."
+    },
+    "modeMessages": {
+      "initial": "La prima sincronizzazione può richiedere qualche minuto mentre indicizziamo lo storico.",
+      "incremental": "Controllo della nuova attività NOS e aggiornamento della cache.",
+      "force": "Ricostruzione completa delle analisi. Potrebbe richiedere più tempo.",
+      "forceNoChanges": "Sincronizzazione completa terminata; le analisi erano già aggiornate. Nessuna nuova firma trovata.",
+      "forceUpToDate": "Sincronizzazione completa riuscita, ma non sono state rilevate nuove attività NOS."
+    },
+    "jobLabels": {
+      "full": "Job di sincronizzazione completo",
+      "incremental": "Job di sincronizzazione"
+    },
+    "overlays": {
+      "syncTitle": "Sincronizzazione dei dati del wallet",
+      "loadingTitle": "Caricamento delle analisi del wallet",
+      "stagePercent": "{percent}% in questo passaggio",
+      "overallPercent": "Completato {percent}%",
+      "stepProgress": "Passo {current} di {total}",
+      "preparingJob": "Preparazione del job di sincronizzazione…",
+      "initialHint": "Puoi lasciare aperta la scheda; i dati continueranno a popolarsi man mano che i batch terminano.",
+      "loadingList": {
+        "retrieving": "Recupero dell'analisi salvata più recente per questo wallet.",
+        "firstTime": "È la prima volta? Esegui <strong>Aggiorna</strong> per indicizzare lo storico on-chain e aggiornare i dati."
+      },
+      "loadingFooter": "I caricamenti da cache richiedono solitamente pochi secondi. La finestra si chiude automaticamente quando i dati sono pronti."
+    },
+    "eta": {
+      "wrapping": "Ultimi passaggi…",
+      "almost": "Quasi fatto",
+      "seconds": "{count, plural, one {{count} s rimanente} other {{count} s rimanenti}}",
+      "minutesSeconds": "{minutes} m {seconds} s rimanenti",
+      "minutes": "{minutes} m rimanenti",
+      "hoursMinutes": "{hours} h {minutes} m rimanenti"
+    }
+  },
+  "toasts": {
+    "syncStartedTitle": "{label} avviato",
+    "syncStartedFull": "Job {id} accodato per il wallet {wallet}. Ricostruzione completa delle analisi in corso.",
+    "syncStartedIncremental": "Job {id} accodato per il wallet {wallet}. Il progresso apparirà di seguito.",
+    "syncFailedTitle": "Sincronizzazione fallita",
+    "syncFailedDescription": "Il job di sincronizzazione è fallito inaspettatamente. Riprova più tardi.",
+    "progressUnavailableTitle": "Progresso di sincronizzazione non disponibile",
+    "progressUnavailableDescription": "Impossibile ottenere il progresso dalla API.",
+    "statusUnavailableTitle": "Stato di sincronizzazione non disponibile",
+    "statusUnavailableDescription": "Impossibile recuperare lo stato dalla API.",
+    "loadErrorTitle": "Impossibile caricare le analisi di staking",
+    "syncCompleteTitle": "Sincronizzazione completata",
+    "syncCompleteDescription": "Le analisi del wallet sono state aggiornate con gli ultimi dati.",
+    "noActivityTitle": "Nessuna attività NOS rilevata",
+    "noActivityDescription": "Questo wallet non ha ancora transazioni NOS. Continueremo a monitorare nuove attività.",
+    "fullSyncNoChangesTitle": "Sincronizzazione completa senza cambiamenti",
+    "fullSyncNoChangesDescription": "Sincronizzazione completa riuscita, ma le analisi erano già aggiornate.",
+    "alreadyUpToDateTitle": "Già aggiornato",
+    "alreadyUpToDateDescription": "Nessuna nuova transazione NOS trovata dall'ultima sincronizzazione.",
+    "eventCount": "{count, plural, one {{count} evento} other {{count} eventi}}",
+    "signatureCount": "{count, plural, one {{count} firma} other {{count} firme}}",
+    "newSignatures": "nuove firme",
+    "syncCompleteCounts": "Indicizzati {events} su {signatures}.",
+    "genericError": "{message}"
+  },
+  "limit": {
+    "message": "Questo wallet supera le 20.000 transazioni NOS. Per motivi di sicurezza non verrà elaborato automaticamente. Contatta nos.plus su Twitter, apri un issue su GitHub oppure scrivi nel canale nos.plus sul Discord di Nosana."
+  },
+  "flow": {
+    "title": "Analisi del flusso di NOS",
+    "subtitle": "Suddivisione visiva degli afflussi e deflussi",
+    "inflow": "Afflusso totale",
+    "outflow": "Deflusso totale",
+    "net": "Flusso netto",
+    "categories": {
+      "purchases": "Acquisti",
+      "transfersIn": "Trasferimenti in entrata",
+      "stakeWithdrawals": "Prelievi di staking",
+      "sales": "Vendite",
+      "transfersOut": "Trasferimenti in uscita",
+      "stakePrincipalDeposits": "Depositi di staking (principal)",
+      "stakeRewardRestaked": "Ricompense restakeate (escluse dal totale)"
+    }
+  },
+  "distribution": {
+    "title": "Distribuzione degli eventi",
+    "subtitle": "Ripartizione dei tipi di transazione per numero",
+    "labels": {
+      "purchase": "Acquisti",
+      "sale": "Vendite",
+      "transfer_in": "Trasferimenti in entrata",
+      "transfer_out": "Trasferimenti in uscita",
+      "stake_deposit": "Depositi di staking",
+      "stake_withdrawal": "Prelievi",
+      "stake_slash": "Slashes"
+    },
+    "tooltip": {
+      "count": "Conteggio",
+      "amount": "Quantità",
+      "percentage": "Percentuale"
+    }
+  },
+  "timeline": {
+    "title": "Cronologia attività",
+    "subtitle": "Evoluzione storica degli eventi di staking",
+    "view": {
+      "daily": "Totali giornalieri",
+      "cumulative": "Totali cumulativi"
+    },
+    "metrics": {
+      "deposits": "Depositi di staking",
+      "withdrawals": "Prelievi",
+      "purchases": "Acquisti",
+      "sales": "Vendite",
+      "netFlow": "Flusso netto"
+    }
+  },
+  "eventsTable": {
+    "title": "Storico transazioni",
+    "subtitle": "{count, plural, one {{count} evento trovato} other {{count} eventi trovati}}",
+    "filters": {
+      "all": "Tutti i tipi"
+    },
+    "labels": {
+      "purchase": "Acquisto",
+      "sale": "Vendita",
+      "transfer_in": "Trasferimento in entrata",
+      "transfer_out": "Trasferimento in uscita",
+      "stake_deposit": "Deposito di staking",
+      "stake_withdrawal": "Prelievo",
+      "stake_slash": "Slash"
+    },
+    "columns": {
+      "date": "Data",
+      "type": "Tipo",
+      "amount": "Quantità",
+      "usdValue": "Valore USD",
+      "signature": "Firma"
+    },
+    "unknown": "Sconosciuto",
+    "rowsLabel": "Righe:",
+    "pageLabel": "Pagina {current} di {total}",
+    "toast": {
+      "copied": "Firma copiata negli appunti",
+      "failed": "Impossibile copiare la firma. Riprova."
+    }
+  },
+  "copy": {
+    "signature": "Copia firma"
+  },
+  "pagination": {
+    "rows": "Righe:",
+    "page": "Pagina {current} di {total}"
+  },
+  "selectors": {
+    "pageSize": {
+      "ten": "10",
+      "twenty": "20",
+      "fifty": "50",
+      "hundred": "100"
+    }
+  },
+  "stakeStatus": {
+    "heading": "Ciclo di vita dello staking",
+    "labels": {
+      "active": "Stake attivo",
+      "cooldown": "Unstaking in corso",
+      "ready_to_withdraw": "Pronto al prelievo",
+      "inactive": "Stake inattivo",
+      "not_staked": "Nessuno stake",
+      "unknown": "Stato sconosciuto"
+    },
+    "badges": {
+      "cooldown": "unstaking"
+    },
+    "descriptions": {
+      "activeWithDuration": "Stake attualmente attivo con un periodo di blocco di {duration}.",
+      "active": "Lo stake è attivo e genera ricompense.",
+      "cooldownCountdownAndDate": "Unstaking in corso. Sblocco in {countdown} ({date}).",
+      "cooldownCountdown": "Unstaking in corso. Sblocco in {countdown}.",
+      "cooldownDate": "Unstaking in corso. Sblocco il {date}.",
+      "cooldown": "Unstaking in corso.",
+      "readyWithDate": "Unstaking completato il {date}. I fondi possono essere prelevati o restakeati.",
+      "ready": "Unstaking completato. I fondi possono essere prelevati o restakeati.",
+      "inactive": "L'account di staking esiste ma al momento non contiene NOS.",
+      "unknown": "Indirizzo di staking individuato, ma impossibile recuperare i dettagli.",
+      "not_staked": "Non è stato trovato alcun account di staking per questo wallet."
+    },
+    "fields": {
+      "onChainStake": "Stake on-chain",
+      "lockDuration": "Periodo di blocco",
+      "unstakeInitiated": "Unstaking avviato",
+      "unlocks": "Sblocco",
+      "unlocked": "Sbloccato"
+    },
+    "duration": {
+      "lessThanOne": "< 1 giorno",
+      "days": "{count} giorni",
+      "daysWithMonths": "{days} giorni (~{months} mesi)"
+    },
+    "countdown": {
+      "days": "{count} g",
+      "hours": "{count} h",
+      "minutes": "{count} m",
+      "seconds": "{count} s"
+    }
+  },
+  "units": {
+    "nos": "NOS",
+    "usd": "USD"
+  }
+}
