@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/luzzo33/nos-plus-web/compare/v1.2.0...v1.3.0) (2025-10-20)
+
+
+### ⚙️ Maintenance
+
+* **release:** 1.3.0 ([799e3cc](https://github.com/luzzo33/nos-plus-web/commit/799e3ccb4402e6441c18610a72df26f9b343b728))
+
+
+### ✨ Features
+
+* enhance staking analysis dashboard ([f48bf30](https://github.com/luzzo33/nos-plus-web/commit/f48bf300ec39d685090580fcca70525474064770))
+* localize staking analysis dashboard and add ui feedback ([85e51c6](https://github.com/luzzo33/nos-plus-web/commit/85e51c65da0ee910732b2f519fcf8187651bc815))
+
 ## [1.2.0](https://github.com/luzzo33/nos-plus-web/compare/v1.1.3...v1.2.0) (2025-10-19)
 
 
