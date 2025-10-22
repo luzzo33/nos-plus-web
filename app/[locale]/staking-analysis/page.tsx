@@ -67,6 +67,50 @@ import {
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
+type DebugLevel = 'log' | 'info' | 'warn' | 'error' | 'debug';
+
+type StakingDebugRecord = {
+  timestamp: number;
+  level: DebugLevel;
+  message: string;
+  context?: unknown;
+};
+
+const DEBUG_EVENT_NAME = 'nos-staking-analysis-log';
+
+function emitDebug(level: DebugLevel, message: string, context?: unknown) {
+  const prefix = `[staking-analysis][${level}]`;
+  const writer = console.log.bind(console);
+  if (typeof context === 'undefined') {
+    writer(`${prefix} ${message}`);
+  } else {
+    writer(`${prefix} ${message}`, context);
+  }
+
+  if (typeof window !== 'undefined') {
+    const globalWindow = window as typeof window & {
+      __NOS_STAKING_ANALYTICS_LOGS__?: StakingDebugRecord[];
+    };
+    const record: StakingDebugRecord = {
+      timestamp: Date.now(),
+      level,
+      message,
+      context,
+    };
+    const store =
+      (globalWindow.__NOS_STAKING_ANALYTICS_LOGS__ =
+        globalWindow.__NOS_STAKING_ANALYTICS_LOGS__ || []);
+    store.push(record);
+    try {
+      window.dispatchEvent(
+        new CustomEvent(DEBUG_EVENT_NAME, { detail: record }),
+      );
+    } catch (err) {
+      writer(`${prefix} [debug-event-error]`, err);
+    }
+  }
+}
+
 const EVENT_FETCH_LIMIT = 500;
 
 const STAGE_KEYS = [
@@ -165,12 +209,12 @@ function shouldAcceptJobUpdate(previous: StakingJob | null, next: StakingJob): b
     return true;
   }
 
-  const prevTimestamp = extractUpdatedAt(previous);
-  const nextTimestamp = extractUpdatedAt(next);
-  if (nextTimestamp > prevTimestamp) {
+  const prevTs = extractUpdatedAt(previous);
+  const nextTs = extractUpdatedAt(next);
+  if (nextTs > prevTs) {
     return true;
   }
-  if (nextTimestamp < prevTimestamp) {
+  if (nextTs < prevTs) {
     return false;
   }
 
@@ -185,7 +229,10 @@ function shouldAcceptJobUpdate(previous: StakingJob | null, next: StakingJob): b
 
   const prevOverall = extractOverallPercent(previous);
   const nextOverall = extractOverallPercent(next);
-  return nextOverall >= prevOverall;
+  if (nextOverall >= prevOverall) {
+    return true;
+  }
+  return false;
 }
 
 function formatNos(value?: number | null, fractionDigits = 2) {
@@ -257,6 +304,60 @@ export default function StakingAnalysisPage() {
   const jobStreamControllerRef = useRef<AbortController | null>(null);
   const lastJobStatusRef = useRef<string | null>(null);
   const lastProgressStageRef = useRef<string | null>(null);
+  const overlayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const syncJobStagePercent = extractStagePercent(syncJob);
+  const syncJobUpdatedAt = extractUpdatedAt(syncJob);
+
+  const showOverlay = useCallback(() => {
+    setOverlayVisible(true);
+    if (overlayTimeoutRef.current) {
+      clearTimeout(overlayTimeoutRef.current);
+      overlayTimeoutRef.current = null;
+    }
+  }, []);
+
+  const hideOverlayLater = useCallback((delayMs = 2500) => {
+    if (overlayTimeoutRef.current) {
+      clearTimeout(overlayTimeoutRef.current);
+    }
+    overlayTimeoutRef.current = setTimeout(() => {
+      setOverlayVisible(false);
+      overlayTimeoutRef.current = null;
+    }, delayMs);
+  }, []);
+
+  useEffect(() => () => {
+    if (overlayTimeoutRef.current) {
+      clearTimeout(overlayTimeoutRef.current);
+      overlayTimeoutRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    emitDebug('info', '[lifecycle] StakingAnalysisPage mounted');
+    return () => emitDebug('info', '[lifecycle] StakingAnalysisPage unmounted');
+  }, []);
+
+  useEffect(
+    () => emitDebug('info', '[state] activeWallet changed', { activeWallet }),
+    [activeWallet],
+  );
+
+  useEffect(
+    () => emitDebug('info', '[state] activeSyncJobId changed', { activeSyncJobId }),
+    [activeSyncJobId],
+  );
+
+  useEffect(() => {
+    emitDebug('info', '[state] syncJob updated', {
+      jobId: syncJob?.id ?? null,
+      status: syncJob?.status ?? null,
+      stage: syncJob?.stage ?? null,
+      stagePercent: syncJobStagePercent,
+      updatedAt: syncJobUpdatedAt,
+    });
+  }, [syncJob?.id, syncJob?.status, syncJob?.stage, syncJobStagePercent, syncJobUpdatedAt]);
 
   useEffect(() => {
     const paramWallet = searchParams.get('wallet');
@@ -270,6 +371,7 @@ export default function StakingAnalysisPage() {
       setWalletInput(paramWallet);
       setActiveWallet(paramWallet);
       setHasSubmitted(true);
+      emitDebug('info', '[params] wallet detected', { wallet: paramWallet });
     } else {
       setActiveWallet(null);
       setHasSubmitted(false);
@@ -277,102 +379,11 @@ export default function StakingAnalysisPage() {
     }
   }, [searchParams]);
 
-  const subscribeToJob = useCallback(
-    async (jobId: string, signal: AbortSignal, onUpdate: (job: StakingJob) => void) => {
-      const base = buildNosApiUrl('/v3/staking');
-      const url = `${base}/jobs/${encodeURIComponent(jobId)}/stream`;
-      const headers = new Headers();
-      const defaultAuth = buildMonitorAuthHeaders();
-      Object.entries(defaultAuth).forEach(([key, value]) => {
-        if (value && !headers.has(key)) {
-          headers.set(key, value);
-        }
-      });
-      const apiKey = getMonitorApiKey();
-      if (apiKey && !headers.has('x-api-key')) {
-        headers.set('x-api-key', apiKey);
-      }
-
-      let response: Response;
-      try {
-        response = await fetch(url, {
-          headers,
-          signal,
-          cache: 'no-store',
-        });
-      } catch (error) {
-        if (signal.aborted) return;
-        throw error;
-      }
-
-      if (!response.ok || !response.body) {
-        const error = new Error(`Streaming failed with status ${response.status}`);
-        (error as Error & { status?: number }).status = response.status;
-        throw error;
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let buffer = '';
-
-      try {
-        while (!signal.aborted) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-
-          let boundary = buffer.indexOf('\n\n');
-          while (boundary !== -1) {
-            const chunk = buffer.slice(0, boundary);
-            buffer = buffer.slice(boundary + 2);
-            boundary = buffer.indexOf('\n\n');
-            if (!chunk.trim() || chunk.startsWith(':')) continue;
-            const dataLine = chunk
-              .split('\n')
-              .map((line) => line.trim())
-              .find((line) => line.startsWith('data:'));
-            if (!dataLine) continue;
-            const payload = dataLine.slice(5).trim();
-            if (!payload) continue;
-            try {
-              const parsed: StakingJob = JSON.parse(payload);
-              onUpdate(parsed);
-            } catch (err) {
-              console.error('[staking-analysis] Failed to parse job payload', err);
-            }
-          }
-        }
-      } finally {
-        if (!signal.aborted && buffer.trim()) {
-          const lines = buffer
-            .split('\n')
-            .map((line) => line.trim())
-            .filter(Boolean);
-          const dataLine = lines.find((line) => line.startsWith('data:'));
-          if (dataLine) {
-            try {
-              const parsed: StakingJob = JSON.parse(dataLine.slice(5).trim());
-              onUpdate(parsed);
-            } catch (err) {
-              console.error('[staking-analysis] Failed to parse trailing job payload', err);
-            }
-          }
-        }
-        try {
-          decoder.decode();
-        } catch {}
-        try {
-          reader.releaseLock();
-        } catch {}
-      }
-    },
-    [],
-  );
-
   const pollJobStatus = useCallback(
     async (jobId: string, signal: AbortSignal, onUpdate: (job: StakingJob) => void) => {
       const base = buildNosApiUrl('/v3/staking');
       const url = `${base}/jobs/${encodeURIComponent(jobId)}`;
+      emitDebug('info', '[poll] start', { jobId, url });
 
       const createHeaders = () => {
         const headers = new Headers();
@@ -390,10 +401,14 @@ export default function StakingAnalysisPage() {
         return headers;
       };
 
-      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+      const delay = (ms: number) =>
+        new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
 
       while (!signal.aborted) {
         try {
+          emitDebug('debug', '[poll] fetch', { jobId });
           const response = await fetch(url, {
             headers: createHeaders(),
             signal,
@@ -404,24 +419,422 @@ export default function StakingAnalysisPage() {
             continue;
           }
           if (!response.ok) {
+            emitDebug('warn', '[poll] non-ok status', {
+              jobId,
+              status: response.status,
+            });
             throw new Error(`Job status request failed with ${response.status}`);
           }
           const data = await response.json();
-          const job = data?.job as StakingJob | undefined;
+          const job = (data?.job as StakingJob) ?? null;
           if (job) {
+            emitDebug('debug', '[poll] update', {
+              jobId,
+              stage: job.stage,
+              status: job.status,
+              stagePercent: job.progress?.payload
+                ? (job.progress.payload as { stagePercent?: number }).stagePercent ?? null
+                : null,
+            });
             onUpdate(job);
             if (job.status === 'completed' || job.status === 'failed') {
+              emitDebug('info', '[poll] terminal state reached', {
+                jobId,
+                status: job.status,
+              });
               break;
             }
           }
         } catch (error) {
           if (signal.aborted) return;
+          emitDebug('error', '[poll] error', {
+            jobId,
+            message: (error as Error)?.message,
+          });
           throw error;
         }
         await delay(2000);
       }
+
+      emitDebug('info', '[poll] stopped', {
+        jobId,
+        aborted: signal.aborted,
+      });
     },
     [],
+  );
+
+  const subscribeToJob = useCallback(
+    async (jobId: string, signal: AbortSignal, onUpdate: (job: StakingJob) => void) => {
+      emitDebug('info', '[stream] subscribe init', {
+        jobId,
+        hasWindow: typeof window !== 'undefined',
+        hasWebSocket:
+          typeof window !== 'undefined' ? typeof window.WebSocket !== 'undefined' : false,
+      });
+
+      const pollController = new AbortController();
+
+      const forwardUpdate = (job: StakingJob) => {
+        emitDebug('debug', '[stream] forward update', {
+          jobId,
+          stage: job.stage,
+          status: job.status,
+          stagePercent: job.progress?.payload
+            ? (job.progress.payload as { stagePercent?: number }).stagePercent ?? null
+            : null,
+        });
+        onUpdate(job);
+        if (job.status === 'completed' || job.status === 'failed') {
+          pollController.abort();
+        }
+      };
+
+      const propagateAbort = () => {
+        try {
+          pollController.abort();
+        } catch {
+          // ignore
+        }
+      };
+
+      signal.addEventListener('abort', propagateAbort, { once: true });
+
+      const pollPromise = pollJobStatus(jobId, pollController.signal, forwardUpdate).catch(
+        (error) => {
+          if (signal.aborted || pollController.signal.aborted) return;
+          emitDebug('warn', '[poll] fallback error', {
+            jobId,
+            message: (error as Error)?.message,
+          });
+        },
+      );
+
+      const subscribeViaWebSocket = async () =>
+        new Promise<void>((resolve, reject) => {
+          if (typeof window === 'undefined' || typeof window.WebSocket === 'undefined') {
+            reject(new Error('websocket_unavailable_env'));
+            return;
+          }
+
+          let ws: WebSocket | null = null;
+          let done = false;
+          const STALE_TIMEOUT_MS = 8000;
+          let staleTimer: ReturnType<typeof setTimeout> | null = null;
+
+          const clearTimers = () => {
+            if (staleTimer) {
+              clearTimeout(staleTimer);
+              staleTimer = null;
+            }
+          };
+
+          const finalize = (error?: Error) => {
+            if (done) return;
+            done = true;
+            clearTimers();
+            signal.removeEventListener('abort', onAbort);
+            try {
+              if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.close(1000, error ? 'error' : 'normal');
+              }
+            } catch {
+              // ignore
+            }
+            ws = null;
+            emitDebug(error ? 'warn' : 'info', '[ws] finalize', {
+              jobId,
+              error: error ? error.message : null,
+            });
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          };
+
+          const refreshStaleTimer = () => {
+            if (signal.aborted) {
+              finalize();
+              return;
+            }
+            clearTimers();
+            staleTimer = setTimeout(() => {
+              finalize(new Error('websocket_stale'));
+            }, STALE_TIMEOUT_MS);
+            const maybeTimer = staleTimer as unknown as { unref?: () => void } | null;
+            if (maybeTimer && typeof maybeTimer.unref === 'function') {
+              maybeTimer.unref();
+            }
+          };
+
+          const onAbort = () => {
+            finalize();
+          };
+
+          signal.addEventListener('abort', onAbort);
+
+          let wsUrl: URL;
+          try {
+            const base = buildNosApiUrl('/v3/staking/jobs/ws');
+            wsUrl = new URL(base);
+            wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+            wsUrl.searchParams.set('jobId', jobId);
+            const apiKey = getMonitorApiKey();
+            if (apiKey) {
+              wsUrl.searchParams.set('apiKey', apiKey);
+            }
+          } catch (error) {
+            finalize(error instanceof Error ? error : new Error('websocket_url_error'));
+            return;
+          }
+
+          try {
+            ws = new WebSocket(wsUrl.toString());
+            ws.binaryType = 'arraybuffer';
+          } catch (error) {
+            finalize(error instanceof Error ? error : new Error('websocket_init_failed'));
+            return;
+          }
+
+          const handlePayload = (raw: string) => {
+            if (done || signal.aborted) return;
+            if (!raw.trim()) return;
+            try {
+              const parsed = JSON.parse(raw) as StakingJob;
+              emitDebug('debug', '[ws] message', {
+                jobId,
+                stage: parsed.stage,
+                status: parsed.status,
+                stagePercent: parsed.progress?.payload
+                  ? ((parsed.progress.payload as { stagePercent?: number }).stagePercent ?? null)
+                  : null,
+                overallPercent: parsed.progress?.payload
+                  ? ((parsed.progress.payload as { overallPercent?: number }).overallPercent ?? null)
+                  : null,
+              });
+              forwardUpdate(parsed);
+              if (parsed.status === 'completed' || parsed.status === 'failed') {
+                finalize();
+              }
+            } catch (err) {
+              emitDebug('error', '[ws] parse error', {
+                jobId,
+                error: (err as Error)?.message,
+              });
+            }
+          };
+
+          ws.addEventListener('open', () => {
+            emitDebug('debug', '[ws] open', { jobId });
+            refreshStaleTimer();
+          });
+
+          ws.addEventListener('message', (event) => {
+            refreshStaleTimer();
+            const { data } = event;
+            if (typeof data === 'string') {
+              handlePayload(data);
+              return;
+            }
+            if (data instanceof ArrayBuffer) {
+              try {
+                const decoder = new TextDecoder();
+                handlePayload(decoder.decode(data));
+              } catch (err) {
+                emitDebug('error', '[ws] decode arraybuffer error', {
+                  jobId,
+                  error: (err as Error)?.message,
+                });
+              }
+              return;
+            }
+            if (data instanceof Blob) {
+              data
+                .text()
+                .then(handlePayload)
+                .catch((err) => {
+                  emitDebug('error', '[ws] read blob error', {
+                    jobId,
+                    error: (err as Error)?.message,
+                  });
+                });
+              return;
+            }
+            const candidate = data as { arrayBuffer?: () => Promise<ArrayBuffer> } | null;
+            if (candidate?.arrayBuffer) {
+              candidate
+                .arrayBuffer()
+                .then((buffer) => {
+                  const decoder = new TextDecoder();
+                  handlePayload(decoder.decode(buffer));
+                })
+                .catch((err) => {
+                  emitDebug('error', '[ws] read generic payload error', {
+                    jobId,
+                    error: (err as Error)?.message,
+                  });
+                });
+            }
+          });
+
+          ws.addEventListener('error', (event) => {
+            const error = new Error('websocket_error');
+            (error as Error & { event?: Event }).event = event;
+            finalize(error);
+          });
+
+          ws.addEventListener('close', (event) => {
+            if (done) return;
+            const isExpected = event.wasClean || event.code === 1000 || event.code === 1001;
+            if (isExpected || signal.aborted) {
+              emitDebug('info', '[ws] close clean', {
+                jobId,
+                code: event.code,
+                reason: event.reason,
+              });
+              finalize();
+              return;
+            }
+            const error = new Error(`websocket_closed_${event.code || 'unknown'}`);
+            (error as Error & { code?: number }).code = event.code;
+            (error as Error & { reason?: string }).reason = event.reason;
+            finalize(error);
+          });
+        });
+
+      const subscribeViaEventStream = async () => {
+        const base = buildNosApiUrl('/v3/staking');
+        const url = `${base}/jobs/${encodeURIComponent(jobId)}/stream`;
+        emitDebug('info', '[sse] start', { jobId, url });
+
+        const headers = new Headers();
+        const defaultAuth = buildMonitorAuthHeaders();
+        Object.entries(defaultAuth).forEach(([key, value]) => {
+          if (value && !headers.has(key)) {
+            headers.set(key, value);
+          }
+        });
+        const apiKey = getMonitorApiKey();
+        if (apiKey && !headers.has('x-api-key')) {
+          headers.set('x-api-key', apiKey);
+        }
+
+        let response: Response;
+        try {
+          response = await fetch(url, {
+            headers,
+            signal,
+            cache: 'no-store',
+          });
+        } catch (error) {
+          if (signal.aborted) return;
+          throw error instanceof Error ? error : new Error('event_stream_request_failed');
+        }
+
+        if (!response.ok || !response.body) {
+          const error = new Error(`Streaming failed with status ${response.status}`);
+          (error as Error & { status?: number }).status = response.status;
+          throw error;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+
+        try {
+          while (!signal.aborted) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+
+            let boundary = buffer.indexOf('\n\n');
+            while (boundary !== -1) {
+              const chunk = buffer.slice(0, boundary);
+              buffer = buffer.slice(boundary + 2);
+              boundary = buffer.indexOf('\n\n');
+              if (!chunk.trim() || chunk.startsWith(':')) continue;
+              const dataLine = chunk
+                .split('\n')
+                .map((line) => line.trim())
+                .find((line) => line.startsWith('data:'));
+              if (!dataLine) continue;
+              const payload = dataLine.slice(5).trim();
+              if (!payload) continue;
+              try {
+                const parsed = JSON.parse(payload) as StakingJob;
+                emitDebug('debug', '[sse] message', {
+                  jobId,
+                  stage: parsed.stage,
+                  status: parsed.status,
+                  stagePercent: parsed.progress?.payload
+                    ? ((parsed.progress.payload as { stagePercent?: number }).stagePercent ?? null)
+                    : null,
+                  overallPercent: parsed.progress?.payload
+                    ? (
+                        (parsed.progress.payload as { overallPercent?: number }).overallPercent ??
+                        null
+                      )
+                    : null,
+                });
+                forwardUpdate(parsed);
+                if (parsed.status === 'completed' || parsed.status === 'failed') {
+                  return;
+                }
+              } catch (err) {
+                emitDebug('error', '[sse] parse error', {
+                  jobId,
+                  error: (err as Error)?.message,
+                });
+              }
+            }
+          }
+        } finally {
+          try {
+            reader.releaseLock();
+          } catch {
+            // ignore
+          }
+        }
+
+        emitDebug('info', '[sse] completed', {
+          jobId,
+          aborted: signal.aborted,
+        });
+      };
+
+      let usedStream = false;
+      try {
+        emitDebug('info', '[stream] attempting websocket', { jobId });
+        await subscribeViaWebSocket();
+        usedStream = true;
+      } catch (error) {
+        if (!signal.aborted) {
+          emitDebug('warn', '[stream] websocket unavailable, falling back to sse', {
+            jobId,
+            message: (error as Error)?.message,
+          });
+        }
+      }
+
+      if (!usedStream && !signal.aborted) {
+        try {
+          emitDebug('info', '[stream] starting SSE fallback', { jobId });
+          await subscribeViaEventStream();
+        } catch (error) {
+          if (!signal.aborted) {
+            emitDebug('error', '[stream] sse failed', {
+              jobId,
+              message: (error as Error)?.message,
+            });
+          }
+        }
+      }
+
+      await pollPromise;
+      emitDebug('info', '[stream] subscription completed', { jobId });
+    },
+    [pollJobStatus],
   );
 
   const hasWallet = Boolean(activeWallet);
@@ -440,7 +853,14 @@ export default function StakingAnalysisPage() {
     refetch: refetchEarnings,
   } = useQuery<StakingEarningsResponse>({
     queryKey: ['staking-analysis', 'earnings', activeWallet],
-    queryFn: () => apiClient.getStakingEarnings({ wallet: activeWallet! }),
+    queryFn: async () => {
+      emitDebug('info', '[query] earnings fetch start', { wallet: activeWallet });
+      try {
+        return await apiClient.getStakingEarnings({ wallet: activeWallet! });
+      } finally {
+        emitDebug('debug', '[query] earnings fetch complete', { wallet: activeWallet });
+      }
+    },
     enabled: hasWallet,
     staleTime: 60_000,
     refetchInterval: limitExceeded ? false : 5 * 60_000,
@@ -453,14 +873,28 @@ export default function StakingAnalysisPage() {
     },
     onSuccess: (data) => {
       const job = data?.job;
+      emitDebug('info', '[query] earnings success', {
+        hasJob: Boolean(job),
+        jobId: job?.id ?? null,
+        status: job?.status ?? null,
+      });
       if (!job) return;
       setSyncJob(job);
       if (job.status === 'queued' || job.status === 'running') {
+        showOverlay();
         setActiveSyncJobId((current) => (current === job.id ? current : job.id));
       } else {
         setActiveSyncJobId((current) => (current === job.id ? null : current));
       }
       lastJobStatusRef.current = job.status;
+    },
+    onError: (error) => {
+      const err = error as Error & { status?: number; code?: string };
+      emitDebug('error', '[query] earnings error', {
+        message: err?.message ?? null,
+        status: err?.status ?? null,
+        code: err?.code ?? null,
+      });
     },
   });
 
@@ -472,16 +906,39 @@ export default function StakingAnalysisPage() {
     refetch: refetchEvents,
   } = useQuery<StakingEarningsEventsResponse>({
     queryKey: ['staking-analysis', 'events', activeWallet, EVENT_FETCH_LIMIT],
-    queryFn: () =>
-      apiClient.getStakingEarningsEvents({
-        wallet: activeWallet!,
+    queryFn: async () => {
+      emitDebug('info', '[query] events fetch start', {
+        wallet: activeWallet,
         limit: EVENT_FETCH_LIMIT,
-        order: 'desc',
-        sortBy: 'timestamp',
-      }),
+      });
+      try {
+        return await apiClient.getStakingEarningsEvents({
+          wallet: activeWallet!,
+          limit: EVENT_FETCH_LIMIT,
+          order: 'desc',
+          sortBy: 'timestamp',
+        });
+      } finally {
+        emitDebug('debug', '[query] events fetch complete', { wallet: activeWallet });
+      }
+    },
     enabled: hasWallet && !limitExceeded,
     staleTime: 60_000,
     keepPreviousData: true,
+    onSuccess: (data) => {
+      emitDebug('info', '[query] events success', {
+        wallet: activeWallet,
+        count: data?.events?.length ?? 0,
+      });
+    },
+    onError: (error) => {
+      const err = error as Error & { status?: number; code?: string };
+      emitDebug('error', '[query] events error', {
+        message: err?.message ?? null,
+        status: err?.status ?? null,
+        code: err?.code ?? null,
+      });
+    },
   });
 
   const stakeAccount =
@@ -494,6 +951,11 @@ export default function StakingAnalysisPage() {
     mutationFn: ({ wallet, mode }) => apiClient.createStakingJob({ wallet, mode }),
     onSuccess: (response) => {
       const nextJob = response.job;
+      emitDebug('info', '[mutation] job created', {
+        jobId: nextJob.id,
+        status: nextJob.status,
+        stage: nextJob.stage,
+      });
       if (jobStreamControllerRef.current) {
         jobStreamControllerRef.current.abort();
         jobStreamControllerRef.current = null;
@@ -501,6 +963,7 @@ export default function StakingAnalysisPage() {
       lastProgressStageRef.current = null;
       setSyncJob(nextJob);
       setActiveSyncJobId(nextJob.id);
+      showOverlay();
       lastJobStatusRef.current = nextJob.status;
 
       const isFullSync = nextJob.mode === 'force';
@@ -516,6 +979,10 @@ export default function StakingAnalysisPage() {
       });
     },
     onError: (error) => {
+      emitDebug('error', '[mutation] failed to start job', {
+        message: error.message,
+      });
+      hideOverlayLater(0);
       addToast({
         title: tToasts('syncFailedTitle'),
         description: error.message ?? tToasts('syncFailedDescription'),
@@ -524,10 +991,36 @@ export default function StakingAnalysisPage() {
     },
   });
 
+  useEffect(() => {
+    if (!activeWallet) return;
+    if (limitExceeded) return;
+    const needsJob = !activeSyncJobId && !syncJob && !syncPending;
+    if (!needsJob) return;
+    emitDebug('info', '[autostart] triggering syncWallet', { wallet: activeWallet });
+    showOverlay();
+    void syncWallet({ wallet: activeWallet }).catch((error) => {
+      emitDebug('error', '[autostart] syncWallet failed', {
+        wallet: activeWallet,
+        message: (error as Error)?.message,
+      });
+    });
+  }, [activeWallet, activeSyncJobId, syncJob, syncPending, limitExceeded, syncWallet, showOverlay]);
+
   const handleJobUpdate = useCallback(
     (update: StakingJob) => {
+      emitDebug('debug', '[update] job update received', {
+        jobId: update.id,
+        status: update.status,
+        stage: update.stage,
+      });
       setSyncJob((current) => {
         if (!shouldAcceptJobUpdate(current, update)) {
+          emitDebug('debug', '[update] skipped stale job update', {
+            jobId: update.id,
+            status: update.status,
+            stage: update.stage,
+            stagePercent: extractStagePercent(update),
+          });
           return current;
         }
         return update;
@@ -542,96 +1035,40 @@ export default function StakingAnalysisPage() {
         lastProgressStageRef.current = currentStage;
       }
 
+      showOverlay();
       if (update.status === 'completed' || update.status === 'failed') {
         setActiveSyncJobId((current) => (current === update.id ? null : current));
+        hideOverlayLater();
+      } else {
+        setActiveSyncJobId((current) => (current === update.id ? current : update.id));
       }
     },
-    [refetchEvents, refetchEarnings],
+    [refetchEvents, refetchEarnings, showOverlay, hideOverlayLater],
   );
 
   useEffect(() => {
     if (!activeSyncJobId) {
+      emitDebug('info', '[effect] subscribeToJob skipped (no job id)');
       if (jobStreamControllerRef.current) {
         jobStreamControllerRef.current.abort();
         jobStreamControllerRef.current = null;
       }
       return;
     }
+
+    emitDebug('info', '[effect] subscribeToJob run', { jobId: activeSyncJobId });
 
     const controller = new AbortController();
     jobStreamControllerRef.current = controller;
 
     subscribeToJob(activeSyncJobId, controller.signal, (update) => {
       handleJobUpdate(update);
-    })
-      .catch((error) => {
-        if (controller.signal.aborted) return;
-        const status = (error as Error & { status?: number }).status;
-        if (status === 404) {
-          return pollJobStatus(activeSyncJobId, controller.signal, handleJobUpdate);
-        }
-        console.error('[staking-analysis] job stream error', error);
-        addToast({
-          title: tToasts('progressUnavailableTitle'),
-          description:
-            error instanceof Error
-              ? error.message
-              : tToasts('progressUnavailableDescription'),
-          type: 'info',
-        });
-        return pollJobStatus(activeSyncJobId, controller.signal, handleJobUpdate);
-      })
-      .catch((error) => {
-        if (controller.signal.aborted) return;
-        console.error('[staking-analysis] job polling error', error);
-        addToast({
-          title: tToasts('statusUnavailableTitle'),
-          description:
-            error instanceof Error
-              ? error.message
-              : tToasts('statusUnavailableDescription'),
-          type: 'error',
-        });
-      });
-
-    return () => {
-      controller.abort();
-      if (jobStreamControllerRef.current === controller) {
-        jobStreamControllerRef.current = null;
-      }
-    };
-  }, [activeSyncJobId, subscribeToJob, pollJobStatus, handleJobUpdate, addToast]);
-
-  useEffect(() => {
-    if (!activeSyncJobId) {
-      if (jobStreamControllerRef.current) {
-        jobStreamControllerRef.current.abort();
-        jobStreamControllerRef.current = null;
-      }
-      return;
-    }
-
-    const controller = new AbortController();
-    jobStreamControllerRef.current = controller;
-
-    subscribeToJob(activeSyncJobId, controller.signal, (update) => {
-      setSyncJob(update);
-
-      const currentStage = update.stage || null;
-      if (currentStage && currentStage !== lastProgressStageRef.current) {
-        if (currentStage === 'events_classified' || currentStage === 'events_stored') {
-          void refetchEvents();
-          void refetchEarnings();
-        }
-        lastProgressStageRef.current = currentStage;
-      }
-
-      if (update.status === 'completed' || update.status === 'failed') {
-        setActiveSyncJobId((current) => (current === update.id ? null : current));
-      }
     }).catch((error) => {
       if (controller.signal.aborted) return;
-      console.error('[staking-analysis] job stream error', error);
+      emitDebug('error', '[stream] job stream error', {
+        jobId: activeSyncJobId,
+        message: (error as Error)?.message,
+      });
       addToast({
         title: tToasts('progressUnavailableTitle'),
         description:
@@ -643,12 +1080,13 @@ export default function StakingAnalysisPage() {
     });
 
     return () => {
+      emitDebug('info', '[effect] cleanup stream', { jobId: activeSyncJobId });
       controller.abort();
       if (jobStreamControllerRef.current === controller) {
         jobStreamControllerRef.current = null;
       }
     };
-  }, [activeSyncJobId, subscribeToJob, addToast, refetchEvents, refetchEarnings]);
+  }, [activeSyncJobId, subscribeToJob, handleJobUpdate, addToast]);
 
   const combinedError =
     (earningsError instanceof Error ? earningsError : null) ??
@@ -889,8 +1327,10 @@ export default function StakingAnalysisPage() {
 
   const handleSyncLatest = useCallback(() => {
     if (!activeWallet) return Promise.resolve();
+    emitDebug('info', '[action] Sync Latest requested', { wallet: activeWallet });
+    showOverlay();
     return syncWallet({ wallet: activeWallet });
-  }, [activeWallet, syncWallet]);
+  }, [activeWallet, syncWallet, showOverlay]);
 
   const quickStats = [
     {
@@ -1153,10 +1593,30 @@ export default function StakingAnalysisPage() {
     tProgressMode,
   ]);
 
-  const shouldShowSyncOverlay = syncPending || syncInFlight;
+  const shouldShowSyncOverlay = syncPending || syncInFlight || overlayVisible;
   const showSpinnerOverlay = !shouldShowSyncOverlay && isTransitioning;
   const syncButtonBusy = syncPending || syncInFlight;
   const activeJobMode = progressInfo.jobMode || syncJob?.mode || syncJob?.result?.mode || null;
+
+  useEffect(() => {
+    emitDebug('debug', '[ui] overlay state', {
+      shouldShowSyncOverlay,
+      showSpinnerOverlay,
+      syncPending,
+      syncInFlight,
+      activeSyncJobId,
+      overlayVisible,
+      jobStatus: syncJob?.status ?? null,
+    });
+  }, [
+    shouldShowSyncOverlay,
+    showSpinnerOverlay,
+    syncPending,
+    syncInFlight,
+    activeSyncJobId,
+    overlayVisible,
+    syncJob?.status,
+  ]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
