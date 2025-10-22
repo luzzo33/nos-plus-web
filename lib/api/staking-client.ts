@@ -92,8 +92,7 @@ export class StakingApiClient {
     });
 
     const apiKey = getMonitorApiKey();
-    const isServer = typeof window === 'undefined';
-    if (apiKey && isServer && !headers.has('x-api-key')) {
+    if (apiKey && !headers.has('x-api-key')) {
       headers.set('x-api-key', apiKey);
     }
 

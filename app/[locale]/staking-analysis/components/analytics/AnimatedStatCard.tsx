@@ -47,14 +47,19 @@ export function AnimatedStatCard({
   });
 
   useEffect(() => {
-    if (isInView && !hasAnimated) {
-      const timer = setTimeout(() => {
-        spring.set(value);
+    if (!isInView) return undefined;
+
+    const timeout = setTimeout(() => {
+      spring.stop();
+      spring.set(value);
+      if (!hasAnimated) {
         setHasAnimated(true);
-      }, delay);
-      return () => clearTimeout(timer);
-    }
-    return undefined;
+      }
+    }, hasAnimated ? 0 : delay);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [isInView, value, spring, delay, hasAnimated]);
 
   const determinedTrend =

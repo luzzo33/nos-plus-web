@@ -122,6 +122,72 @@ type StakingJobMutationVariables = {
   mode?: 'initial' | 'incremental' | 'force' | 'empty';
 };
 
+function extractUpdatedAt(job: StakingJob | null | undefined): number {
+  if (!job) return 0;
+  const candidates: Array<string | null | undefined> = [
+    job.updatedAt,
+    job.progress?.updatedAt,
+    (job.progress?.payload as { updatedAt?: string } | null | undefined)?.updatedAt,
+  ];
+  for (const value of candidates) {
+    if (!value) continue;
+    const time = Date.parse(value);
+    if (!Number.isNaN(time)) {
+      return time;
+    }
+  }
+  return 0;
+}
+
+function extractStagePercent(job: StakingJob | null | undefined): number {
+  if (!job) return -1;
+  const payload = job.progress?.payload as { stagePercent?: number } | null | undefined;
+  const value = payload?.stagePercent;
+  return typeof value === 'number' && Number.isFinite(value) ? value : -1;
+}
+
+function extractOverallPercent(job: StakingJob | null | undefined): number {
+  if (!job) return -1;
+  const payload = job.progress?.payload as { overallPercent?: number } | null | undefined;
+  const value = payload?.overallPercent;
+  return typeof value === 'number' && Number.isFinite(value) ? value : -1;
+}
+
+function isTerminalStatus(status: StakingJob['status'] | null | undefined) {
+  return status === 'completed' || status === 'failed';
+}
+
+function shouldAcceptJobUpdate(previous: StakingJob | null, next: StakingJob): boolean {
+  if (!previous) return true;
+  const prevStatus = previous.status ?? null;
+  const nextStatus = next.status ?? null;
+  if (isTerminalStatus(nextStatus) && !isTerminalStatus(prevStatus)) {
+    return true;
+  }
+
+  const prevTimestamp = extractUpdatedAt(previous);
+  const nextTimestamp = extractUpdatedAt(next);
+  if (nextTimestamp > prevTimestamp) {
+    return true;
+  }
+  if (nextTimestamp < prevTimestamp) {
+    return false;
+  }
+
+  const prevStagePercent = extractStagePercent(previous);
+  const nextStagePercent = extractStagePercent(next);
+  if (nextStagePercent > prevStagePercent) {
+    return true;
+  }
+  if (nextStagePercent < prevStagePercent) {
+    return false;
+  }
+
+  const prevOverall = extractOverallPercent(previous);
+  const nextOverall = extractOverallPercent(next);
+  return nextOverall >= prevOverall;
+}
+
 function formatNos(value?: number | null, fractionDigits = 2) {
   if (value == null || Number.isNaN(value)) return '0';
   return Number(value).toLocaleString(undefined, {
@@ -460,7 +526,12 @@ export default function StakingAnalysisPage() {
 
   const handleJobUpdate = useCallback(
     (update: StakingJob) => {
-      setSyncJob(update);
+      setSyncJob((current) => {
+        if (!shouldAcceptJobUpdate(current, update)) {
+          return current;
+        }
+        return update;
+      });
 
       const currentStage = update.stage || null;
       if (currentStage && currentStage !== lastProgressStageRef.current) {
