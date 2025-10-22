@@ -2,19 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [1.3.2](https://github.com/luzzo33/nos-plus-web/compare/v1.3.0...v1.3.2) (2025-10-22)
-
-
-### ⚙️ Maintenance
-
-* **release:** 1.3.1 ([132c35f](https://github.com/luzzo33/nos-plus-web/commit/132c35f8fcdd02aca33340e4c2fb16c70b67fe73))
-
-
-### 🐞 Fixes
-
-* clean staking analysis state handling ([8063994](https://github.com/luzzo33/nos-plus-web/commit/80639945b77e5fe39f7a8b336af1a7dd4b766995))
-* restore staking analysis streaming instrumentation ([2890833](https://github.com/luzzo33/nos-plus-web/commit/289083307176363705cb258f3a47ed90849ec4d4))
-
 ### [1.3.1](https://github.com/luzzo33/nos-plus-web/compare/v1.3.0...v1.3.1) (2025-10-22)
 
 ## [1.3.0](https://github.com/luzzo33/nos-plus-web/compare/v1.2.0...v1.3.0) (2025-10-20)
