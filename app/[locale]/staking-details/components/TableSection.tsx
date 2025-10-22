@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, isValidElement, useEffect } from 'react';
+import { useMemo, useState, isValidElement } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronDown, FileDown, ArrowUpDown, X } from 'lucide-react';
 import { format, endOfDay, startOfDay, subDays } from 'date-fns';
@@ -74,40 +74,6 @@ export function TableSection({
   const resolvedStart = tableDateRange.start ? tableDateRange.start.toISOString() : 'null';
   const resolvedEnd = tableDateRange.end ? tableDateRange.end.toISOString() : 'null';
 
-  useEffect(() => {
-    console.log(
-      `<pre>[STAKING-DETAILS][TableSection] props snapshot
-timeframe: ${tableTimeframe}
-sort: ${tableSort.field}:${tableSort.order}
-page: ${tablePage}
-rows(received): ${rawRows.length}
-mounted: ${mounted}
-loading: ${loading}
-dateRange: ${resolvedStart} -> ${resolvedEnd}
-isMobile: ${isMobile}
-</pre>`,
-    );
-  }, [
-    tableTimeframe,
-    tableSort.field,
-    tableSort.order,
-    tablePage,
-    rawRows.length,
-    mounted,
-    loading,
-    resolvedStart,
-    resolvedEnd,
-    isMobile,
-  ]);
-
-  useEffect(() => {
-    console.log('<pre>[STAKING-DETAILS][TableSection] tableData payload</pre>', tableData);
-  }, [tableData]);
-
-  useEffect(() => {
-    console.log('<pre>[STAKING-DETAILS][TableSection] column definitions</pre>', rawColumnDefs);
-  }, [rawColumnDefs]);
-
   const columns = useMemo(() => {
     if (rawColumnDefs.length) return rawColumnDefs;
     const fallbackKeys = ['timestamp', 'total', 'staking', 'unstaking', 'change'];
@@ -119,10 +85,6 @@ isMobile: ${isMobile}
   }, [rawColumnDefs]);
 
   const rows = useMemo(() => rawRows, [rawRows]);
-  useEffect(() => {
-    console.log('<pre>[STAKING-DETAILS][TableSection] derived rows snapshot</pre>', rows);
-  }, [rows]);
-
   const paginationMeta = tableData?.pagination ?? table?.pagination ?? null;
   const totalItems = paginationMeta?.total ?? rows.length;
   const limit = paginationMeta?.limit ?? paginationMeta?.pageSize ?? 20;
@@ -130,10 +92,6 @@ isMobile: ${isMobile}
   const lastItem = totalItems === 0 ? 0 : Math.min(tablePage * limit, totalItems);
   const totalPages = paginationMeta?.totalPages ?? (limit ? Math.ceil(totalItems / limit) : 1);
   const showPagination = totalPages > 1;
-  useEffect(() => {
-    console.log('<pre>[STAKING-DETAILS][TableSection] pagination meta</pre>', paginationMeta);
-  }, [paginationMeta]);
-
   const formatDateCell = (value: unknown) => {
     if (!value) return tc('na');
     const date = new Date(String(value));
@@ -233,12 +191,6 @@ isMobile: ${isMobile}
   ];
 
   const applyDateRange = () => {
-    console.log(
-      `<pre>[STAKING-DETAILS][TableSection] applyDateRange
-start: ${tempDateRange.start ? tempDateRange.start.toISOString() : 'null'}
-end: ${tempDateRange.end ? tempDateRange.end.toISOString() : 'null'}
-</pre>`,
-    );
     onDateRangeChange(tempDateRange);
     setShowDateModal(false);
   };

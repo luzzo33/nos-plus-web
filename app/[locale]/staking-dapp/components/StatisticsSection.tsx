@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, TrendingUpDown, AlertCircle, BarChart3, Gauge, Info } from 'lucide-react';
 import { Tooltip as UiTooltip } from '@/components/ui/Tooltip';
@@ -35,32 +35,6 @@ export function StatisticsSection({
   const isHydrated = mounted || loading;
   const normalizedStats = useMemo(() => normalizeStakingDappStats(stats), [stats]);
   const data = normalizedStats ?? stats;
-
-  useEffect(() => {
-    console.log(
-      `<pre>[STAKING-DAPP][StatisticsSection] render gate
-statsRange: ${statsRange}
-mounted: ${mounted}
-loading: ${loading}
-metric: ${metric}
-statsPresent: ${Boolean(stats)}
-metaPresent: ${Boolean(meta)}
-</pre>`,
-    );
-  }, [statsRange, mounted, loading, metric, stats, meta]);
-
-  useEffect(() => {
-    if (!stats) {
-      console.log('<pre>[STAKING-DAPP][StatisticsSection] stats payload missing</pre>');
-      return;
-    }
-    console.log('<pre>[STAKING-DAPP][StatisticsSection] stats payload</pre>', stats);
-  }, [stats]);
-
-  useEffect(() => {
-    if (!meta) return;
-    console.log('<pre>[STAKING-DAPP][StatisticsSection] meta payload</pre>', meta);
-  }, [meta]);
 
   if (!isHydrated) return null;
 
@@ -168,24 +142,6 @@ metaPresent: ${Boolean(meta)}
   const concentrationRecord = (distribution?.concentration ?? {}) as Record<string, unknown>;
   const giniValue = coerceNumber(concentrationRecord.gini);
   const top20Value = coerceNumber(concentrationRecord.top20Percent);
-
-  console.log(
-    `<pre>[STAKING-DAPP][StatisticsSection] derived metrics
-avgX: ${avgX}
-minX: ${minX}
-maxX: ${maxX}
-rangeX: ${rangeX}
-volatility: ${volatilityValue ?? 'NA'}
-coverage: ${coverage}
-coveragePct: ${coveragePct}
-aprAverage: ${aprAverageValue != null ? aprAverageValue.toFixed(2) : 'NA'}
-aprStreak: ${aprStreak ? `${aprStreak.direction}:${aprStreak.length}` : 'NA'}
-xStreak: ${xStreak ? `${xStreak.direction}:${xStreak.length}` : 'NA'}
-maxDrawdown: ${maxDD}
-dataPoints: ${dataPoints}
-distributionKeys: ${Array.isArray(distribution?.breakdown) ? distribution.breakdown.length : 0}
-</pre>`,
-  );
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
