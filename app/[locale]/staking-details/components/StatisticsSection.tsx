@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
@@ -109,35 +109,6 @@ export function StatisticsSection({
   const tc = useTranslations('common');
   const isReady = mounted && Boolean(normalizedStats);
 
-  useEffect(() => {
-    console.log(
-      `<pre>[STAKING-DETAILS][StatisticsSection] render gate
-statsRange: ${statsRange}
-mounted: ${mounted}
-metric(raw): ${rawMetric}
-metric(normalized): ${metric}
-hasStats: ${Boolean(rawStats)}
-normalized: ${Boolean(normalizedStats)}
-</pre>`,
-    );
-  }, [statsRange, mounted, rawMetric, rawStats, normalizedStats, metric]);
-
-  useEffect(() => {
-    if (!rawStats) {
-      console.log('<pre>[STAKING-DETAILS][StatisticsSection] raw stats missing</pre>');
-      return;
-    }
-    console.log('<pre>[STAKING-DETAILS][StatisticsSection] raw stats payload</pre>', rawStats);
-  }, [rawStats]);
-
-  useEffect(() => {
-    if (!normalizedStats) return;
-    console.log(
-      '<pre>[STAKING-DETAILS][StatisticsSection] normalized stats payload</pre>',
-      normalizedStats,
-    );
-  }, [normalizedStats]);
-
   const metricKey: MetricMode = metric || 'total';
   const metricMeta = METRIC_META[metricKey];
   const seriesLabels: Record<MetricMode, string> = {
@@ -240,60 +211,6 @@ normalized: ${Boolean(normalizedStats)}
     stable: t('momentumStates.stable'),
     neutral: t('momentumStates.neutral'),
   };
-
-  useEffect(() => {
-    console.log(
-      `<pre>[STAKING-DETAILS][StatisticsSection] derived metrics
-series(avg/min/max/median): ${[
-        seriesStats.avg,
-        seriesStats.min,
-        seriesStats.max,
-        seriesStats.median,
-      ]
-        .map((v) => (v == null ? 'null' : v))
-        .join(', ')}
-stabilityVolatility: ${volatilityValue ?? 'NA'}
-stabilityDrawdowns: ${coerceNumber(stability?.maxDrawdown) ?? 'NA'}
-change7d: ${change7d ?? 'NA'}
-change30d: ${change30d ?? 'NA'}
-momentumScore: ${momentumScore ?? 'NA'}
-momentumState: ${momentumState}
-growthYoY: ${growth?.yearOverYear ?? 'NA'}
-distributionKeys: ${
-        distribution
-          ? Object.keys(distribution)
-              .filter((key) => distribution[key] != null).length
-          : 0
-      }
-coveragePercent: ${coveragePercent ?? 'NA'}
-dataPoints: ${dataPoints}
-dayOfWeek: ${dayOfWeekData.length}
-monthlyPatterns: ${monthlyPatterns.length}
-percentiles: ${percentileEntries.length}
-events: highest=${events.highest.length} lowest=${events.lowest.length} unusual=${events.unusual.length}
-</pre>`,
-    );
-  }, [
-    seriesStats.avg,
-    seriesStats.min,
-    seriesStats.max,
-    seriesStats.median,
-    stability,
-    change7d,
-    change30d,
-    momentumScore,
-    momentumState,
-    growth,
-    distribution,
-    coveragePercent,
-    dataPoints,
-    dayOfWeekData.length,
-    monthlyPatterns.length,
-    percentileEntries.length,
-    events.highest.length,
-    events.lowest.length,
-    events.unusual.length,
-  ]);
 
   if (!isReady) {
     return null;

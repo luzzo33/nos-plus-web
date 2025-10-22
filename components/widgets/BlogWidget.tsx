@@ -28,8 +28,7 @@ function formatPublishedDate(value: string | null, locale: string) {
       return value;
     }
     return format(date, 'MMM d', { locale: getDateLocale(locale) });
-  } catch (error) {
-    console.warn('[BlogWidget] Failed to format date:', error);
+  } catch {
     return value ?? '—';
   }
 }

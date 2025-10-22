@@ -79,13 +79,7 @@ type StakingDebugRecord = {
 const DEBUG_EVENT_NAME = 'nos-staking-analysis-log';
 
 function emitDebug(level: DebugLevel, message: string, context?: unknown) {
-  const prefix = `[staking-analysis][${level}]`;
-  const writer = console.log.bind(console);
-  if (typeof context === 'undefined') {
-    writer(`${prefix} ${message}`);
-  } else {
-    writer(`${prefix} ${message}`, context);
-  }
+  const fullMessage = `[staking-analysis][${level}] ${message}`;
 
   if (typeof window !== 'undefined') {
     const globalWindow = window as typeof window & {
@@ -94,7 +88,7 @@ function emitDebug(level: DebugLevel, message: string, context?: unknown) {
     const record: StakingDebugRecord = {
       timestamp: Date.now(),
       level,
-      message,
+      message: fullMessage,
       context,
     };
     const store =
@@ -106,7 +100,12 @@ function emitDebug(level: DebugLevel, message: string, context?: unknown) {
         new CustomEvent(DEBUG_EVENT_NAME, { detail: record }),
       );
     } catch (err) {
-      writer(`${prefix} [debug-event-error]`, err);
+      store.push({
+        timestamp: Date.now(),
+        level: 'error',
+        message: `${fullMessage} [debug-event-error]`,
+        context: err,
+      });
     }
   }
 }

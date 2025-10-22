@@ -12,6 +12,13 @@ interface LogContext {
   [key: string]: unknown;
 }
 
+type LogEntry = {
+  timestamp: string;
+  level: LogLevel;
+  message: string;
+  payload?: LoggableValue;
+};
+
 const MAX_DEPTH = 5;
 const MAX_ARRAY_LENGTH = 20;
 
@@ -59,31 +66,42 @@ function toLoggable(value: unknown, depth = 0): LoggableValue {
   return String(value);
 }
 
-function selectConsoleMethod(level: LogLevel) {
-  switch (level) {
-    case 'error':
-      return console.error;
-    case 'warn':
-      return console.warn;
-    case 'debug':
-      return console.debug ?? console.log;
-    default:
-      return console.info;
+const LOG_HISTORY_LIMIT = 500;
+const logHistory: LogEntry[] = [];
+
+function notifyExternalSink(entry: LogEntry) {
+  const globalObject = globalThis as typeof globalThis & {
+    __NOS_APP_LOGGER__?: (record: LogEntry) => void;
+  };
+
+  const sink = globalObject.__NOS_APP_LOGGER__;
+  if (typeof sink === 'function') {
+    try {
+      sink(entry);
+    } catch {
+      // Ignore logging sink errors to avoid cascading failures
+    }
   }
+}
+
+function storeLog(entry: LogEntry) {
+  logHistory.push(entry);
+  if (logHistory.length > LOG_HISTORY_LIMIT) {
+    logHistory.shift();
+  }
+  notifyExternalSink(entry);
 }
 
 function log(level: LogLevel, message: string, context?: LogContext | Error | unknown) {
   const timestamp = new Date().toISOString();
-  const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
-  const writer = selectConsoleMethod(level).bind(console);
+  const payload = typeof context === 'undefined' ? undefined : toLoggable(context);
 
-  if (typeof context === 'undefined') {
-    writer(`${prefix} ${message}`);
-    return;
-  }
-
-  const payload = toLoggable(context);
-  writer(`${prefix} ${message}`, payload);
+  storeLog({
+    timestamp,
+    level,
+    message,
+    payload,
+  });
 }
 
 export function logDebug(message: string, context?: LogContext | Error | unknown) {
@@ -105,3 +123,9 @@ export function logError(message: string, context?: LogContext | Error | unknown
 export function formatLogPayload(context?: LogContext | Error | unknown): LoggableValue {
   return toLoggable(context);
 }
+
+export function getLogHistory(): LogEntry[] {
+  return [...logHistory];
+}
+
+export type { LogEntry };
